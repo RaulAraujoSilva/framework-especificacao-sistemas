@@ -1,0 +1,116 @@
+{
+  "processo": "SEI-480002/009982/2025",
+  "concessionaria": "Águas de Paraty",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão 008/2014; Terceiro Termo Aditivo (realinhamento, segundo o pleito); Deliberação AGENERSA nº 4.830/2024, art. 18 (realinhamento, segundo a CAPET)",
+  "clausula_reajuste": "Cláusula 20 do Contrato de Concessão 008/2014",
+  "vigencia_pretendida": "01/01/2026",
+  "data_pleito": "17/11/2025",
+  "data_recebimento_agenersa": "11/12/2024 (como escrito no parecer; provável erro de ano, pois o ofício é de 17/11/2025)",
+  "formula": {
+    "texto": "IR = {[ P1 x [(IMOi - IMOo)/IMOo] + P2 x [(IEEi - IEEo)/IEEo] + P3 x [(IPAi - IPAo)/IPAo] + P4 x [(IPQi - IPQo)/IPQo] + [(IPCi - IPCo)/IPCo] + P6 x [(ICCi - ICCo)/ICCo]}",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "multiplicativa",
+    "componentes": [
+      {"sigla": "IMO", "indice": "ICC - Mão de Obra - Rio de Janeiro", "fonte": "FGV", "codigo_serie": null,
+       "peso_texto": "0,195", "peso": 0.195, "regra_data": "3º mês anterior ao da data de início da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"},
+      {"sigla": "IEE", "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh", "fonte": "outra", "codigo_serie": null,
+       "peso_texto": "0,0974", "peso": 0.0974, "regra_data": "praticada no 3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"},
+      {"sigla": "IPA", "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool", "fonte": "FGV", "codigo_serie": "1006819",
+       "peso_texto": "0,1082", "peso": 0.1082, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"},
+      {"sigla": "IPQ", "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos", "fonte": "FGV", "codigo_serie": "1006820",
+       "peso_texto": "0,0405", "peso": 0.0405, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"},
+      {"sigla": "IPC", "indice": "IPC - Brasil - Geral - Índice de Preços ao Consumidor", "fonte": "FGV", "codigo_serie": null,
+       "peso_texto": "0,0662", "peso": 0.0662, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"},
+      {"sigla": "ICC", "indice": "INCC - Índice Nacional de Preços da Construção Civil", "fonte": "FGV", "codigo_serie": "160868",
+       "peso_texto": "0,4925", "peso": 0.4925, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "120172748"}
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "119087517",
+      "emissor": "concessionária",
+      "tipo_doc": "Ofício nº 0320/2025",
+      "data": "17/11/2025",
+      "periodo_referencia": "outubro de 2024 a outubro de 2025",
+      "valores": [],
+      "ir_texto": "3,967%",
+      "ir_pct": 3.967,
+      "outros_componentes": [
+        {"nome": "realinhamento", "descricao": "Segunda parcela do realinhamento tarifário estabelecido na cláusula quarta do Terceiro Termo Aditivo ao Contrato de Concessão", "valor_texto": "2,72%", "valor_pct": 2.72}
+      ],
+      "reajuste_total_texto": "6,795%",
+      "reajuste_total_pct": 6.795,
+      "conclusao": "outra",
+      "divergencias": []
+    },
+    {
+      "doc_id": "120172748",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET nº 343/2025",
+      "data": "03/12/2025 (assinado em 05/12/2025)",
+      "periodo_referencia": "outubro/2024 a outubro/2025",
+      "valores": [
+        {"sigla": "IMO", "i_texto": "1.576,75", "i": 1576.75, "o_texto": "1.466,05", "o": 1466.05, "variacao_texto": "0,07551", "variacao": 0.07551, "peso_usado": 0.1951},
+        {"sigla": "IEE", "i_texto": "471,91", "i": 471.91, "o_texto": "511,75", "o": 511.75, "variacao_texto": "-0,07785", "variacao": -0.07785, "peso_usado": 0.0974},
+        {"sigla": "IPA", "i_texto": "356,857", "i": 356.857, "o_texto": "367,637", "o": 367.637, "variacao_texto": "-0,02932", "variacao": -0.02932, "peso_usado": 0.1082},
+        {"sigla": "IPQ", "i_texto": "209,255", "i": 209.255, "o_texto": "199,691", "o": 199.691, "variacao_texto": "0,04789", "variacao": 0.04789, "peso_usado": 0.0405},
+        {"sigla": "IPC", "i_texto": "789,092", "i": 789.092, "o_texto": "761,643", "o": 761.643, "variacao_texto": "0,03604", "variacao": 0.03604, "peso_usado": 0.0662},
+        {"sigla": "ICC", "i_texto": "1222,36", "i": 1222.36, "o_texto": "1.149,17", "o": 1149.17, "variacao_texto": "0,0637", "variacao": 0.0637, "peso_usado": 0.4925}
+      ],
+      "ir_texto": "3,967%",
+      "ir_pct": 3.967,
+      "outros_componentes": [
+        {"nome": "realinhamento", "descricao": "Segunda parcela do realinhamento tarifário (art. 18 da Deliberação AGENERSA 4.830/2024, realinhamento total de 6,3% a partir de janeiro de 2025)", "valor_texto": "2,72%", "valor_pct": 2.72}
+      ],
+      "reajuste_total_texto": "6,795%",
+      "reajuste_total_pct": 6.795,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Nenhuma: a CAPET declara conformidade do percentual calculado e da tabela tarifária publicada (jornal Diário do Vale de 30/11/2025)."
+      ]
+    },
+    {
+      "doc_id": "125756035",
+      "emissor": "Conselho",
+      "tipo_doc": "Publicação no DOERJ de 26/02/2026 da Deliberação AGENERSA nº 4997",
+      "data": "03/02/2026 (publicada em 26/02/2026)",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {"nome": "realinhamento", "descricao": "2ª parcela do realinhamento tarifário, conforme art. 18 da Deliberação AGENERSA 4830/2024 (percentual da parcela não repetido na deliberação)", "valor_texto": null, "valor_pct": null}
+      ],
+      "reajuste_total_texto": "6,795%",
+      "reajuste_total_pct": 6.795,
+      "conclusao": "confirma o pleito",
+      "divergencias": []
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "125756035",
+    "deliberacao": "4997",
+    "reajuste_pct": 6.795,
+    "observacao": "Ratifica decisão da 19ª Reunião Interna do Conselho Diretor; homologação definitiva, observada antecedência mínima de 30 dias da publicação. Minuta sem número: doc 124415862. A tabela publicada traz só tarifa de água (jan/2026)."
+  },
+  "insumos_do_pleito": [
+    "Memória de cálculo detalhada (Anexo I do Ofício 0320/2025), não incluída no arquivo",
+    "Dados que fundamentam o cálculo (Anexos II a IV), não incluídos no arquivo",
+    "Arquivos em Excel, memória de cálculo e tabela tarifária, pedidos pela CAPET no Ofício CAPET nº 136/2025 (doc 119469413, prazo de 3 dias úteis)",
+    "Cópia do jornal Diário do Vale de 30/11/2025 com a tabela tarifária reajustada (Ofício 0345/2025, doc 120192427)"
+  ],
+  "inconsistencias_textuais": [
+    "Peso P1 escrito 0,195 na definição e 0,1951 no cálculo.",
+    "A fórmula escrita omite P5 no termo do IPC, mas o cálculo usa 0,0662 (P5).",
+    "Verificação: os pesos definidos somam 0,9998 (com 0,1951, somam 0,9999), não 1.",
+    "A variação do ICC é escrita com 4 casas (0,0637); as demais, com 5.",
+    "Item 5 do parecer: 'reajuste da fórmula paramétrica, correspondente a 2,720%'; o percentual da fórmula é 3,967% (2,72% é o realinhamento).",
+    "Item 6 escreve 6,795% por extenso como 'sete inteiros, setecentos e noventa e cinco milésimos'.",
+    "O parecer data o Ofício 0320/2025 de 17/11/2024 e o recebimento de 11/12/2024; o ofício é de 17/11/2025.",
+    "Base do realinhamento: o pleito cita a cláusula quarta do Terceiro Termo Aditivo; a CAPET e a deliberação citam o art. 18 da Deliberação 4.830/2024.",
+    "O IPC é definido como 'IPC - Brasil - Geral' sem código, mas os valores usados (789,092 e 761,643) são os mesmos que o processo da Águas da Condessa (SEI-480002/009837/2025) atribui ao 'IPC - Brasil - DI (1390594)'.",
+    "Os valores do IEE (471,91 e 511,75) são os mesmos do pleito da Águas da Imperatriz (SEI-480002/009822/2025), que os calcula com a tarifa A4 Azul Fora de Ponta (TUSD + TE) mais bandeira vermelha, e não com a modalidade 'Convencional' que a definição contratual cita."
+  ],
+  "observacoes": "Combinação multiplicativa inferida: o texto não declara a regra, mas 3,967% e 2,72% não somam 6,795% e o produto (1,03967 x 1,0272) fecha em 6,795%. Dificuldades para automatizar: (1) IMO é a série regional 'ICC - Mão de Obra - Rio de Janeiro' da FGV, sem código citado; as séries FGV não estão em portal aberto do IBGE; (2) IEE vem da tarifa da distribuidora de energia, sem fonte citada no parecer, e na prática (pelo processo da Imperatriz) inclui bandeira tarifária, que sai de ato separado da ANEEL; (3) a memória de cálculo e as planilhas do pleito não estão no arquivo, a CAPET precisou pedi-las por ofício; (4) o realinhamento é um percentual fixo por parcela, definido fora da fórmula, e precisa de cronograma próprio; (5) arredondamentos das variações não são uniformes."
+}

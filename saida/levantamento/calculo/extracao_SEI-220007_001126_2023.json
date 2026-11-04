@@ -1,0 +1,154 @@
+{
+  "processo": "SEI-220007/001126/2023",
+  "concessionaria": "Iguá Rio de Janeiro S.A. (Bloco 2)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão do Bloco 2",
+  "clausula_reajuste": "Cláusula 29 (item 29.1.1) do Contrato; itens 4.2 e 4.3 do Anexo III – Indicadores de Desempenho e Metas de Atendimento (memória de cálculo do ITS conforme 'item 4.31 do Anexo III', na ata)",
+  "vigencia_pretendida": "junto com o reajuste tarifário de 2023 (data não informada no texto)",
+  "data_pleito": "OF-RJ 0529/2023 – Tarifa Social (SEI 47643894; documento omitido do dump por tamanho, 326k caracteres); data não informada",
+  "data_recebimento_agenersa": null,
+  "formula": {
+    "texto": "TARIFA e = TARIFA b * IDG + TARIFA b * ITS",
+    "tipo": "outra",
+    "combinacao_com_outros_componentes": "aditiva",
+    "doc_id": "54045113",
+    "definicoes": "TARIFA e: Tarifa Efetiva; TARIFA b: Tarifa base, reajustada calculada conforme item 7.1 (do Anexo III); IDG: Indicador de Desempenho Geral (redutor financeiro se metas não cumpridas); ITS: Índice de Tarifa Social",
+    "componentes": [
+      {
+        "sigla": "IDG",
+        "indice": "Indicador de Desempenho Geral (11 indicadores de desempenho)",
+        "fonte": "outra",
+        "fonte_observacao": "metas aferidas pelo verificador independente (FIPE, segundo o doc 52213635)",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "aplicação a partir do terceiro ano de operação; tarifas efetivas determinadas anualmente na ocasião do reajuste; vale 1 nos dois primeiros anos (interpretação CAPET)",
+        "doc_id": "54045113"
+      },
+      {
+        "sigla": "ITS",
+        "indice": "Índice de Tarifa Social",
+        "fonte": "outra",
+        "fonte_observacao": "calculado pela concessionária a partir do cadastro de unidades beneficiárias de tarifa social",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "a partir do terceiro ano de operação (reajuste de novembro de 2024, segundo a CAPET); vale 0 nos dois primeiros anos (interpretação CAPET)",
+        "doc_id": "54045113"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "52213635",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito OF-RJ 0529/2023 – Tarifa Social (SEI 47643894) — valor relatado pela CAPET",
+      "data": null,
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {
+          "nome": "ITS",
+          "descricao": "ITS calculado pela concessionária para aplicação com o reajuste tarifário de 2023",
+          "valor_texto": "2,53%",
+          "valor_pct": 2.53,
+          "doc_id": "52213635"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [],
+      "doc_pleito_citado": "47643894"
+    },
+    {
+      "doc_id": "52213635",
+      "emissor": "CAPET",
+      "tipo_doc": "Despacho de Encaminhamento de Processo (CAPET à SECEX)",
+      "data": "18/05/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {
+          "nome": "ITS",
+          "descricao": "ITS pleiteado; CAPET pede esclarecimentos sobre a quantidade de economias beneficiadas",
+          "valor_texto": "2,53%",
+          "valor_pct": 2.53,
+          "doc_id": "52213635"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "pede complementação",
+      "divergencias": [
+        "ITS só seria aplicável à TARIFA a partir do terceiro ano de operação (reajuste de novembro de 2024), pelo item 29.1.1 e pelas definições de TARIFA e TARIFA EFETIVA.",
+        "Pede cadastro auditável das unidades beneficiárias (pela CAPET e pelo verificador independente FIPE), critérios de concessão do benefício e planilha eletrônica."
+      ]
+    },
+    {
+      "doc_id": "54045113",
+      "emissor": "CAPET",
+      "tipo_doc": "Despacho (CAPET à SECEX), em resposta ao OF-RJ 1493/2023",
+      "data": "23/06/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "diverge do pleito",
+      "divergencias": [
+        "Nos dois primeiros anos, TARIFA e = TARIFA b só é satisfeita com IDG = 1 e ITS = 0; reafirma o ITS só a partir do terceiro ano.",
+        "Mecanismo de recomposição automático alegado (resposta ao pedido de esclarecimento 4604) não foi encontrado em instrumento contratual.",
+        "Pede confirmar se as normas do SABREN (município do Rio) se estendem a Paty do Alferes e Miguel Pereira e se todos os da categoria '3 - DOMICILIAR BX.RENDA' são beneficiários de tarifa social.",
+        "Não foram apresentados estudos de desequilíbrio pela não aplicação do ITS."
+      ]
+    },
+    {
+      "doc_id": "58989025",
+      "emissor": "Conselho",
+      "tipo_doc": "Ata da 17ª Reunião Interna do Conselho Diretor (item 3.6, sorteio)",
+      "data": "28/08/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {
+          "nome": "ITS",
+          "descricao": "Pedido de aplicação do ITS com o reajuste de 2023; Procuradoria (Parecer 243, SEI 55390427) opina pelo não acolhimento",
+          "valor_texto": "2,53%",
+          "valor_pct": 2.53,
+          "doc_id": "58989025"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [],
+      "conclusao_detalhe": "Processo distribuído por prevenção ao relator do reajuste tarifário do ano; sem decisão de mérito."
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": null,
+    "deliberacao": null,
+    "reajuste_pct": null,
+    "observacao": "Não há deliberação no dump; o processo só foi distribuído ao relator (ata de 28/08/2023)."
+  },
+  "insumos_do_pleito": [
+    "OF-RJ 0529/2023 – Tarifa Social (SEI 47643894) com memória de cálculo do ITS — omitido do dump (base de dados grande)",
+    "OF-RJ 1493/2023 com planilhas e relatórios de cadastro de unidades (coluna 'Categoria Tipo Tarifa Residencial') e critérios de concessão do benefício (doc 54045113)"
+  ],
+  "inconsistencias_textuais": [
+    "A ata (doc 58989025) chama o ITS de 'Índice de Taxa de Serviços'; os despachos da CAPET o chamam de 'Índice de Tarifa Social'.",
+    "A ata cita o 'item 4.31 do Anexo III'; a CAPET cita os itens 4.2 e 4.3 do Anexo III.",
+    "Na extração, a fórmula aparece como 'TARIFA b * [1] IDG': [1] é a nota de rodapé 'Símbolo adotado para o operador da multiplicação'.",
+    "O doc 52213635 menciona 'CAPE' em vez de CAPET."
+  ],
+  "observacoes": "Não é o cálculo do reajuste anual: trata só da aplicação do ITS (2,53%) sobre a tarifa-base reajustada. O ITS depende de dados que só a concessionária tem (cadastro de beneficiários com dados pessoais, quantidade de economias beneficiadas, critérios de concessão) e de conferência pelo verificador independente; o IDG também depende do verificador. A fórmula do ITS (item 4.3 do Anexo III) não está transcrita no texto. O pleito com a memória de cálculo foi omitido do dump. A divergência é de enquadramento contratual (carência de dois anos), não aritmética."
+}

@@ -1,0 +1,1368 @@
+// Reajusta — modelo físico (Prisma na última versão estável, PostgreSQL; validado com Prisma 6.x em 31/10/2026)
+// Descrição, regras de integridade e SQL complementar (gatilhos, CHECK, REVOKE): especificacao/06_MODELO_DADOS.md.
+// Nomes do glossário de 01_VISAO_ESCOPO.md §7, em português e sem acento.
+// Entidades marcadas "(proposto)" não estão na seção 11 do documento-base e precisam ser acrescentadas lá.
+// Convenções: id uuid; tabelas em snake_case (@@map); colunas em camelCase; mês "AAAA-MM" em Char(7);
+// percentuais em pontos percentuais (6,30 = 6,30%); data civil em @db.Date.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================================================================================
+// Enums
+// =====================================================================================================================
+
+enum Servico {
+  SANEAMENTO
+  RESIDUOS
+}
+
+enum SituacaoVersao {
+  RASCUNHO
+  PUBLICADA
+  SUBSTITUIDA
+}
+
+enum TipoFormula {
+  INDICES_PONDERADOS
+  INDICE_UNICO
+}
+
+enum RegraMesReferencia {
+  MESES_ANTES_DA_VIGENCIA
+  MESES_ANTES_DA_DATA_BASE
+}
+
+// RN-NUM-03 de 08_REGRAS_NEGOCIO.md; campo proposto lá (formula.modo_arredondamento)
+enum ModoArredondamento {
+  MEIO_PARA_O_PAR
+  MEIO_PARA_CIMA
+}
+
+enum RegraCombinacao {
+  MULTIPLICATIVA
+  ADITIVA
+}
+
+// Valores do campo "fonte" do layout 0.1 (pleito_reajuste.schema.json)
+enum FonteComponente {
+  FGV
+  IBGE
+  ANEEL
+  ACORDO_COLETIVO
+  DELIBERACAO_AGENERSA
+  OUTRA
+}
+
+// Disponibilidade de comum.FONTES_COMPONENTE (levantamento §3)
+enum DisponibilidadeFonte {
+  PUBLICA
+  PUBLICA_COM_REGRA
+  ASSINATURA
+  OUTRO_REAJUSTE
+  DOCUMENTO
+  INSUMO_INFORMADO
+}
+
+// Estados do ciclo de 04_CASOS_DE_USO.md §5 (nível de cima)
+enum SituacaoCiclo {
+  PROTOCOLADO
+  EM_VALIDACAO
+  DEVOLVIDO
+  A_RECONFERIR
+  EM_ANALISE_TECNICA
+  EM_ANALISE_JURIDICA
+  EM_INSTRUCAO
+  EM_RAZOES_FINAIS
+  APTO_PARA_PAUTA
+  DECIDIDO_EM_REUNIAO_INTERNA
+  PAUTADO
+  DELIBERADO
+  PUBLICADO
+  EM_PRAZO_RECURSAL
+  AGUARDANDO_ENCERRAMENTO
+  ENCERRADO
+  ARQUIVADO
+}
+
+// Subestados de EmInstrucao e AguardandoEncerramento (04_CASOS_DE_USO.md §5)
+enum SubsituacaoCiclo {
+  AVALIANDO_INSTRUCAO
+  EM_DILIGENCIA
+  AGUARDANDO_RESPOSTA
+  EM_CONCILIACAO
+  ACESSO_AOS_AUTOS
+  CONFERINDO_FATURAS
+  LISTA_COMPLETA
+  CONSULTA_JURIDICA
+}
+
+// Atividades do BPMN (insumos/mapeamento/modelo_P01.json): T1 = t1 ... T16 = t16
+enum AtividadeBpmn {
+  T1
+  T2
+  T3
+  T4
+  T5
+  T6
+  T7
+  T8
+  T9
+  T10
+  T11
+  T12
+  T13
+  T14
+  T15
+  T16
+}
+
+enum SituacaoPleito {
+  RECEBIDO
+  EM_VALIDACAO
+  A_RECONFERIR
+  DEVOLVIDO
+  VALIDADO
+  SUBSTITUIDO
+}
+
+enum BaseSerie {
+  IPEADATA
+  IBGE_SIDRA
+  ANEEL
+  FGV_DADOS
+  PLEITOS
+}
+
+enum LicencaSerie {
+  PUBLICA
+  RESTRITA
+}
+
+enum SituacaoSerie {
+  ATUALIZADA
+  DESATUALIZADA
+  INDISPONIVEL
+}
+
+enum RegraValidacao {
+  V01
+  V02
+  V03
+  V04
+  V05
+  V06
+  V07
+  V08
+  V09
+  V10
+  V11
+  V12
+}
+
+enum SituacaoItemValidacao {
+  OK
+  AVISO
+  ERRO
+  A_REFAZER
+}
+
+// campo decisao de contratos/resultado_validacao.schema.json
+enum ConclusaoValidacao {
+  SEGUE_PARA_ANALISE
+  DEVOLVER
+  A_REFAZER
+}
+
+enum OrigemValor {
+  PLEITO
+  SERIE_EXTERNA
+}
+
+// Tipos de marco de 08_REGRAS_NEGOCIO.md §7 e de TipoMarco em contratos/openapi.yaml; RESPOSTA_DILIGENCIA (proposto)
+enum TipoMarco {
+  PROTOCOLO
+  VALIDACAO
+  DEVOLUCAO
+  PARECER_TECNICO
+  PARECER_JURIDICO
+  DILIGENCIA
+  RESPOSTA_DILIGENCIA
+  REITERACAO
+  CONCILIACAO
+  ACESSO_AUTOS
+  RAZOES_FINAIS
+  DECISAO_REUNIAO_INTERNA
+  INCLUSAO_PAUTA
+  DELIBERACAO
+  PUBLICACAO
+  NOTIFICACAO
+  DIVULGACAO
+  ENVIO_ALERJ
+  VIGENCIA_TARIFA
+  RECURSO
+  CONFERENCIA_FATURAS
+  PARECER_ARQUIVAMENTO
+  CERTIDAO_AUSENCIA_RECURSO
+  ENCERRAMENTO
+}
+
+enum OrigemMarco {
+  MANUAL
+  SISTEMA
+  IMPORTACAO_SEI
+}
+
+enum UnidadeContagem {
+  DIAS_UTEIS
+  DIAS_CORRIDOS
+}
+
+enum PapelDono {
+  SECRETARIA
+  CAMARA_TECNICA
+  PROCURADORIA
+  GABINETE_RELATOR
+}
+
+// SituacaoPrazo de contratos/openapi.yaml
+enum SituacaoPrazo {
+  CORRENDO
+  A_VENCER
+  VENCIDO
+  CUMPRIDO
+  SUSPENSO
+  PRORROGADO
+}
+
+// tipo do alerta em contratos/openapi.yaml
+enum TipoAlerta {
+  ANTES_DO_VENCIMENTO
+  NO_VENCIMENTO
+  VENCIDO
+  SEM_DONO
+  DATA_BASE
+  SERIE_DIVERGENTE
+  A_REFAZER
+}
+
+enum CanalAlerta {
+  EMAIL
+  PAINEL
+}
+
+enum SituacaoAlerta {
+  PENDENTE
+  ENVIADO
+  FALHOU
+  LIDO
+}
+
+// tipo_peca de contratos/openapi.yaml; MEMORIA_CALCULO (proposto)
+enum TipoPeca {
+  OFICIO_RECEBIMENTO
+  OFICIO_COMPLEMENTACAO
+  OFICIO_DILIGENCIA
+  OFICIO_REITERACAO
+  NOTIFICACAO_RAZOES_FINAIS
+  OFICIO_ACESSO_AUTOS
+  NOTIFICACAO_DELIBERACAO
+  OFICIO_ALERJ
+  OFICIO_PEDIDO_FATURAS
+  CERTIDAO_AUSENCIA_RECURSO
+  TERMO_ENCERRAMENTO
+  PARECER_TECNICO
+  PARECER_JURIDICO
+  RELATORIO
+  VOTO
+  DELIBERACAO
+  MEMORIA_CALCULO
+}
+
+// situacao da peça em contratos/openapi.yaml; DESCARTADA (proposto)
+enum SituacaoPeca {
+  MINUTA
+  PRONTA_PARA_ASSINATURA
+  JUNTADA
+  DESCARTADA
+}
+
+enum SituacaoModelo {
+  RASCUNHO
+  ATIVO
+  OBSOLETO
+}
+
+enum OrigemMinuta {
+  MODELO
+  MODELO_LINGUAGEM
+}
+
+// situacao da minuta em contratos/openapi.yaml; DESCARTADA (proposto)
+enum SituacaoMinuta {
+  GERADA
+  EM_REVISAO
+  REVISADA
+  DESCARTADA
+}
+
+enum TipoFonteCitacao {
+  NORMA
+  CONTRATO
+  DELIBERACAO
+  PECA_DO_PROCESSO
+}
+
+enum SituacaoCitacao {
+  NAO_VERIFICADA
+  VERIFICADA
+  INVALIDA
+  CONFERIDA_PELO_REVISOR
+}
+
+enum TipoEdicao {
+  INCLUSAO
+  EXCLUSAO
+  ALTERACAO
+}
+
+enum SituacaoRemessa {
+  RECEBIDA
+  RECUSADA
+  EM_CONFERENCIA
+  CONFERIDA
+}
+
+enum TipoDivergencia {
+  TARIFA_DIFERENTE
+  CATEGORIA_INEXISTENTE
+  FAIXA_INEXISTENTE
+  VALOR_DIFERENTE
+}
+
+enum SituacaoDivergencia {
+  ABERTA
+  JUSTIFICADA
+  CONFIRMADA
+}
+
+// Tipos de controles_P01.json (indicadores I-P01) mais os controles de qualidade da IA (Q-P01)
+enum TipoIndicador {
+  LEAD
+  HORAS
+  CONFORMIDADE
+  POSSE_SEM_UNIDADE
+  LACO
+  QUALIDADE_IA
+}
+
+// Tipos de teste de normas_P01.json
+enum TipoTesteRequisito {
+  PRECEDE
+  PRAZO_MAX
+  PRAZO_MIN
+  PRAZO_CONCEDIDO_MIN
+  EXIGE
+  MANUAL
+}
+
+enum Criticidade {
+  ALTA
+  MEDIA
+  BAIXA
+}
+
+// ResultadoTeste de contratos/openapi.yaml
+enum ResultadoTeste {
+  CONFORME
+  NAO_CONFORME
+  SEM_EVIDENCIA
+  NAO_APLICAVEL
+}
+
+// PER-CON, PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-ADM
+enum CodigoPerfil {
+  CON
+  ANA
+  GCA
+  PRO
+  SEC
+  REL
+  GES
+  ADM
+}
+
+enum NaturezaUnidade {
+  SECRETARIA
+  CAMARA_TECNICA
+  PROCURADORIA
+  GABINETE
+  CONSELHO
+  TI
+  CONTROLE_INTERNO
+}
+
+enum AbrangenciaFeriado {
+  NACIONAL
+  ESTADUAL
+  MUNICIPAL
+  PONTO_FACULTATIVO
+}
+
+enum OrigemAcao {
+  TELA
+  API
+  JOB
+}
+
+// =====================================================================================================================
+// MOD-CAD — Cadastro de contratos
+// =====================================================================================================================
+
+model Concessionaria {
+  id       String   @id @default(uuid()) @db.Uuid
+  nome     String
+  cnpj     String   @unique @db.Char(14)
+  ativa    Boolean  @default(true)
+  criadoEm DateTime @default(now())
+
+  contratos Contrato[]
+  usuarios  Usuario[]
+  remessas  RemessaFaturamento[]
+
+  @@map("concessionaria")
+}
+
+model Contrato {
+  id               String    @id @default(uuid()) @db.Uuid
+  numero           String    @unique
+  concessionariaId String    @db.Uuid
+  servico          Servico
+  poderConcedente  String?
+  assinadoEm       DateTime? @db.Date
+  ativo            Boolean   @default(true)
+  criadoEm         DateTime  @default(now())
+
+  concessionaria Concessionaria       @relation(fields: [concessionariaId], references: [id], onDelete: Restrict)
+  versoes        VersaoContratual[]
+  ciclos         CicloReajuste[]
+  remessas       RemessaFaturamento[]
+  alertas        Alerta[]
+
+  @@index([concessionariaId])
+  @@map("contrato")
+}
+
+model VersaoContratual {
+  id                  String           @id @default(uuid()) @db.Uuid
+  contratoId          String           @db.Uuid
+  codigo              String
+  ato                 String
+  vigenteDesde        DateTime?        @db.Date
+  herdaDeId           String?          @db.Uuid
+  // Atributos herdáveis: null = herda da versão anterior (fusão rasa, como versao() do oráculo)
+  periodicidadeMeses  Int?
+  combinacao          RegraCombinacao?
+  dataBaseDia         Int?
+  dataBaseMes         Int?
+  defineRealinhamento Boolean          @default(false)
+  observacao          String?
+  situacao            SituacaoVersao   @default(RASCUNHO)
+  publicadaEm         DateTime?
+  publicadaPorId      String?          @db.Uuid
+  criadoEm            DateTime         @default(now())
+
+  contrato     Contrato               @relation(fields: [contratoId], references: [id], onDelete: Restrict)
+  herdaDe      VersaoContratual?      @relation("HerancaVersao", fields: [herdaDeId], references: [id], onDelete: Restrict)
+  herdeiras    VersaoContratual[]     @relation("HerancaVersao")
+  publicadaPor Usuario?               @relation("VersaoPublicadaPor", fields: [publicadaPorId], references: [id], onDelete: Restrict)
+  formula      Formula?
+  parcelas     ParcelaRealinhamento[]
+  fontes       FonteRegra[]
+  pleitos      Pleito[]
+  resultados   ResultadoValidacao[]
+  apuracoes    Apuracao[]
+
+  @@unique([contratoId, codigo])
+  @@index([contratoId, vigenteDesde])
+  @@map("versao_contratual")
+}
+
+model Formula {
+  id                 String             @id @default(uuid()) @db.Uuid
+  versaoContratualId String             @unique @db.Uuid
+  tipo               TipoFormula
+  expressao          String
+  regraMesReferencia RegraMesReferencia
+  mesesReferencia    Int
+  casasDecimaisIr    Int
+  modoArredondamento ModoArredondamento @default(MEIO_PARA_O_PAR)
+  observacao         String?
+
+  versaoContratual VersaoContratual @relation(fields: [versaoContratualId], references: [id], onDelete: Cascade)
+  componentes      Componente[]
+
+  @@map("formula")
+}
+
+model Componente {
+  id              String               @id @default(uuid()) @db.Uuid
+  formulaId       String               @db.Uuid
+  sigla           String
+  ordem           Int
+  peso            Decimal?             @db.Decimal(12, 8)
+  fonte           FonteComponente
+  disponibilidade DisponibilidadeFonte
+  codigoSerie     String?
+  indice          String
+  serieExternaId  String?              @db.Uuid
+  pendencia       String?
+
+  formula      Formula         @relation(fields: [formulaId], references: [id], onDelete: Cascade)
+  serieExterna SerieExterna?   @relation(fields: [serieExternaId], references: [id], onDelete: Restrict)
+  termos       TermoApuracao[]
+
+  @@unique([formulaId, sigla])
+  @@unique([formulaId, ordem])
+  @@index([codigoSerie])
+  @@map("componente")
+}
+
+model ParcelaRealinhamento {
+  id                 String  @id @default(uuid()) @db.Uuid
+  versaoContratualId String  @db.Uuid
+  parcela            Int
+  referencia         String  @db.Char(7)
+  percentual         Decimal @db.Decimal(9, 4)
+
+  versaoContratual VersaoContratual @relation(fields: [versaoContratualId], references: [id], onDelete: Cascade)
+
+  @@unique([versaoContratualId, parcela])
+  @@unique([versaoContratualId, referencia])
+  @@map("parcela_realinhamento")
+}
+
+model FonteRegra {
+  id                 String    @id @default(uuid()) @db.Uuid
+  versaoContratualId String    @db.Uuid
+  parametro          String
+  documento          String
+  trecho             String
+  hashDocumento      String?   @db.Char(64)
+  achadoNoTexto      Boolean?
+  conferidoEm        DateTime?
+
+  versaoContratual VersaoContratual @relation(fields: [versaoContratualId], references: [id], onDelete: Cascade)
+  termosPeso       TermoApuracao[]
+
+  @@index([versaoContratualId, parametro])
+  @@map("fonte_regra")
+}
+
+// =====================================================================================================================
+// MOD-PLE — Pleitos
+// =====================================================================================================================
+
+model CicloReajuste {
+  id                 String            @id @default(uuid()) @db.Uuid
+  contratoId         String            @db.Uuid
+  numeroSei          String?           @unique
+  vigenciaPretendida DateTime          @db.Date
+  situacao           SituacaoCiclo
+  subsituacao        SubsituacaoCiclo?
+  atividadeAtual     AtividadeBpmn
+  unidadeDonaId      String            @db.Uuid
+  gabineteRelatorId  String?           @db.Uuid
+  cicloAnteriorId    String?           @unique @db.Uuid
+  totalHomologadoPct Decimal?          @db.Decimal(12, 6)
+  tabelaHomologada   Json?
+  abertoEm           DateTime          @default(now())
+  encerradoEm        DateTime?
+
+  contrato        Contrato                 @relation(fields: [contratoId], references: [id], onDelete: Restrict)
+  unidadeDona     Unidade                  @relation("CicloUnidadeDona", fields: [unidadeDonaId], references: [id], onDelete: Restrict)
+  gabineteRelator Unidade?                 @relation("CicloGabineteRelator", fields: [gabineteRelatorId], references: [id], onDelete: Restrict)
+  cicloAnterior   CicloReajuste?           @relation("EncadeamentoCiclo", fields: [cicloAnteriorId], references: [id], onDelete: Restrict)
+  cicloPosterior  CicloReajuste?           @relation("EncadeamentoCiclo")
+  pleitos         Pleito[]
+  apuracoes       Apuracao[]
+  marcos          Marco[]
+  prazos          Prazo[]
+  pecas           Peca[]
+  remessas        RemessaFaturamento[]
+  medicoes        MedicaoIndicador[]
+  execucoesTeste  ExecucaoTesteRequisito[]
+  alertas         Alerta[]
+
+  quesitos Quesito[]
+
+  @@unique([contratoId, vigenciaPretendida])
+  @@index([situacao])
+  @@index([unidadeDonaId, situacao])
+  @@map("ciclo_reajuste")
+}
+
+model Pleito {
+  id                    String         @id @default(uuid()) @db.Uuid
+  cicloId               String         @db.Uuid
+  numeroEnvio           Int
+  versaoLayout          String
+  codigoVersaoDeclarada String
+  versaoContratualId    String?        @db.Uuid
+  vigenciaPretendida    DateTime       @db.Date
+  tarifaVigenteDesde    DateTime       @db.Date
+  atoTarifaEmVigor      String
+  mesO                  String         @db.Char(7)
+  mesI                  String         @db.Char(7)
+  irDeclaradoPct        Decimal        @db.Decimal(18, 10)
+  totalDeclaradoPct     Decimal        @db.Decimal(18, 10)
+  outrosDeclarados      Json
+  energia               Json?
+  tabelaTarifaria       Json?
+  publicacao            Json?
+  casasIndice           Int
+  casasIr               Int
+  casasTarifa           Int
+  conteudo              Json
+  hashPacote            String         @db.Char(64)
+  situacao              SituacaoPleito @default(RECEBIDO)
+  enviadoPorId          String         @db.Uuid
+  recebidoEm            DateTime       @default(now())
+
+  ciclo            CicloReajuste        @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  versaoContratual VersaoContratual?    @relation(fields: [versaoContratualId], references: [id], onDelete: Restrict)
+  enviadoPor       Usuario              @relation("PleitoEnviadoPor", fields: [enviadoPorId], references: [id], onDelete: Restrict)
+  componentes      ComponentePleito[]
+  evidencias       Evidencia[]
+  resultados       ResultadoValidacao[]
+  apuracoes        Apuracao[]
+
+  @@unique([cicloId, numeroEnvio])
+  @@index([situacao])
+  @@map("pleito")
+}
+
+model ComponentePleito {
+  id                  String          @id @default(uuid()) @db.Uuid
+  pleitoId            String          @db.Uuid
+  sigla               String
+  codigoSerie         String?
+  fonte               FonteComponente
+  evidenciaId         String?         @db.Uuid
+  evidenciaPagina     Int?
+  evidenciaExtraidaEm DateTime?       @db.Date
+  licencaRestrita     Boolean
+
+  pleito    Pleito        @relation(fields: [pleitoId], references: [id], onDelete: Restrict)
+  evidencia Evidencia?    @relation(fields: [evidenciaId], references: [id], onDelete: Restrict)
+  valores   ValorMensal[]
+
+  @@unique([pleitoId, sigla])
+  @@index([codigoSerie])
+  @@map("componente_pleito")
+}
+
+model ValorMensal {
+  id                 String  @id @default(uuid()) @db.Uuid
+  componentePleitoId String  @db.Uuid
+  mes                String  @db.Char(7)
+  valor              Decimal @db.Decimal(24, 10)
+  casasInformadas    Int
+
+  componentePleito ComponentePleito @relation(fields: [componentePleitoId], references: [id], onDelete: Restrict)
+  termosO          TermoApuracao[]  @relation("TermoValorMensalO")
+  termosI          TermoApuracao[]  @relation("TermoValorMensalI")
+
+  @@unique([componentePleitoId, mes])
+  @@index([mes])
+  @@map("valor_mensal")
+}
+
+model Evidencia {
+  id                   String   @id @default(uuid()) @db.Uuid
+  pleitoId             String   @db.Uuid
+  arquivo              String
+  tipo                 String
+  sha256               String   @db.Char(64)
+  hashConfere          Boolean
+  tamanhoBytes         Int
+  tipoMime             String
+  caminhoArmazenamento String
+  recebidaEm           DateTime @default(now())
+
+  pleito      Pleito             @relation(fields: [pleitoId], references: [id], onDelete: Restrict)
+  componentes ComponentePleito[]
+
+  @@unique([pleitoId, arquivo])
+  @@map("evidencia")
+}
+
+model ResultadoValidacao {
+  id                 String             @id @default(uuid()) @db.Uuid
+  pleitoId           String             @db.Uuid
+  versaoContratualId String?            @db.Uuid
+  versaoRegras       String
+  versaoLayout       String
+  conclusao          ConclusaoValidacao
+  totalOk            Int
+  totalAvisos        Int
+  totalErros         Int
+  totalARefazer      Int
+  duracaoMs          Int
+  executadoEm        DateTime           @default(now())
+
+  pleito           Pleito            @relation(fields: [pleitoId], references: [id], onDelete: Restrict)
+  versaoContratual VersaoContratual? @relation(fields: [versaoContratualId], references: [id], onDelete: Restrict)
+  itens            ItemValidacao[]
+  apuracao         Apuracao?
+
+  @@index([pleitoId, executadoEm])
+  @@map("resultado_validacao")
+}
+
+model ItemValidacao {
+  id                  String                @id @default(uuid()) @db.Uuid
+  resultadoId         String                @db.Uuid
+  ordem               Int
+  regra               RegraValidacao
+  situacao            SituacaoItemValidacao
+  componenteSigla     String?
+  mensagem            String
+  detalhe             Json?
+  valorSerieExternaId String?               @db.Uuid
+
+  resultado         ResultadoValidacao @relation(fields: [resultadoId], references: [id], onDelete: Restrict)
+  valorSerieExterna ValorSerieExterna? @relation(fields: [valorSerieExternaId], references: [id], onDelete: Restrict)
+
+  @@unique([resultadoId, ordem])
+  @@index([regra, situacao])
+  @@map("item_validacao")
+}
+
+// =====================================================================================================================
+// MOD-SER — Séries
+// =====================================================================================================================
+
+model SerieExterna {
+  id               String        @id @default(uuid()) @db.Uuid
+  base             BaseSerie
+  codigo           String
+  nome             String
+  licenca          LicencaSerie
+  enderecoConsulta String?
+  situacao         SituacaoSerie @default(DESATUALIZADA)
+  consultadaEm     DateTime?
+  ultimaFalhaEm    DateTime?
+  ultimaFalha      String?
+
+  valores     ValorSerieExterna[]
+  componentes Componente[]
+  alertas     Alerta[]
+
+  @@unique([base, codigo])
+  @@map("serie_externa")
+}
+
+model ValorSerieExterna {
+  id              String    @id @default(uuid()) @db.Uuid
+  serieExternaId  String    @db.Uuid
+  mes             String    @db.Char(7)
+  valor           Decimal   @db.Decimal(24, 10)
+  casasPublicadas Int
+  consultadaEm    DateTime
+  substituidoEm   DateTime?
+  origem          String?
+
+  serieExterna SerieExterna    @relation(fields: [serieExternaId], references: [id], onDelete: Restrict)
+  termosO      TermoApuracao[] @relation("TermoValorExternoO")
+  termosI      TermoApuracao[] @relation("TermoValorExternoI")
+  itens        ItemValidacao[]
+
+  @@unique([serieExternaId, mes, consultadaEm])
+  @@index([serieExternaId, mes])
+  @@map("valor_serie_externa")
+}
+
+// =====================================================================================================================
+// MOD-CAL — Motor de cálculo
+// =====================================================================================================================
+
+model Apuracao {
+  id                   String          @id @default(uuid()) @db.Uuid
+  cicloId              String          @db.Uuid
+  pleitoId             String?         @db.Uuid
+  resultadoValidacaoId String?         @unique @db.Uuid
+  versaoContratualId   String          @db.Uuid
+  versaoRegras         String
+  versaoLayout         String?
+  irCalculadoPct       Decimal         @db.Decimal(24, 12)
+  irArredondadoPct     Decimal         @db.Decimal(18, 10)
+  casasIr              Int
+  regraCombinacao      RegraCombinacao
+  parcelaRealinhamento Int?
+  realinhamentoPct     Decimal?        @db.Decimal(9, 4)
+  outrosComponentes    Json
+  totalCalculadoPct    Decimal         @db.Decimal(24, 12)
+  confereComDeclarado  Boolean?
+  calculadaEm          DateTime        @default(now())
+
+  ciclo              CicloReajuste       @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  pleito             Pleito?             @relation(fields: [pleitoId], references: [id], onDelete: Restrict)
+  resultadoValidacao ResultadoValidacao? @relation(fields: [resultadoValidacaoId], references: [id], onDelete: Restrict)
+  versaoContratual   VersaoContratual    @relation(fields: [versaoContratualId], references: [id], onDelete: Restrict)
+  termos             TermoApuracao[]
+  memorias           Peca[]
+
+  @@index([cicloId, calculadaEm])
+  @@map("apuracao")
+}
+
+model TermoApuracao {
+  id                   String      @id @default(uuid()) @db.Uuid
+  apuracaoId           String      @db.Uuid
+  componenteId         String      @db.Uuid
+  sigla                String
+  ordem                Int
+  peso                 Decimal     @db.Decimal(12, 8)
+  valorO               Decimal     @db.Decimal(24, 10)
+  valorI               Decimal     @db.Decimal(24, 10)
+  variacao             Decimal     @db.Decimal(24, 12)
+  termoPonderado       Decimal     @db.Decimal(24, 12)
+  origemValores        OrigemValor
+  valorMensalOId       String?     @db.Uuid
+  valorMensalIId       String?     @db.Uuid
+  valorSerieExternaOId String?     @db.Uuid
+  valorSerieExternaIId String?     @db.Uuid
+  fontePesoId          String?     @db.Uuid
+
+  apuracao           Apuracao           @relation(fields: [apuracaoId], references: [id], onDelete: Restrict)
+  componente         Componente         @relation(fields: [componenteId], references: [id], onDelete: Restrict)
+  valorMensalO       ValorMensal?       @relation("TermoValorMensalO", fields: [valorMensalOId], references: [id], onDelete: Restrict)
+  valorMensalI       ValorMensal?       @relation("TermoValorMensalI", fields: [valorMensalIId], references: [id], onDelete: Restrict)
+  valorSerieExternaO ValorSerieExterna? @relation("TermoValorExternoO", fields: [valorSerieExternaOId], references: [id], onDelete: Restrict)
+  valorSerieExternaI ValorSerieExterna? @relation("TermoValorExternoI", fields: [valorSerieExternaIId], references: [id], onDelete: Restrict)
+  fontePeso          FonteRegra?        @relation(fields: [fontePesoId], references: [id], onDelete: Restrict)
+
+  @@unique([apuracaoId, sigla])
+  @@unique([apuracaoId, ordem])
+  @@map("termo_apuracao")
+}
+
+// =====================================================================================================================
+// MOD-PRZ — Prazos e tramitação
+// =====================================================================================================================
+
+// (proposto) Unidade da agência que pode ser dona de etapa (RF-PRZ-02, RF-PRZ-09)
+model Unidade {
+  id       String          @id @default(uuid()) @db.Uuid
+  sigla    String          @unique
+  nome     String
+  natureza NaturezaUnidade
+  ativa    Boolean         @default(true)
+
+  usuarios      Usuario[]
+  ciclosDono    CicloReajuste[] @relation("CicloUnidadeDona")
+  ciclosRelator CicloReajuste[] @relation("CicloGabineteRelator")
+  prazos        Prazo[]
+  alertas       Alerta[]
+
+  quesitos Quesito[]
+
+  @@map("unidade")
+}
+
+// (proposto) Regra de prazo com fonte normativa; nenhum prazo fica escrito no código
+model RegraPrazo {
+  id              String          @id @default(uuid()) @db.Uuid
+  codigo          String          @unique
+  nome            String
+  marcoInicial    TipoMarco
+  marcoFinal      TipoMarco?
+  duracao         Int?
+  contaParaTras   Boolean         @default(false)
+  unidadeContagem UnidadeContagem
+  papelDono       PapelDono
+  diasAlertaAntes Int[]
+  fonte           String
+  vigenteDesde    DateTime        @db.Date
+  ativa           Boolean         @default(true)
+
+  prazos Prazo[]
+
+  @@map("regra_prazo")
+}
+
+// (proposto) Calendário de dias sem expediente (ADR-0011)
+model Feriado {
+  id          String             @id @default(uuid()) @db.Uuid
+  data        DateTime           @unique @db.Date
+  nome        String
+  abrangencia AbrangenciaFeriado
+  fonte       String
+
+  @@map("feriado")
+}
+
+model Marco {
+  id                 String        @id @default(uuid()) @db.Uuid
+  cicloId            String        @db.Uuid
+  tipo               TipoMarco
+  atividade          AtividadeBpmn
+  ocorrencia         Int           @default(1)
+  data               DateTime      @db.Date
+  origem             OrigemMarco
+  numeroDocumentoSei String?
+  pecaId             String?       @db.Uuid
+  registradoPorId    String?       @db.Uuid
+  registradoEm       DateTime      @default(now())
+  observacao         String?
+
+  ciclo            CicloReajuste @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  peca             Peca?         @relation(fields: [pecaId], references: [id], onDelete: Restrict)
+  registradoPor    Usuario?      @relation("MarcoRegistradoPor", fields: [registradoPorId], references: [id], onDelete: Restrict)
+  prazosIniciados  Prazo[]       @relation("PrazoMarcoInicial")
+  prazosConcluidos Prazo[]       @relation("PrazoMarcoFinal")
+
+  @@unique([cicloId, tipo, ocorrencia])
+  @@index([cicloId, data])
+  @@map("marco")
+}
+
+model Prazo {
+  id              String          @id @default(uuid()) @db.Uuid
+  cicloId         String          @db.Uuid
+  regraPrazoId    String          @db.Uuid
+  marcoInicialId  String          @db.Uuid
+  marcoFinalId    String?         @db.Uuid
+  inicio          DateTime        @db.Date
+  vencimento      DateTime        @db.Date
+  duracao         Int
+  unidadeContagem UnidadeContagem
+  unidadeDonaId   String          @db.Uuid
+  usuarioDonoId   String?         @db.Uuid
+  situacao        SituacaoPrazo   @default(CORRENDO)
+  cumpridoEm      DateTime?       @db.Date
+
+  ciclo        CicloReajuste @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  regraPrazo   RegraPrazo    @relation(fields: [regraPrazoId], references: [id], onDelete: Restrict)
+  marcoInicial Marco         @relation("PrazoMarcoInicial", fields: [marcoInicialId], references: [id], onDelete: Restrict)
+  marcoFinal   Marco?        @relation("PrazoMarcoFinal", fields: [marcoFinalId], references: [id], onDelete: Restrict)
+  unidadeDona  Unidade       @relation(fields: [unidadeDonaId], references: [id], onDelete: Restrict)
+  usuarioDono  Usuario?      @relation("PrazoUsuarioDono", fields: [usuarioDonoId], references: [id], onDelete: Restrict)
+  alertas      Alerta[]
+
+  @@index([situacao, vencimento])
+  @@index([unidadeDonaId, situacao])
+  @@index([cicloId])
+  @@map("prazo")
+}
+
+model Alerta {
+  id                String         @id @default(uuid()) @db.Uuid
+  tipo              TipoAlerta
+  canal             CanalAlerta
+  prazoId           String?        @db.Uuid
+  cicloId           String?        @db.Uuid
+  serieExternaId    String?        @db.Uuid
+  contratoId        String?        @db.Uuid
+  unidadeId         String?        @db.Uuid
+  destinatarioId    String?        @db.Uuid
+  programadoPara    DateTime
+  enviadoEm         DateTime?
+  situacao          SituacaoAlerta @default(PENDENTE)
+  tentativas        Int            @default(0)
+  ultimaFalha       String?
+  chaveIdempotencia String         @unique
+
+  prazo        Prazo?         @relation(fields: [prazoId], references: [id], onDelete: Restrict)
+  ciclo        CicloReajuste? @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  serieExterna SerieExterna?  @relation(fields: [serieExternaId], references: [id], onDelete: Restrict)
+  contrato     Contrato?      @relation(fields: [contratoId], references: [id], onDelete: Restrict)
+  unidade      Unidade?       @relation(fields: [unidadeId], references: [id], onDelete: Restrict)
+  destinatario Usuario?       @relation("AlertaDestinatario", fields: [destinatarioId], references: [id], onDelete: Restrict)
+
+  @@index([situacao, programadoPara])
+  @@map("alerta")
+}
+
+// =====================================================================================================================
+// MOD-DOC e MOD-MIN — Documentos por modelo e minutas assistidas
+// =====================================================================================================================
+
+model ModeloDocumento {
+  id              String         @id @default(uuid()) @db.Uuid
+  codigo          String
+  versao          Int
+  nome            String
+  tipoPeca        TipoPeca
+  arquivoModelo   String
+  hashArquivo     String         @db.Char(64)
+  camposEsperados Json
+  situacao        SituacaoModelo @default(RASCUNHO)
+  vigenteDesde    DateTime?
+  criadoPorId     String         @db.Uuid
+  criadoEm        DateTime       @default(now())
+
+  criadoPor Usuario @relation("ModeloCriadoPor", fields: [criadoPorId], references: [id], onDelete: Restrict)
+  pecas     Peca[]
+
+  @@unique([codigo, versao])
+  @@index([tipoPeca, situacao])
+  @@map("modelo_documento")
+}
+
+model Peca {
+  id                String       @id @default(uuid()) @db.Uuid
+  cicloId           String       @db.Uuid
+  tipo              TipoPeca
+  titulo            String
+  situacao          SituacaoPeca @default(MINUTA)
+  modeloDocumentoId String?      @db.Uuid
+  apuracaoId        String?      @db.Uuid
+  dadosPreenchidos  Json?
+  arquivoDocx       String?
+  arquivoPdf        String?
+  hashArquivo       String?      @db.Char(64)
+  numeroSei         String?
+  juntadaEm         DateTime?    @db.Date
+  geradaPorId       String?      @db.Uuid
+  geradaEm          DateTime     @default(now())
+  aprovadaPorId     String?      @db.Uuid
+  aprovadaEm        DateTime?
+
+  ciclo           CicloReajuste    @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  modeloDocumento ModeloDocumento? @relation(fields: [modeloDocumentoId], references: [id], onDelete: Restrict)
+  apuracao        Apuracao?        @relation(fields: [apuracaoId], references: [id], onDelete: Restrict)
+  geradaPor       Usuario?         @relation("PecaGeradaPor", fields: [geradaPorId], references: [id], onDelete: Restrict)
+  aprovadaPor     Usuario?         @relation("PecaAprovadaPor", fields: [aprovadaPorId], references: [id], onDelete: Restrict)
+  minutas         Minuta[]
+  marcos          Marco[]
+
+  quesitos Quesito[]
+
+  @@index([cicloId, tipo])
+  @@map("peca")
+}
+
+model Minuta {
+  id               String         @id @default(uuid()) @db.Uuid
+  pecaId           String         @db.Uuid
+  versao           Int
+  origem           OrigemMinuta
+  provedorModelo   String?
+  nomeModelo       String?
+  versaoPrompt     String?
+  conteudo         String
+  conteudoRevisado String?
+  situacao         SituacaoMinuta @default(GERADA)
+  geradaEm         DateTime       @default(now())
+  revisadaPorId    String?        @db.Uuid
+  revisadaEm       DateTime?
+  taxaEdicao       Decimal?       @db.Decimal(7, 4)
+
+  peca        Peca           @relation(fields: [pecaId], references: [id], onDelete: Restrict)
+  revisadaPor Usuario?       @relation("MinutaRevisadaPor", fields: [revisadaPorId], references: [id], onDelete: Restrict)
+  citacoes    Citacao[]
+  edicoes     EdicaoMinuta[]
+
+  @@unique([pecaId, versao])
+  @@map("minuta")
+}
+
+model Citacao {
+  id             String           @id @default(uuid()) @db.Uuid
+  minutaId       String           @db.Uuid
+  ordem          Int
+  tipoFonte      TipoFonteCitacao
+  referencia     String
+  documentoFonte String
+  trechoCitado   String
+  situacao       SituacaoCitacao  @default(NAO_VERIFICADA)
+  verificadaEm   DateTime?
+  motivo         String?
+  conferidaPorId String?          @db.Uuid
+
+  minuta       Minuta   @relation(fields: [minutaId], references: [id], onDelete: Restrict)
+  conferidaPor Usuario? @relation("CitacaoConferidaPor", fields: [conferidaPorId], references: [id], onDelete: Restrict)
+
+  @@unique([minutaId, ordem])
+  @@index([situacao])
+  @@map("citacao")
+}
+
+model EdicaoMinuta {
+  id           String     @id @default(uuid()) @db.Uuid
+  minutaId     String     @db.Uuid
+  usuarioId    String     @db.Uuid
+  tipo         TipoEdicao
+  posicao      Int
+  trechoAntes  String?
+  trechoDepois String?
+  em           DateTime   @default(now())
+
+  minuta  Minuta  @relation(fields: [minutaId], references: [id], onDelete: Restrict)
+  usuario Usuario @relation("EdicaoPorUsuario", fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([minutaId, em])
+  @@map("edicao_minuta")
+}
+
+// =====================================================================================================================
+// MOD-FAT — Conferência de faturas
+// =====================================================================================================================
+
+model RemessaFaturamento {
+  id                String          @id @default(uuid()) @db.Uuid
+  concessionariaId  String          @db.Uuid
+  contratoId        String          @db.Uuid
+  cicloId           String          @db.Uuid
+  competencia       String          @db.Char(7)
+  versaoLayout      String
+  arquivo           String
+  sha256            String          @db.Char(64)
+  situacao          SituacaoRemessa @default(RECEBIDA)
+  motivoRecusa      String?
+  totalFaturas      Int?
+  totalDivergencias Int?
+  enviadaPorId      String          @db.Uuid
+  recebidaEm        DateTime        @default(now())
+  conferidaEm       DateTime?
+
+  concessionaria Concessionaria    @relation(fields: [concessionariaId], references: [id], onDelete: Restrict)
+  contrato       Contrato          @relation(fields: [contratoId], references: [id], onDelete: Restrict)
+  ciclo          CicloReajuste     @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  enviadaPor     Usuario           @relation("RemessaEnviadaPor", fields: [enviadaPorId], references: [id], onDelete: Restrict)
+  faturas        FaturaConferida[]
+
+  @@unique([contratoId, competencia, sha256])
+  @@index([contratoId, competencia])
+  @@map("remessa_faturamento")
+}
+
+model FaturaConferida {
+  id               String   @id @default(uuid()) @db.Uuid
+  remessaId        String   @db.Uuid
+  identificador    String
+  categoria        String
+  faixaInicio      Decimal? @db.Decimal(18, 4)
+  faixaFim         Decimal? @db.Decimal(18, 4)
+  quantidade       Decimal  @db.Decimal(18, 4)
+  unidade          String
+  valorFaturado    Decimal  @db.Decimal(18, 6)
+  valorRecalculado Decimal  @db.Decimal(18, 6)
+  divergente       Boolean
+
+  remessa      RemessaFaturamento  @relation(fields: [remessaId], references: [id], onDelete: Restrict)
+  divergencias DivergenciaFatura[]
+
+  @@unique([remessaId, identificador])
+  @@index([remessaId, divergente])
+  @@map("fatura_conferida")
+}
+
+model DivergenciaFatura {
+  id              String              @id @default(uuid()) @db.Uuid
+  faturaId        String              @db.Uuid
+  tipo            TipoDivergencia
+  valorEsperado   Decimal?            @db.Decimal(18, 6)
+  valorEncontrado Decimal?            @db.Decimal(18, 6)
+  diferenca       Decimal?            @db.Decimal(18, 6)
+  situacao        SituacaoDivergencia @default(ABERTA)
+  justificativa   String?
+
+  fatura FaturaConferida @relation(fields: [faturaId], references: [id], onDelete: Restrict)
+
+  @@index([situacao])
+  @@map("divergencia_fatura")
+}
+
+// =====================================================================================================================
+// MOD-IND — Indicadores e auditoria contínua
+// =====================================================================================================================
+
+model Indicador {
+  id            String        @id @default(uuid()) @db.Uuid
+  codigo        String        @unique
+  nome          String
+  tipo          TipoIndicador
+  definicao     Json
+  unidadeMedida String
+  linhaBase     Decimal?      @db.Decimal(18, 6)
+  meta          Json?
+  fonte         String
+  hipotese      Boolean       @default(false)
+  ativo         Boolean       @default(true)
+
+  medicoes MedicaoIndicador[]
+
+  @@map("indicador")
+}
+
+model MedicaoIndicador {
+  id            String   @id @default(uuid()) @db.Uuid
+  indicadorId   String   @db.Uuid
+  cicloId       String?  @db.Uuid
+  periodoInicio DateTime @db.Date
+  periodoFim    DateTime @db.Date
+  valor         Decimal? @db.Decimal(18, 6)
+  numerador     Decimal? @db.Decimal(18, 6)
+  denominador   Decimal? @db.Decimal(18, 6)
+  versaoRegras  String
+  detalhe       Json?
+  calculadaEm   DateTime @default(now())
+
+  indicador Indicador      @relation(fields: [indicadorId], references: [id], onDelete: Restrict)
+  ciclo     CicloReajuste? @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+
+  @@index([indicadorId, periodoFim])
+  @@index([cicloId])
+  @@map("medicao_indicador")
+}
+
+model TesteRequisito {
+  id          String             @id @default(uuid()) @db.Uuid
+  codigo      String             @unique
+  exigencia   String
+  tipo        TipoTesteRequisito
+  parametros  Json
+  criticidade Criticidade
+  normas      String[]
+  atividades  AtividadeBpmn[]
+  ativo       Boolean            @default(true)
+
+  execucoes ExecucaoTesteRequisito[]
+
+  @@map("teste_requisito")
+}
+
+// (proposto) Resultado de um teste R-P01 sobre um ciclo (RF-IND-02)
+model ExecucaoTesteRequisito {
+  id               String         @id @default(uuid()) @db.Uuid
+  testeRequisitoId String         @db.Uuid
+  cicloId          String         @db.Uuid
+  resultado        ResultadoTeste
+  evidencia        Json
+  versaoRegras     String
+  executadoEm      DateTime       @default(now())
+
+  testeRequisito TesteRequisito @relation(fields: [testeRequisitoId], references: [id], onDelete: Restrict)
+  ciclo          CicloReajuste  @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+
+  @@index([testeRequisitoId, resultado])
+  @@index([cicloId, executadoEm])
+  @@map("execucao_teste_requisito")
+}
+
+// =====================================================================================================================
+// MOD-ADM — Administração
+// =====================================================================================================================
+
+model Usuario {
+  id               String    @id @default(uuid()) @db.Uuid
+  nome             String
+  email            String    @unique
+  senhaHash        String
+  externo          Boolean
+  concessionariaId String?   @db.Uuid
+  unidadeId        String?   @db.Uuid
+  ativo            Boolean   @default(true)
+  tentativasFalhas Int       @default(0)
+  bloqueadoAte     DateTime?
+  versaoSessao     Int       @default(1)
+  ultimoAcessoEm   DateTime?
+  criadoEm         DateTime  @default(now())
+
+  concessionaria     Concessionaria?      @relation(fields: [concessionariaId], references: [id], onDelete: Restrict)
+  unidade            Unidade?             @relation(fields: [unidadeId], references: [id], onDelete: Restrict)
+  perfis             Perfil[]
+  versoesPublicadas  VersaoContratual[]   @relation("VersaoPublicadaPor")
+  pleitosEnviados    Pleito[]             @relation("PleitoEnviadoPor")
+  marcosRegistrados  Marco[]              @relation("MarcoRegistradoPor")
+  prazosDono         Prazo[]              @relation("PrazoUsuarioDono")
+  alertasRecebidos   Alerta[]             @relation("AlertaDestinatario")
+  modelosCriados     ModeloDocumento[]    @relation("ModeloCriadoPor")
+  pecasGeradas       Peca[]               @relation("PecaGeradaPor")
+  pecasAprovadas     Peca[]               @relation("PecaAprovadaPor")
+  minutasRevisadas   Minuta[]             @relation("MinutaRevisadaPor")
+  citacoesConferidas Citacao[]            @relation("CitacaoConferidaPor")
+  edicoes            EdicaoMinuta[]       @relation("EdicaoPorUsuario")
+  remessasEnviadas   RemessaFaturamento[] @relation("RemessaEnviadaPor")
+  registrosAuditoria RegistroAuditoria[]  @relation("AuditoriaUsuario")
+
+  @@index([concessionariaId])
+  @@index([unidadeId])
+  @@map("usuario")
+}
+
+model Perfil {
+  id        String       @id @default(uuid()) @db.Uuid
+  codigo    CodigoPerfil @unique
+  nome      String
+  descricao String
+
+  usuarios Usuario[]
+
+  @@map("perfil")
+}
+
+// Trilha de auditoria: só inserção (gatilho + REVOKE em 06_MODELO_DADOS.md §5), encadeada por hash
+model RegistroAuditoria {
+  id           BigInt        @id @default(autoincrement())
+  em           DateTime      @default(now())
+  usuarioId    String?       @db.Uuid
+  perfilAtivo  CodigoPerfil?
+  origem       OrigemAcao
+  acao         String
+  entidade     String
+  entidadeId   String
+  antes        Json?
+  depois       Json?
+  correlacaoId String
+  hashAnterior String?       @db.Char(64)
+  hash         String        @unique @db.Char(64)
+
+  usuario Usuario? @relation("AuditoriaUsuario", fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@index([entidade, entidadeId])
+  @@index([usuarioId, em])
+  @@map("registro_auditoria")
+}
+
+// Quesito de diligência em rodada única (RN-TRA-07, RF-DOC-03, M-P01-08). Registrado pela CAPET ou pela Procuradoria;
+// os abertos entram no ofício único da fase (peca), junto com as pendências da validação.
+enum DestinatarioDiligencia {
+  CONCESSIONARIA
+  PODER_CONCEDENTE
+  VERIFICADOR_INDEPENDENTE
+}
+
+enum SituacaoQuesito {
+  ABERTO
+  ENVIADO
+  RESPONDIDO
+}
+
+model Quesito {
+  id             String                 @id @default(uuid()) @db.Uuid
+  cicloId        String                 @db.Uuid
+  texto          String
+  destinatario   DestinatarioDiligencia
+  autorUnidadeId String                 @db.Uuid
+  situacao       SituacaoQuesito        @default(ABERTO)
+  pecaId         String?                @db.Uuid
+  criadoEm       DateTime               @default(now())
+  respondidoEm   DateTime?
+
+  ciclo        CicloReajuste @relation(fields: [cicloId], references: [id], onDelete: Restrict)
+  autorUnidade Unidade       @relation(fields: [autorUnidadeId], references: [id], onDelete: Restrict)
+  peca         Peca?         @relation(fields: [pecaId], references: [id], onDelete: Restrict)
+
+  @@index([cicloId, situacao])
+  @@map("quesito")
+}

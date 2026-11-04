@@ -1,0 +1,276 @@
+{
+  "processo": "SEI-220007/004207/2022",
+  "concessionaria": "CEG",
+  "servico": "gás",
+  "contrato": "Contrato de Concessão de Serviços Públicos de Gás Canalizado (CEG); Deliberação AGENERSA n° 4363/2021 (reajuste 2022)",
+  "clausula_reajuste": "Cláusula Sétima, parágrafos 14, 16 e 17 do Contrato de Concessão (tarifa-limite / price cap; atualização anual pela variação do IGP-M)",
+  "vigencia_pretendida": "01/01/2023",
+  "data_pleito": "30/11/2022 (DIREG 060/22, SEI 43485044)",
+  "data_recebimento_agenersa": "recebimento acusado em 01/12/2022 (Ofício AGENERSA/SCEXEC Nº1228, SEI 43530916)",
+  "formula": {
+    "texto": "variação anual: (IGP-M nov-22 / IGP-M nov-21) -1; resíduo do reajuste de 2022: IR = (1 + A) / (1 + B), A = IGP-M de Nov/20 a Nov/21, B = percentual aplicado pela liminar judicial",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "aplicacao": "sobre a margem de distribuição, excluídos o custo de aquisição do gás natural e do GLP alocado e os tributos incidentes",
+    "doc_id": "43919024",
+    "componentes": [
+      {
+        "sigla": "IGP-M",
+        "indice": "Índice Geral de Preços - Mercado",
+        "fonte": "FGV",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "nov do ano anterior a nov do ano corrente (01/12 a 30/11), divulgação dos últimos 12 meses no Release da FGV",
+        "doc_id": "43919024"
+      },
+      {
+        "sigla": "B",
+        "indice": "Percentual aplicado de acordo com a liminar judicial no reajuste de 2022",
+        "fonte": "outra",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "reajuste de 01/01/2022",
+        "doc_id": "43919024"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "43485044",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito (DIREG 060/22)",
+      "data": "30/11/2022",
+      "periodo_referencia": "01/12/21 a 30/11/22",
+      "valores": [],
+      "ir_texto": "5,90%",
+      "ir_pct": 5.9,
+      "outros_componentes": [
+        {
+          "nome": "outro",
+          "descricao": "Diferença a aplicar entre o IGP-M de 01/12/20 a 30/11/21 (17,8%) e o índice aplicado por decisão liminar",
+          "valor_texto": "17,8%",
+          "valor_pct": 17.8,
+          "doc_id": "43485044"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Índice aplicado em 2022 mediante decisão liminar",
+          "valor_texto": "10,74%",
+          "valor_pct": 10.74,
+          "doc_id": "43485044"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Variação do custo total do GLP para janeiro/23 em relação a dezembro/22",
+          "valor_texto": "+ 2,72%",
+          "valor_pct": 2.72,
+          "doc_id": "43485044"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Alíquotas de PIS/COFINS sobre as tarifas de GNV a partir de 01/01/2023 (fim da LC nº 194/2022)",
+          "valor_texto": "9,25%",
+          "valor_pct": 9.25,
+          "doc_id": "43485044"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Repasse do saldo da Conta Gráfica Concessionária-Consumidor (clientes de GN exceto residenciais, comerciais e termelétricas)",
+          "valor_texto": null,
+          "valor_pct": null,
+          "doc_id": "43485044"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [],
+      "observacao": "O pleito não traz um percentual total; a CAPET o resume como 12,74% (cenário A). Margem resultante equivale à atualização integral do IGP-M de Nov/20 a Nov/22 sobre a margem de dez/20."
+    },
+    {
+      "doc_id": "43919024",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 220/2022",
+      "data": "08/12/2022",
+      "periodo_referencia": "Nov/21 a Nov/22 (anual); Nov/20 a Nov/21 (resíduo)",
+      "valores": [
+        {
+          "sigla": "IGP-M",
+          "i_texto": "1.155,829",
+          "i": 1155.829,
+          "o_texto": "1.091,483",
+          "o": 1091.483,
+          "variacao_texto": "0,05895",
+          "variacao": 0.05895,
+          "peso_usado": null,
+          "observacao": "i = IGP-M nov-22; o = IGP-M nov-21"
+        },
+        {
+          "sigla": "IGP-M (resíduo, A)",
+          "i_texto": "1.091,483",
+          "i": 1091.483,
+          "o_texto": "925,887",
+          "o": 925.887,
+          "variacao_texto": "0,178851",
+          "variacao": 0.178851,
+          "peso_usado": null,
+          "observacao": "i = IGP-M nov-21; o = IGP-M nov-20; A = 17,89%"
+        }
+      ],
+      "ir_texto": "5,9%",
+      "ir_pct": 5.9,
+      "outros_componentes": [
+        {
+          "nome": "outro",
+          "descricao": "Resíduo do reajuste de 01/01/2022: IR = (1 + 0,1789) / (1 + 0,1074) = 1,0646",
+          "valor_texto": "6,46%",
+          "valor_pct": 6.46,
+          "doc_id": "43919024"
+        },
+        {
+          "nome": "outro",
+          "descricao": "B = percentual aplicado de acordo com a liminar (escrito 'B = 0,1 = 10,74%')",
+          "valor_texto": "10,74%",
+          "valor_pct": 10.74,
+          "doc_id": "43919024"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Repasse do valor unitário do FOT mantido: R$ 0,0133 R$/m³",
+          "valor_texto": null,
+          "valor_pct": null,
+          "doc_id": "43919024"
+        },
+        {
+          "nome": "outro",
+          "descricao": "PIS/COFINS sobre GNV a partir de 01/01/2023",
+          "valor_texto": "9,25%",
+          "valor_pct": 9.25,
+          "doc_id": "43919024"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Variação do custo do GLP para jan/2023",
+          "valor_texto": "2,72%",
+          "valor_pct": 2.72,
+          "doc_id": "43919024"
+        }
+      ],
+      "reajuste_total_texto": "12,74%",
+      "reajuste_total_pct": 12.74,
+      "conclusao": "outra",
+      "divergencias": [
+        "Pleito cita IGP-M Nov/20–Nov/21 de 17,8%; CAPET apura 17,89% (0,178851).",
+        "Resíduo de 6,46% considerado indevido pela CAPET enquanto a 4ª Revisão Quinquenal estiver em recurso."
+      ],
+      "conclusao_detalhe": "Cenário A acata o pleito (12,74%) sem divergências; CAPET entende que o resíduo de 6,46% não caberia (art. 2° da Deliberação condiciona a reposição à 4ª Revisão Quinquenal, em recurso) e sugere o cenário conservador B (5,9%).",
+      "cenarios": [
+        {
+          "nome": "A",
+          "descricao": "acata o pleito (5,9% + resíduo)",
+          "reajuste_texto": "12,74%",
+          "reajuste_pct": 12.74,
+          "efeitos": "GN: aumento médio de 4,208% em relação à tabela de 01/11/2022; GLP: aumento de 1% em relação à tabela de 01/12/2022",
+          "doc_id": "43919024"
+        },
+        {
+          "nome": "B",
+          "descricao": "conservador: só o IGP-M de Nov/21 a Nov/22, sem o resíduo de 6,46%",
+          "reajuste_texto": "5,9%",
+          "reajuste_pct": 5.9,
+          "efeitos": "GN: aumento médio de 2,124%; GLP: redução de 0,64%",
+          "doc_id": "43919024"
+        }
+      ]
+    },
+    {
+      "doc_id": "45672710",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 012/2023 (substitui o anexo do 220/2022)",
+      "data": "12/01/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": "5,9%",
+      "ir_pct": 5.9,
+      "outros_componentes": [
+        {
+          "nome": "outro",
+          "descricao": "MP n° 1.157 (01/01/2023): PIS/COFINS reduzidos a zero sobre o GNV até 28/02/2023",
+          "valor_texto": null,
+          "valor_pct": null,
+          "doc_id": "45672710"
+        }
+      ],
+      "reajuste_total_texto": "12,74%",
+      "reajuste_total_pct": 12.74,
+      "conclusao": "outra",
+      "divergencias": [],
+      "conclusao_detalhe": "Atualiza os efeitos tarifários dos cenários A (12,74%) e B (5,9%) após a MP n° 1.157.",
+      "cenarios": [
+        {
+          "nome": "A",
+          "descricao": "acata o pleito",
+          "reajuste_texto": "12,74%",
+          "reajuste_pct": 12.74,
+          "efeitos": "GN: aumento médio de 3,885% em relação à tabela de 01/11/2022; GLP: aumento de 1% em relação à tabela de 01/12/2022",
+          "doc_id": "45672710"
+        },
+        {
+          "nome": "B",
+          "descricao": "conservador, sem o resíduo de 6,46%",
+          "reajuste_texto": "5,9%",
+          "reajuste_pct": 5.9,
+          "efeitos": "GN: aumento médio de 1,803%; GLP: redução de 0,64%",
+          "doc_id": "45672710"
+        }
+      ]
+    },
+    {
+      "doc_id": "52886302",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação AGENERSA (número em branco), de 25/05/2023",
+      "data": "25/05/2023 (assinada em 31/05 e 06/06/2023)",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [],
+      "conclusao_detalhe": "Homologa o reajuste das margens de distribuição conforme o 'Cenário A' da CAPET, para vigorar a partir de 01/01/2023; determina processo específico sobre a aferição dos lucros, na 5ª Revisão Quinquenal. O percentual não está escrito na deliberação."
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "52886302",
+    "deliberacao": "não numerada no texto (Nº ___, de 25/05/2023)",
+    "reajuste_pct": 12.74,
+    "observacao": "A deliberação homologa o 'Cenário A' da CAPET sem citar o percentual; 12,74% vem dos docs 43919024 e 45672710. Não diz se vale o anexo do parecer 220/2022 ou o substituto do 012/2023. Homologação em 25/05/2023 para tarifas já praticadas desde 01/01/2023."
+  },
+  "insumos_do_pleito": [
+    "DIREG 060/22 (SEI 43485044), de 30/11/2022",
+    "Anexo I: índice de inflação dos últimos 12 meses (Nov/21 a Nov/22)",
+    "Anexo II: demonstrativo do saldo da Conta Gráfica Concessionária-Consumidor (IIa, IIb) e do cálculo do custo alocado para janeiro/2023 (IIc, IId)",
+    "Anexo III: tabela com os novos valores tarifários",
+    "Anexo IV: custo do gás alocado por tipo de consumidor e alíquotas de tributos",
+    "Anexo V: metodologia de cálculo das tarifas",
+    "Anexo VI: cópias de notas fiscais de GLP para o cálculo das tarifas de GLP",
+    "Ofício GEREG 672/22 (SEI 43527999) e comprovantes de publicação em 01/12/2022 nos jornais 'Diário Comercial' e 'O Dia' (SEI 43528003 e 43528001)",
+    "Ofício DIREG 001/23 (SEI 45113944) (MP n° 1.157/2023, PIS/COFINS zero no GNV até 28/02/2023) e GEREG 023/23 (SEI 45187513), publicação em 03/01/2023"
+  ],
+  "inconsistencias_textuais": [
+    "Valor de B escrito 'B = 0,1 = 10,74%' (0,1 não é 10,74%); no cálculo se usa 0,1074.",
+    "Pleito cita IGP-M Nov/20–Nov/21 de 17,8%; a CAPET calcula 17,89% (0,178851) e arredonda para 0,1789 na fórmula do resíduo.",
+    "Pleito escreve 5,90%; a CAPET apura 0,05895 e escreve 5,9%.",
+    "O total de 12,74% não é decomposto no texto; é compatível com composição multiplicativa de 5,9% e 6,46% (a soma daria 12,36%).",
+    "O cálculo do resíduo é chamado de 'fórmula paramétrica' (item 9.1), mas é um índice único; a sigla IR é usada para 'Índice Residual', não para o índice de reajuste.",
+    "O parecer 012/2023/2023 cita 'os tópicos trazidos no tópico 10, acima', mas o tópico 10 só existe no parecer 220/2022.",
+    "O parecer chama o pleito de 'realinhamento tarifário', mas o assunto é atualização anual de tarifa.",
+    "A deliberação tem dois 'Art. 3º'.",
+    "O doc 43533093 (t1) deste processo é cópia do Ofício NA 1228 e do e-mail juntados no processo SEI-220007/004205/2022 (rodapé 'SEI SEI-220007/004205/2022')."
+  ],
+  "observacoes": "O IGP-M é série pública da FGV, sem código citado, e o cálculo do índice é simples. O reajuste incide só sobre a margem de distribuição: custo do gás, tributos, FOT, Conta Gráfica e custo do GLP (notas fiscais) são dados da concessionária e vêm em anexos não extraídos. O texto também não traz as tabelas tarifárias nem o percentual médio por segmento (dependem da estrutura tarifária e dos volumes). O resíduo de 2022 decorre de decisão liminar e depende do contexto judicial e da 4ª Revisão Quinquenal. O cenário homologado foi o do pleito, contra a sugestão conservadora da CAPET."
+}

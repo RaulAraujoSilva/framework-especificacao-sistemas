@@ -1,0 +1,399 @@
+{
+  "processo": "SEI-220007/004053/2022",
+  "concessionaria": "Águas de Paraty",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão 008/2014 (PPP de água e esgoto de Paraty); Primeiro e Segundo Termos Aditivos",
+  "clausula_reajuste": "Cláusula 20 do Contrato de Concessão 008/2014 (fórmula paramétrica); realinhamento: Cláusula Quarta do Segundo Termo Aditivo, subcláusulas 4.1 e 4.2",
+  "vigencia_pretendida": "01/01/2023",
+  "data_pleito": "18/11/2022 (Ofício n°1301/2022, SEI 42924673; documento não consta do dump, citado no doc 43014673)",
+  "data_recebimento_agenersa": null,
+  "formula": {
+    "texto": "IR = {[ P1 x [(IMOi - IMOo)/ IMOo] + P2 x [(IEEi - IEEo)/ IEEo] + P3 x [(IPAi - IPAo)/IPAo] + P4 x [(IPQi - IPQo)/IPQo] + [(IPCi - IPCo)/IPCo] + P6 x [(ICCi - ICCo)/ICCo]}",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "não informada",
+    "doc_id": "43014673",
+    "componentes": [
+      {
+        "sigla": "IMO",
+        "indice": "ICC - Mão de Obra - Rio de Janeiro",
+        "fonte": "FGV",
+        "codigo_serie": null,
+        "peso_texto": "0,195",
+        "peso": 0.195,
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      },
+      {
+        "sigla": "IEE",
+        "indice": "Tarifa de energia elétrica \"Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh\", praticada",
+        "fonte": "outra",
+        "fonte_observacao": "fonte não indicada no texto (é tarifa praticada, não índice publicado)",
+        "codigo_serie": null,
+        "peso_texto": "0,0974",
+        "peso": 0.0974,
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      },
+      {
+        "sigla": "IPA",
+        "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação – Produtos Derivados do Petróleo e Álcool",
+        "fonte": "FGV",
+        "codigo_serie": "1006819",
+        "peso_texto": "0,1082",
+        "peso": 0.1082,
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      },
+      {
+        "sigla": "IPQ",
+        "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação – Produtos Químicos",
+        "fonte": "FGV",
+        "codigo_serie": "1006820",
+        "peso_texto": "0,0405",
+        "peso": 0.0405,
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      },
+      {
+        "sigla": "IPC",
+        "indice": "IPC – Brasil – Geral – Índice de Preços ao Consumidor",
+        "fonte": "FGV",
+        "codigo_serie": null,
+        "peso_texto": "0,0662",
+        "peso": 0.0662,
+        "peso_rotulo": "P5 (definido na lista de pesos, ausente na fórmula escrita)",
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      },
+      {
+        "sigla": "ICC",
+        "indice": "INCC – Índice Nacional de Preços da Construção Civil",
+        "fonte": "FGV",
+        "codigo_serie": "160868",
+        "peso_texto": "0,4925",
+        "peso": 0.4925,
+        "regra_data": "i = terceiro mês anterior ao da data de início de vigência da nova tarifa; o = terceiro mês anterior ao da data de início de vigência da tarifa em vigor",
+        "doc_id": "43014673"
+      }
+    ],
+    "observacao_pesos": "Pesos devem equivaler à distribuição da coluna Custo Total do Quadro 11 da PROPOSTA COMERCIAL – Anexo X (doc 43014673)."
+  },
+  "apuracoes": [
+    {
+      "doc_id": "43014673",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito (Ofício n°1301/2022, SEI 42924673) — valores relatados no Parecer CAPET 207/2022",
+      "data": "18/11/2022",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": "10,370%",
+      "ir_pct": 10.37,
+      "outros_componentes": [
+        {
+          "nome": "realinhamento",
+          "descricao": "terceira parcela de realinhamento tarifário, Cláusula Quarta do Segundo Termo Aditivo",
+          "valor_texto": "6,96%",
+          "valor_pct": 6.96,
+          "doc_id": "43014673"
+        }
+      ],
+      "reajuste_total_texto": "18,051%",
+      "reajuste_total_pct": 18.051,
+      "conclusao": "outra",
+      "divergencias": [],
+      "doc_pleito_citado": "42924673",
+      "observacao": "O ofício do pleito não está no dump; índices usados pela concessionária não aparecem no texto. Item 1.4: não foi encaminhada tabela com a totalização."
+    },
+    {
+      "doc_id": "43014673",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 207/2022",
+      "data": "21/11/2022",
+      "periodo_referencia": "outubro/2021 a outubro/2022",
+      "valores": [
+        {
+          "sigla": "IMO",
+          "i_texto": "1293,443",
+          "i": 1293.443,
+          "o_texto": "1166,087",
+          "o": 1166.087,
+          "variacao_texto": "0,10922",
+          "variacao": 0.10922,
+          "peso_usado": 0.1951
+        },
+        {
+          "sigla": "IEE",
+          "i_texto": "458,1407",
+          "i": 458.1407,
+          "o_texto": "500,1306",
+          "o": 500.1306,
+          "variacao_texto": "-0,0085",
+          "variacao": -0.0085,
+          "peso_usado": 0.0974
+        },
+        {
+          "sigla": "IPA",
+          "i_texto": "450,008",
+          "i": 450.008,
+          "o_texto": "362,733",
+          "o": 362.733,
+          "variacao_texto": "0,2406",
+          "variacao": 0.2406,
+          "peso_usado": 0.1082
+        },
+        {
+          "sigla": "IPQ",
+          "i_texto": "219,523",
+          "i": 219.523,
+          "o_texto": "198,266",
+          "o": 198.266,
+          "variacao_texto": "0,10721",
+          "variacao": 0.10721,
+          "peso_usado": 0.0405
+        },
+        {
+          "sigla": "IPC",
+          "i_texto": "702,014",
+          "i": 702.014,
+          "o_texto": "668,289",
+          "o": 668.289,
+          "variacao_texto": "0,0546",
+          "variacao": 0.0546,
+          "peso_usado": 0.0662
+        },
+        {
+          "sigla": "ICC",
+          "i_texto": "1046,896",
+          "i": 1046.896,
+          "o_texto": "952,596",
+          "o": 952.596,
+          "variacao_texto": "0,09899",
+          "variacao": 0.09899,
+          "peso_usado": 0.4925
+        }
+      ],
+      "ir_texto": "10,37%",
+      "ir_pct": 10.37,
+      "outros_componentes": [
+        {
+          "nome": "realinhamento",
+          "descricao": "3ª parcela do realinhamento (Segundo TA) — CAPET sugere não aplicar (absorção pelo Poder Concedente via contraprestação orçamentária municipal, subcláusula 4.2; reequilíbrio em curso no SEI-220007/001749/2022)",
+          "valor_texto": "6,96%",
+          "valor_pct": 6.96,
+          "doc_id": "43014673"
+        }
+      ],
+      "reajuste_total_texto": "18,051%",
+      "reajuste_total_pct": 18.051,
+      "conclusao": "outra",
+      "divergencias": [
+        "IEE: índices apresentados pela concessionária diferem dos da CAPET — contrato prevê 'GRUPO A - Convencional, Sub-Grupo A4' e a concessionária informou 'GRUPO B - Convencional, Sub-Grupo B3'; a variação apurada, porém, é idêntica à informada (item 4.2).",
+        "CAPET sugere não aplicar a parcela de realinhamento de 6,96% (item 6)."
+      ],
+      "conclusao_detalhe": "Confirma o cálculo do pleito (18,051%, cenário A) e sugere cenário conservador B, só com a fórmula paramétrica (10,37%).",
+      "cenarios": [
+        {
+          "nome": "A",
+          "descricao": "pleito conferido: fórmula paramétrica + 3ª parcela de realinhamento",
+          "reajuste_texto": "18,051%",
+          "reajuste_pct": 18.051,
+          "doc_id": "43014673"
+        },
+        {
+          "nome": "B",
+          "descricao": "cenário conservador: só a fórmula paramétrica, sem a parcela de 6,96%",
+          "reajuste_texto": "10,37%",
+          "reajuste_pct": 10.37,
+          "doc_id": "43014673"
+        }
+      ]
+    },
+    {
+      "doc_id": "45538623",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 008/2023 (complementa o 207/2022)",
+      "data": "11/01/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {
+          "nome": "outro",
+          "descricao": "Posição da Prefeitura de Paraty (ofício SEG n° 001/2023, SEI 45319512): retirar o insumo 'Investimento Total' (P6) do índice pretendido de 18,051%",
+          "valor_texto": "4,875%",
+          "valor_pct": 4.875,
+          "doc_id": "45538623"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Índice resultante pela Prefeitura após retirar 'Investimento Total'",
+          "valor_texto": "13,176%",
+          "valor_pct": 13.176,
+          "doc_id": "45538623"
+        },
+        {
+          "nome": "realinhamento",
+          "descricao": "Parcela a retirar segundo a Prefeitura (parcela de jan/2020 absorvida pela contraprestação)",
+          "valor_texto": "6,96%",
+          "valor_pct": 6.96,
+          "doc_id": "45538623"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Percentual restante segundo a Prefeitura",
+          "valor_texto": "6,216%",
+          "valor_pct": 6.216,
+          "doc_id": "45538623"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [
+        "Prefeitura defende retirar P6 (investimentos suspensos pelo 1º TA); CAPET aponta duas incongruências: substituir índice contratual por zero e necessidade de reponderar os pesos restantes para 100%."
+      ],
+      "conclusao_detalhe": "Rejeita substituir índice contratual por zero; acrescenta cenários C (INCC do P6 substituído pelo IPCA, com a 3ª parcela) e D (idem, sem a 3ª parcela). Os números dos cenários C e D estão em tabelas não extraídas.",
+      "cenarios": [
+        {
+          "nome": "C",
+          "descricao": "INCC do P6 substituído pelo IPCA, adicionando a 3ª parcela do 2º TA",
+          "reajuste_texto": null,
+          "reajuste_pct": null,
+          "doc_id": "45538623"
+        },
+        {
+          "nome": "D",
+          "descricao": "INCC do P6 substituído pelo IPCA, sem a 3ª parcela do 2º TA",
+          "reajuste_texto": null,
+          "reajuste_pct": null,
+          "doc_id": "45538623"
+        }
+      ]
+    },
+    {
+      "doc_id": "47017043",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 040/2023 (complementa 207/2022 e 008/2023)",
+      "data": "10/02/2023",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [
+        {
+          "nome": "outro",
+          "descricao": "Reajuste 2021 (Decreto 004/2021), segundo a concessionária (ofício n° 1343/2023, SEI 46443671)",
+          "valor_texto": "11,764%",
+          "valor_pct": 11.764,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "realinhamento",
+          "descricao": "1ª parcela de realinhamento contida no reajuste 2021",
+          "valor_texto": "6,96%",
+          "valor_pct": 6.96,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Fórmula paramétrica contratual contida no reajuste 2021",
+          "valor_texto": "4,491%",
+          "valor_pct": 4.491,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Reajuste 2022 (Decreto 007/2022)",
+          "valor_texto": "17,21%",
+          "valor_pct": 17.21,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "realinhamento",
+          "descricao": "2ª parcela de realinhamento contida no reajuste 2022",
+          "valor_texto": "6,96%",
+          "valor_pct": 6.96,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Percentual da fórmula concedido pela Prefeitura em 2022",
+          "valor_texto": "10,25%",
+          "valor_pct": 10.25,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "outro",
+          "descricao": "Resultado da fórmula contratual para 2022, segundo a concessionária",
+          "valor_texto": "21,829%",
+          "valor_pct": 21.829,
+          "doc_id": "47017043"
+        },
+        {
+          "nome": "compensação",
+          "descricao": "Variação a ser compensada, segundo os cálculos da CAP",
+          "valor_texto": "13,1%",
+          "valor_pct": 13.1,
+          "doc_id": "47017043"
+        }
+      ],
+      "reajuste_total_texto": null,
+      "reajuste_total_pct": null,
+      "conclusao": "outra",
+      "divergencias": [
+        "Estudo da GO Associados enviado é idêntico ao do processo de reequilíbrio e não aborda o estudo que resultou nas 4 parcelas de 6,96%."
+      ],
+      "conclusao_detalhe": "Mantém os 4 cenários (A–D) e sugere condicionar a última parcela do 2º TA à conclusão do reequilíbrio (SEI-220007/001749/2022)."
+    },
+    {
+      "doc_id": "49627954",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação AGENERSA (número em branco), de 30/03/2023",
+      "data": "30/03/2023 (assinada em 04/04/2023)",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": "10,37%",
+      "ir_pct": 10.37,
+      "outros_componentes": [
+        {
+          "nome": "realinhamento",
+          "descricao": "Direito à última parcela do realinhamento reconhecido, com aplicação e compensações no processo revisional SEI-220007/001749/2022",
+          "valor_texto": null,
+          "valor_pct": null,
+          "doc_id": "49627954"
+        }
+      ],
+      "reajuste_total_texto": "10,37%",
+      "reajuste_total_pct": 10.37,
+      "conclusao": "outra",
+      "divergencias": [],
+      "conclusao_detalhe": "Homologa a estrutura tarifária do Cenário B da CAPET (10,37%), por maioria (uma abstenção)."
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "49627954",
+    "deliberacao": "não numerada no texto (Nº ___, de 30/03/2023)",
+    "reajuste_pct": 10.37,
+    "observacao": "Cenário B (só fórmula paramétrica). Realinhamento (6,96%) reconhecido, mas remetido ao processo revisional SEI-220007/001749/2022. Não é cautelar."
+  },
+  "insumos_do_pleito": [
+    "Ofício n°1301/2022 (SEI 42924673) com o pleito — não consta do dump",
+    "Nenhuma tabela com a totalização da estrutura tarifária (item 1.4 do doc 43014673)",
+    "Ofício n° 1343/2023 (SEI 46443671): decretos de reajuste 2015–2022; estudo da GO Associados; Primeiro e Segundo Termos Aditivos; ofício à prefeitura com a memória de cálculo; ofícios à Prefeitura sobre os reajustes de 2021 e 2022; cópias de faturas 2014–2022; histórico de reajustes contratuais e efetivamente aplicados (doc 47017043)",
+    "Manifestação do Poder Concedente: ofício SEG n° 001/2023 da Prefeitura de Paraty (SEI 45319512)"
+  ],
+  "inconsistencias_textuais": [
+    "Peso P1 escrito 0,195 na definição e 0,1951 no cálculo (doc 43014673).",
+    "P5 (0,0662) está na lista de pesos e é usado no cálculo, mas falta na fórmula escrita: o termo do IPC aparece sem fator de ponderação.",
+    "Verificação aritmética do extrator (não é valor do texto): a variação do IEE escrita (-0,0085) não corresponde aos índices citados (458,1407 e 500,1306 dão cerca de -0,0840).",
+    "Verificação aritmética do extrator: a variação do IPC escrita (0,0546) não corresponde aos índices citados (702,014 e 668,289 dão cerca de 0,0505).",
+    "Verificação aritmética do extrator: com as variações escritas, a soma ponderada dá cerca de 0,1032, e não os 0,1037 escritos; com as variações recalculadas dos índices citados daria cerca de 0,0956.",
+    "IEE: a definição exige tarifa Grupo A, Sub-Grupo A4; a concessionária usou Grupo B, Sub-Grupo B3 (item 4.2), mas a CAPET registra variação idêntica.",
+    "A soma dos pesos da definição é 0,9998 e a dos pesos usados 0,9999 (não fecham 1).",
+    "Composição do total não declarada: 18,051% é compatível com composição multiplicativa de 10,370% e 6,96% (soma simples daria 17,33%); já o reajuste 2022 (17,21% = 6,96% + 10,25%) foi descrito como soma e o de 2021 (11,764% com 6,96% e 4,491%) é compatível com produto (doc 47017043).",
+    "Item 1.2 do doc 43014673 escreve 6,96% por extenso como 'seis inteiros e noventa e sessenta centésimos'.",
+    "Deliberação sem número no texto (Nº ___)."
+  ],
+  "observacoes": "Fórmula paramétrica de 6 índices; 4 deles são séries FGV (IPA 1006819, IPQ 1006820, INCC 160868 com código; ICC-Mão de Obra RJ e IPC-Brasil sem código citado), de acesso pago no FGV IBRE. O IEE é uma tarifa de energia praticada (subgrupo A4), sem fonte indicada, e foi trocada pela concessionária. As tabelas de estrutura tarifária e os cenários C e D estão em imagens ou anexos não extraídos. O pleito original não está no dump. A decisão depende de elementos não paramétricos: parcela de realinhamento do 2º TA, posição do Poder Concedente sobre o P6 e processo de reequilíbrio paralelo. O cálculo publicado tem erros aritméticos nas variações do IEE e do IPC, e uma regra automatizada daria IR diferente do homologado."
+}

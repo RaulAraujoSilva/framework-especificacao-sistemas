@@ -1,0 +1,2451 @@
+openapi: 3.1.0
+info:
+  title: Reajusta — API do sistema de reajuste tarifário anual (P01)
+  version: 0.1.0
+  summary: Ciclos, pleitos, validação, cadastro, apuração, séries, prazos, peças, minutas, faturas, indicadores e usuários.
+  description: |
+    Contrato da API do Reajusta. Guia em `especificacao/07_CONTRATOS_API.md`; regras em `08_REGRAS_NEGOCIO.md`.
+
+    Convenções:
+    - Caminhos e campos em português, sem acento nos identificadores; campos JSON em `snake_case`.
+    - Datas `AAAA-MM-DD`, meses `AAAA-MM`, instantes ISO 8601 com fuso (`2026-01-02T10:00:00-03:00`).
+    - Números com ponto decimal; percentuais em pontos percentuais (3.967 = 3,967%). O servidor lê os números do
+      pleito sem perda das casas escritas (RN-NUM-02).
+    - Erros em `application/problem+json` (RFC 9457), com os membros de extensão `codigo` e `erros`.
+    - Listas paginadas por `pagina` e `por_pagina`.
+    - `x-perfis`: perfis autorizados (PER-* de `01_VISAO_ESCOPO.md`). `x-caso-de-uso`: UC atendido. `x-requisitos`: RF.
+    - PER-CON só vê ciclos, pleitos, contratos e remessas da própria concessionária; recurso de outra responde 404.
+servers:
+  - url: /api/v1
+tags:
+  - name: ciclos
+  - name: pleitos
+  - name: contratos
+  - name: apuracoes
+  - name: series
+  - name: prazos
+  - name: pecas
+  - name: minutas
+  - name: faturas
+  - name: indicadores
+  - name: administracao
+security:
+  - sessao: []
+  - bearer: []
+
+paths:
+  # ------------------------------------------------------------------ ciclos
+  /ciclos:
+    get:
+      tags: [ciclos]
+      operationId: listarCiclos
+      summary: Fila de ciclos com situação, dono, prazo e idade (TL-01)
+      x-perfis: [PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-CON]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-09]
+      parameters:
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+        - {name: situacao, in: query, schema: {$ref: '#/components/schemas/SituacaoCiclo'}}
+        - {name: contrato_id, in: query, schema: {type: string, format: uuid}}
+        - {name: unidade_dona, in: query, schema: {type: string}, description: 'Ex.: CAPET, PROC, SCEXEC, CONS-02'}
+        - {name: ordenar, in: query, schema: {enum: [idade, prazo, vigencia]}}
+      responses:
+        '200':
+          description: Página de ciclos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/CicloResumo'}}
+        '401': {$ref: '#/components/responses/NaoAutenticado'}
+    post:
+      tags: [ciclos]
+      operationId: abrirCiclo
+      summary: Abrir o ciclo de reajuste de um contrato e vincular o processo SEI
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PLE-06]
+      description: Também é aberto automaticamente no primeiro envio de pleito sem ciclo aberto para o contrato e a vigência.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CicloNovo'}
+      responses:
+        '201':
+          description: Ciclo aberto
+          headers:
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Ciclo'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /ciclos/{ciclo_id}:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [ciclos]
+      operationId: obterCiclo
+      summary: Detalhe do ciclo com marcos, prazos, peças, pendências e apuração (TL-02)
+      x-perfis: [PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-CON]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PLE-06, RF-PRZ-01]
+      responses:
+        '200':
+          description: Ciclo
+          headers:
+            ETag: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Ciclo'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    patch:
+      tags: [ciclos]
+      operationId: atualizarCiclo
+      summary: Vincular ou corrigir o número do processo SEI
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PLE-06]
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                processo_sei: {$ref: '#/components/schemas/ProcessoSei'}
+      responses:
+        '200':
+          description: Ciclo atualizado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Ciclo'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '412': {$ref: '#/components/responses/PreCondicaoFalhou'}
+
+  # ------------------------------------------------------------------ pleitos
+  /pleitos/validacao-previa:
+    post:
+      tags: [pleitos]
+      operationId: validarPleitoPreviamente
+      summary: Validação prévia do pacote, com as mesmas regras e sem registro
+      description: |
+        Aplica V01 a V12 com o mesmo motor do envio e devolve o resultado em modo `previa`. Nada é guardado: nem o
+        pacote, nem o resultado, nem a consulta entra na base de conferência cruzada (RF-PLE-05).
+      x-perfis: [PER-CON, PER-ANA]
+      x-caso-de-uso: UC-02
+      x-requisitos: [RF-PLE-05, RF-PLE-02, RF-PLE-03]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: {$ref: '#/components/schemas/PacotePleito'}
+          application/json:
+            schema: {$ref: './pleito_reajuste.schema.json'}
+      responses:
+        '200':
+          description: Resultado da validação prévia (pode conter erros de V01 a V12; isso não é erro HTTP)
+          content:
+            application/json:
+              schema: {$ref: './resultado_validacao.schema.json'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '413': {$ref: '#/components/responses/MuitoGrande'}
+        '415': {$ref: '#/components/responses/TipoNaoSuportado'}
+        '422': {$ref: '#/components/responses/CampoForaDoLayout'}
+        '429': {$ref: '#/components/responses/MuitasRequisicoes'}
+  /ciclos/{ciclo_id}/pleitos:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [pleitos]
+      operationId: listarPleitosDoCiclo
+      summary: Envios do ciclo (rodadas) com a decisão de cada validação
+      x-perfis: [PER-CON, PER-ANA, PER-SEC, PER-REL, PER-PRO, PER-GES]
+      x-caso-de-uso: UC-02
+      x-requisitos: [RF-PLE-03]
+      responses:
+        '200':
+          description: Pleitos do ciclo, do mais recente ao mais antigo
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/PleitoRegistro'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    post:
+      tags: [pleitos]
+      operationId: enviarPleito
+      summary: Enviar o pleito (pacote no layout 0.1) e disparar a validação registrada
+      description: |
+        Idempotente pelo cabeçalho `Idempotency-Key`. O pacote é guardado com o SHA-256 de cada arquivo, conferido
+        contra `anexos[].sha256` do pleito. A validação (UC-02, com UC-03) roda logo após o registro; a resposta traz
+        o resultado quando ele termina em até 60 s (RNF-13), senão `202` com o endereço do resultado.
+      x-perfis: [PER-CON, PER-SEC]
+      x-caso-de-uso: UC-01
+      x-requisitos: [RF-PLE-01, RF-PLE-02, RF-PLE-03, RF-PLE-06, RF-SER-02]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema: {$ref: '#/components/schemas/PacotePleito'}
+            encoding:
+              pleito: {contentType: application/json}
+      responses:
+        '201':
+          description: Pleito registrado e validado
+          headers:
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PleitoRegistro'}
+        '200':
+          description: Repetição de um envio com a mesma chave de idempotência e o mesmo conteúdo; devolve o registro original
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PleitoRegistro'}
+        '202':
+          description: Pleito registrado; validação em andamento
+          headers:
+            Location: {schema: {type: string}, description: 'Endereço de GET /pleitos/{pleito_id}/resultado'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PleitoRegistro'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '409': {$ref: '#/components/responses/Conflito'}
+        '413': {$ref: '#/components/responses/MuitoGrande'}
+        '415': {$ref: '#/components/responses/TipoNaoSuportado'}
+        '422': {$ref: '#/components/responses/CampoForaDoLayout'}
+  /pleitos/{pleito_id}:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+    get:
+      tags: [pleitos]
+      operationId: obterPleito
+      summary: Registro do pleito, com o conteúdo no layout e os anexos
+      x-perfis: [PER-CON, PER-ANA, PER-SEC, PER-REL, PER-PRO]
+      x-caso-de-uso: UC-02
+      x-requisitos: [RF-PLE-01]
+      responses:
+        '200':
+          description: Pleito
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PleitoRegistro'
+                  - type: object
+                    properties:
+                      conteudo: {$ref: './pleito_reajuste.schema.json'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /pleitos/{pleito_id}/resultado:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+    get:
+      tags: [pleitos]
+      operationId: obterResultadoValidacao
+      summary: Resultado da validação V01 a V12 (TL-04)
+      x-perfis: [PER-CON, PER-ANA, PER-SEC, PER-REL, PER-PRO]
+      x-caso-de-uso: UC-02
+      x-requisitos: [RF-PLE-03, RF-SER-02, RF-SER-04]
+      responses:
+        '200':
+          description: Último resultado registrado do pleito
+          content:
+            application/json:
+              schema: {$ref: './resultado_validacao.schema.json'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /pleitos/{pleito_id}/revalidacao:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+    post:
+      tags: [pleitos]
+      operationId: revalidarPleito
+      summary: Refazer a validação depois de a fonte externa voltar (itens "a refazer")
+      x-perfis: [PER-ANA]
+      x-caso-de-uso: UC-03
+      x-requisitos: [RF-SER-04, RF-PLE-03]
+      responses:
+        '201':
+          description: Novo resultado, ligado ao anterior pelo campo `substitui`
+          content:
+            application/json:
+              schema: {$ref: './resultado_validacao.schema.json'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /pleitos/{pleito_id}/devolucao:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+    post:
+      tags: [pleitos]
+      operationId: devolverPleito
+      summary: Confirmar a devolução do pleito com pendências e gerar a minuta do ofício de complementação
+      description: Só para resultado com decisão `devolver`. Gera a peça por modelo (RF-DOC-01) e abre o prazo de resposta.
+      x-perfis: [PER-ANA]
+      x-caso-de-uso: UC-04
+      x-requisitos: [RF-PLE-04, RF-DOC-03]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                prazo_resposta_dias_uteis: {type: integer, minimum: 1}
+                observacao: {type: string}
+      responses:
+        '201':
+          description: Devolução registrada; peça e prazo criados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [peca, prazo]
+                properties:
+                  peca: {$ref: '#/components/schemas/Peca'}
+                  prazo: {$ref: '#/components/schemas/Prazo'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /pleitos/{pleito_id}/anexos/{arquivo}:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+      - {name: arquivo, in: path, required: true, schema: {type: string}}
+    get:
+      tags: [pleitos]
+      operationId: baixarAnexoPleito
+      summary: Baixar um anexo do pacote (evidência)
+      x-perfis: [PER-CON, PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-05
+      x-requisitos: [RF-PLE-01, RF-CAL-05]
+      responses:
+        '200':
+          description: Arquivo, com o SHA-256 no cabeçalho
+          headers:
+            Digest: {schema: {type: string}, description: 'sha-256=<base64>'}
+          content:
+            application/octet-stream:
+              schema: {type: string, format: binary}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+
+  # ------------------------------------------------------------------ contratos
+  /contratos:
+    get:
+      tags: [contratos]
+      operationId: listarContratos
+      summary: Contratos com a versão contratual vigente
+      x-perfis: [PER-GCA, PER-ANA, PER-GES, PER-SEC, PER-REL, PER-PRO, PER-CON]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01]
+      parameters:
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Página de contratos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/Contrato'}}
+    post:
+      tags: [contratos]
+      operationId: criarContrato
+      summary: Cadastrar contrato (sem versões publicadas)
+      x-perfis: [PER-GCA]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ContratoNovo'}
+      responses:
+        '201':
+          description: Contrato criado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Contrato'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /contratos/{contrato_id}:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+    get:
+      tags: [contratos]
+      operationId: obterContrato
+      summary: Contrato
+      x-perfis: [PER-GCA, PER-ANA, PER-GES, PER-SEC, PER-REL, PER-PRO, PER-CON]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01]
+      responses:
+        '200':
+          description: Contrato
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Contrato'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /contratos/{contrato_id}/cadastro:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+    get:
+      tags: [contratos]
+      operationId: obterCadastroPublicado
+      summary: Cadastro de parâmetros publicado, no formato cadastro_contrato.schema.json
+      description: É o que a concessionária usa para montar o pleito (siglas, códigos, versão contratual). Só versões publicadas.
+      x-perfis: [PER-CON, PER-GCA, PER-ANA, PER-GES]
+      x-caso-de-uso: UC-01
+      x-requisitos: [RF-CAD-01, RF-CAD-02, RF-PLE-05]
+      responses:
+        '200':
+          description: Cadastro
+          content:
+            application/json:
+              schema: {$ref: './cadastro_contrato.schema.json'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /contratos/{contrato_id}/versoes:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+    get:
+      tags: [contratos]
+      operationId: listarVersoes
+      summary: Versões contratuais, com situação e herança (TL-06)
+      x-perfis: [PER-GCA, PER-ANA, PER-GES, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01]
+      responses:
+        '200':
+          description: Versões, da mais antiga à mais recente
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/VersaoRegistro'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    post:
+      tags: [contratos]
+      operationId: criarVersao
+      summary: Criar versão contratual em rascunho, herdando da anterior
+      x-perfis: [PER-GCA]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01, RF-CAD-02, RF-CAD-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './cadastro_contrato.schema.json#/$defs/versao'}
+      responses:
+        '201':
+          description: Versão criada em rascunho, com o resultado da conferência dos trechos
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/VersaoRegistro'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /contratos/{contrato_id}/versoes/{versao}:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+      - $ref: '#/components/parameters/Versao'
+    get:
+      tags: [contratos]
+      operationId: obterVersao
+      summary: Versão contratual, como cadastrada ou resolvida com a herança
+      x-perfis: [PER-GCA, PER-ANA, PER-GES, PER-PRO, PER-REL, PER-CON]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01]
+      parameters:
+        - {name: resolvida, in: query, schema: {type: boolean, default: false}, description: 'true aplica a herança (RN-CAD-01)'}
+      responses:
+        '200':
+          description: Versão
+          headers:
+            ETag: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/VersaoRegistro'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    put:
+      tags: [contratos]
+      operationId: substituirVersaoRascunho
+      summary: Alterar versão em rascunho (versão publicada não muda; cria-se outra)
+      x-perfis: [PER-GCA]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01, RF-CAD-02, RF-CAD-03]
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './cadastro_contrato.schema.json#/$defs/versao'}
+      responses:
+        '200':
+          description: Versão atualizada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/VersaoRegistro'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '409': {$ref: '#/components/responses/Conflito'}
+        '412': {$ref: '#/components/responses/PreCondicaoFalhou'}
+  /contratos/{contrato_id}/versoes/{versao}/conferencia-trechos:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+      - $ref: '#/components/parameters/Versao'
+    post:
+      tags: [contratos]
+      operationId: conferirTrechos
+      summary: Conferir cada trecho literal da versão no texto da base do Especialista (V02)
+      x-perfis: [PER-GCA, PER-ANA]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-02]
+      responses:
+        '200':
+          description: Resultado por fonte
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ConferenciaTrechos'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '503': {$ref: '#/components/responses/FonteIndisponivel'}
+  /contratos/{contrato_id}/versoes/{versao}/publicacao:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+      - $ref: '#/components/parameters/Versao'
+    post:
+      tags: [contratos]
+      operationId: publicarVersao
+      summary: Publicar a versão (exige todos os trechos achados)
+      x-perfis: [PER-GCA]
+      x-caso-de-uso: UC-06
+      x-requisitos: [RF-CAD-01, RF-CAD-02]
+      responses:
+        '200':
+          description: Versão publicada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/VersaoRegistro'}
+        '409': {$ref: '#/components/responses/Conflito'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /contratos/{contrato_id}/historico:
+    parameters:
+      - $ref: '#/components/parameters/ContratoId'
+    get:
+      tags: [contratos]
+      operationId: obterHistoricoContrato
+      summary: Ciclos encadeados do contrato com declarado, refeito e deliberado (TL-07)
+      x-perfis: [PER-ANA, PER-GES, PER-GCA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-07
+      x-requisitos: [RF-CAL-06]
+      responses:
+        '200':
+          description: Histórico
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/CicloHistorico'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+
+  # ------------------------------------------------------------------ apuracoes
+  /pleitos/{pleito_id}/apuracao:
+    parameters:
+      - $ref: '#/components/parameters/PleitoId'
+    get:
+      tags: [apuracoes]
+      operationId: obterApuracaoDoPleito
+      summary: Apuração do motor para o pleito
+      x-perfis: [PER-ANA, PER-PRO, PER-REL, PER-CON]
+      x-caso-de-uso: UC-03
+      x-requisitos: [RF-CAL-01, RF-CAL-02, RF-CAL-03, RF-CAL-04]
+      responses:
+        '200':
+          description: Apuração
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Apuracao'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /apuracoes/{apuracao_id}/memoria:
+    parameters:
+      - {name: apuracao_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      tags: [apuracoes]
+      operationId: obterMemoriaCalculo
+      summary: Memória de cálculo com a origem de cada número (TL-05)
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-05
+      x-requisitos: [RF-CAL-05]
+      responses:
+        '200':
+          description: Memória em JSON, DOCX ou PDF conforme o cabeçalho Accept
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MemoriaCalculo'}
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema: {type: string, format: binary}
+            application/pdf:
+              schema: {type: string, format: binary}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '406': {$ref: '#/components/responses/NaoAceitavel'}
+
+  # ------------------------------------------------------------------ series
+  /series:
+    get:
+      tags: [series]
+      operationId: listarSeries
+      summary: Séries externas e situação do cache (TL-14)
+      x-perfis: [PER-ANA, PER-ADM]
+      x-caso-de-uso: UC-20
+      x-requisitos: [RF-SER-01, RF-SER-04]
+      responses:
+        '200':
+          description: Séries
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/SerieExterna'}
+  /series/{serie_id}/valores:
+    parameters:
+      - {name: serie_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      tags: [series]
+      operationId: listarValoresSerie
+      summary: Valores mensais de uma série pública, com a data da consulta
+      description: Séries pagas (FGV) não são servidas aqui (RNF-04); seus valores aparecem só dentro do ciclo.
+      x-perfis: [PER-ANA, PER-ADM]
+      x-caso-de-uso: UC-20
+      x-requisitos: [RF-SER-01]
+      parameters:
+        - {name: de, in: query, schema: {$ref: '#/components/schemas/Mes'}}
+        - {name: ate, in: query, schema: {$ref: '#/components/schemas/Mes'}}
+      responses:
+        '200':
+          description: Valores
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/ValorSerie'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /series/atualizacoes:
+    post:
+      tags: [series]
+      operationId: atualizarSeries
+      summary: Disparar a atualização das séries externas (também agendada)
+      x-perfis: [PER-ADM, PER-ANA]
+      x-caso-de-uso: UC-20
+      x-requisitos: [RF-SER-01, RF-SER-03, RF-SER-04]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                series: {type: array, items: {type: string, format: uuid}, description: 'Vazio = todas'}
+      responses:
+        '202':
+          description: Atualização agendada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Tarefa'}
+
+  # ------------------------------------------------------------------ prazos
+  /ciclos/{ciclo_id}/marcos:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [prazos]
+      operationId: listarMarcos
+      summary: Linha do tempo de marcos do ciclo
+      x-perfis: [PER-ANA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-CON]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-01]
+      responses:
+        '200':
+          description: Marcos em ordem cronológica
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Marco'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    post:
+      tags: [prazos]
+      operationId: registrarMarco
+      summary: Registrar marco (juntada no SEI, publicação, ciência, recurso)
+      description: Cria os prazos que o marco abre e fecha os que ele cumpre (RN-PRZ-02). O perfil permitido depende do tipo de marco (RN-TRA-02).
+      x-perfis: [PER-SEC, PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-01, RF-PRZ-05, RF-PRZ-07]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MarcoNovo'}
+      responses:
+        '201':
+          description: Marco registrado, com os prazos abertos e fechados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [marco]
+                properties:
+                  marco: {$ref: '#/components/schemas/Marco'}
+                  prazos_abertos: {type: array, items: {$ref: '#/components/schemas/Prazo'}}
+                  prazos_cumpridos: {type: array, items: {$ref: '#/components/schemas/Prazo'}}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/prazos:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [prazos]
+      operationId: listarPrazosDoCiclo
+      summary: Prazos do ciclo com vencimento, dono e situação
+      x-perfis: [PER-ANA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-CON]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-01, RF-PRZ-03]
+      responses:
+        '200':
+          description: Prazos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Prazo'}
+  /prazos:
+    get:
+      tags: [prazos]
+      operationId: listarMinhaFila
+      summary: Minha fila de prazos e alertas (TL-10)
+      x-perfis: [PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-03, RF-PRZ-09]
+      parameters:
+        - {name: dono, in: query, schema: {enum: [eu, minha_unidade]}, required: false}
+        - {name: situacao, in: query, schema: {$ref: '#/components/schemas/SituacaoPrazo'}}
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Página de prazos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/Prazo'}}
+  /prazos/{prazo_id}/prorrogacao:
+    parameters:
+      - {name: prazo_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      tags: [prazos]
+      operationId: prorrogarPrazo
+      summary: 'Prorrogar prazo da agência com justificativa (ex.: dilação de 15 dias da Procuradoria)'
+      x-perfis: [PER-PRO, PER-REL, PER-ANA]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-05, RF-PRZ-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dias, justificativa]
+              additionalProperties: false
+              properties:
+                dias: {type: integer, minimum: 1}
+                justificativa: {type: string, minLength: 10}
+                autorizado_por: {type: string, format: uuid, description: 'Usuário que autorizou (Procurador-Geral, gerente)'}
+      responses:
+        '200':
+          description: Prazo prorrogado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Prazo'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/dono:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    put:
+      tags: [prazos]
+      operationId: transferirDono
+      summary: Passar o ciclo a outra unidade (troca atômica; nunca sem dono)
+      x-perfis: [PER-SEC, PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-02]
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [unidade]
+              additionalProperties: false
+              properties:
+                unidade: {type: string, description: 'Ex.: CAPET, PROC, SCEXEC, CONS-02'}
+                usuario_id: {type: [string, 'null'], format: uuid}
+                motivo: {type: string}
+      responses:
+        '200':
+          description: Dono atualizado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Ciclo'}
+        '412': {$ref: '#/components/responses/PreCondicaoFalhou'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /alertas:
+    get:
+      tags: [prazos]
+      operationId: listarAlertas
+      summary: Alertas do usuário
+      x-perfis: [PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-03, RF-CAD-04]
+      responses:
+        '200':
+          description: Alertas não lidos primeiro
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Alerta'}
+  /alertas/{alerta_id}/ciencia:
+    parameters:
+      - {name: alerta_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      tags: [prazos]
+      operationId: registrarCienciaAlerta
+      summary: Marcar alerta como lido
+      x-perfis: [PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL]
+      x-caso-de-uso: UC-08
+      x-requisitos: [RF-PRZ-03]
+      responses:
+        '204': {description: Ciência registrada}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /ciclos/{ciclo_id}/diligencias:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [prazos]
+      operationId: abrirDiligencia
+      summary: Abrir diligência em rodada única, com os quesitos abertos da fase
+      x-perfis: [PER-REL, PER-SEC]
+      x-caso-de-uso: UC-10
+      x-requisitos: [RF-DOC-03, RF-PRZ-04]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DiligenciaNova'}
+      responses:
+        '201':
+          description: Diligência criada com a minuta do ofício único e o prazo
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Diligencia'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/quesitos:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [prazos]
+      operationId: registrarQuesito
+      summary: Registrar quesito para a próxima diligência da fase
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-10
+      x-requisitos: [RF-DOC-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [texto]
+              additionalProperties: false
+              properties:
+                texto: {type: string, minLength: 5}
+                destinatario: {enum: [concessionaria, poder_concedente, verificador_independente]}
+      responses:
+        '201':
+          description: Quesito registrado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Quesito'}
+  /diligencias/{diligencia_id}/resposta:
+    parameters:
+      - {name: diligencia_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      tags: [prazos]
+      operationId: responderDiligencia
+      summary: Responder diligência (concessionária) ou registrar a resposta recebida no SEI
+      x-perfis: [PER-CON, PER-SEC, PER-REL]
+      x-caso-de-uso: UC-10
+      x-requisitos: [RF-PRZ-04]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [texto]
+              properties:
+                texto: {type: string}
+                anexos: {type: array, items: {type: string, format: binary}}
+      responses:
+        '201':
+          description: Resposta registrada; prazo cumprido
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Marco'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /pauta:
+    get:
+      tags: [prazos]
+      operationId: listarPauta
+      summary: Ciclos aptos e incluídos na pauta do Conselho-Diretor (TL-11)
+      x-perfis: [PER-SEC, PER-REL, PER-GES]
+      x-caso-de-uso: UC-13
+      x-requisitos: [RF-PRZ-06]
+      parameters:
+        - {name: data_sessao, in: query, schema: {type: string, format: date}}
+      responses:
+        '200':
+          description: Itens de pauta
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/ItemPauta'}
+  /ciclos/{ciclo_id}/inclusao-pauta:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [prazos]
+      operationId: incluirEmPauta
+      summary: Incluir o ciclo na sessão (exige razões finais vencidas e pareceres juntados)
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-13
+      x-requisitos: [RF-PRZ-06]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data_sessao]
+              additionalProperties: false
+              properties:
+                data_sessao: {type: string, format: date}
+      responses:
+        '201':
+          description: Incluído na pauta
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ItemPauta'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/recursos:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [prazos]
+      operationId: registrarRecurso
+      summary: Registrar recurso ou embargos (suspende a certidão; exige relator diverso)
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-14
+      x-requisitos: [RF-PRZ-07]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tipo, protocolado_em]
+              additionalProperties: false
+              properties:
+                tipo: {enum: [recurso, embargos]}
+                protocolado_em: {type: string, format: date}
+                documento_sei: {type: string}
+                relator_unidade: {type: string, description: 'Gabinete sorteado; não pode ser o do relator da deliberação recorrida'}
+      responses:
+        '201':
+          description: Recurso registrado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Marco'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/certidao-ausencia-recurso:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [prazos]
+      operationId: gerarCertidaoAusenciaRecurso
+      summary: Gerar a minuta da certidão de ausência de recurso (após o vencimento do prazo recursal)
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-15
+      x-requisitos: [RF-PRZ-08, RF-PRZ-07]
+      responses:
+        '201':
+          description: Minuta da certidão gerada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Peca'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /ciclos/{ciclo_id}/encerramento:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [prazos]
+      operationId: obterListaVerificacaoEncerramento
+      summary: Lista de verificação do encerramento
+      x-perfis: [PER-SEC, PER-REL, PER-GES, PER-PRO]
+      x-caso-de-uso: UC-15
+      x-requisitos: [RF-PRZ-08]
+      responses:
+        '200':
+          description: Itens com situação
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ListaVerificacao'}
+    post:
+      tags: [prazos]
+      operationId: encerrarCiclo
+      summary: Encerrar o ciclo e gerar o termo de encerramento (só com os itens bloqueantes atendidos)
+      x-perfis: [PER-SEC]
+      x-caso-de-uso: UC-15
+      x-requisitos: [RF-PRZ-08]
+      responses:
+        '201':
+          description: Ciclo encerrado; minuta do termo gerada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ciclo, termo]
+                properties:
+                  ciclo: {$ref: '#/components/schemas/Ciclo'}
+                  termo: {$ref: '#/components/schemas/Peca'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+
+  # ------------------------------------------------------------------ pecas e modelos
+  /modelos:
+    get:
+      tags: [pecas]
+      operationId: listarModelos
+      summary: Modelos de documento com a versão vigente
+      x-perfis: [PER-ADM, PER-SEC, PER-REL, PER-ANA, PER-PRO]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-03]
+      responses:
+        '200':
+          description: Modelos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/ModeloDocumento'}
+    post:
+      tags: [pecas]
+      operationId: criarModelo
+      summary: Criar modelo de documento
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ModeloNovo'}
+      responses:
+        '201':
+          description: Modelo criado (versão 1)
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ModeloDocumento'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+  /modelos/{modelo_id}/versoes:
+    parameters:
+      - {name: modelo_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      tags: [pecas]
+      operationId: criarVersaoModelo
+      summary: Nova versão do modelo (a anterior fica para as peças já geradas)
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-03]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ModeloNovo'}
+      responses:
+        '201':
+          description: Versão criada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ModeloDocumento'}
+  /ciclos/{ciclo_id}/pecas:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    get:
+      tags: [pecas]
+      operationId: listarPecas
+      summary: Peças do ciclo
+      x-perfis: [PER-ANA, PER-PRO, PER-SEC, PER-REL, PER-GES]
+      x-caso-de-uso: UC-09
+      x-requisitos: [RF-DOC-01]
+      responses:
+        '200':
+          description: Peças
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Peca'}
+    post:
+      tags: [pecas]
+      operationId: emitirPecaPorModelo
+      summary: Emitir peça de rotina por modelo com os dados do ciclo (TL-09)
+      x-perfis: [PER-SEC, PER-REL, PER-ANA]
+      x-caso-de-uso: UC-09
+      x-requisitos: [RF-DOC-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PecaNova'}
+      responses:
+        '201':
+          description: Peça gerada em minuta
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Peca'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /pecas/{peca_id}:
+    parameters:
+      - $ref: '#/components/parameters/PecaId'
+    get:
+      tags: [pecas]
+      operationId: exportarPeca
+      summary: Peça em JSON, DOCX ou PDF para juntada no SEI
+      x-perfis: [PER-ANA, PER-PRO, PER-SEC, PER-REL]
+      x-caso-de-uso: UC-09
+      x-requisitos: [RF-DOC-02]
+      responses:
+        '200':
+          description: Peça conforme o cabeçalho Accept
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Peca'}
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema: {type: string, format: binary}
+            application/pdf:
+              schema: {type: string, format: binary}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+        '406': {$ref: '#/components/responses/NaoAceitavel'}
+  /pecas/{peca_id}/juntada:
+    parameters:
+      - $ref: '#/components/parameters/PecaId'
+    post:
+      tags: [pecas]
+      operationId: registrarJuntada
+      summary: Registrar a juntada da peça assinada no SEI (número do documento e data); cria o marco
+      x-perfis: [PER-SEC, PER-REL, PER-ANA, PER-PRO]
+      x-caso-de-uso: UC-09
+      x-requisitos: [RF-DOC-02, RF-PRZ-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [documento_sei, juntado_em]
+              additionalProperties: false
+              properties:
+                documento_sei: {type: string}
+                juntado_em: {type: string, format: date-time}
+                prazo_concedido_dias: {type: [integer, 'null'], minimum: 1}
+      responses:
+        '201':
+          description: Juntada registrada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Marco'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+
+  # ------------------------------------------------------------------ minutas
+  /ciclos/{ciclo_id}/minutas:
+    parameters:
+      - $ref: '#/components/parameters/CicloId'
+    post:
+      tags: [minutas]
+      operationId: gerarMinuta
+      summary: Gerar minuta de parecer técnico, parecer jurídico, relatório, voto ou deliberação
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-05
+      x-requisitos: [RF-MIN-01, RF-MIN-02, RF-MIN-03]
+      description: 'O tipo define o perfil: parecer_tecnico (PER-ANA, UC-05), parecer_juridico (PER-PRO, UC-11), relatorio, voto e deliberacao (PER-REL, UC-12).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tipo]
+              additionalProperties: false
+              properties:
+                tipo: {$ref: '#/components/schemas/TipoMinuta'}
+      responses:
+        '202':
+          description: Geração iniciada (usa o modelo de linguagem, INT-06)
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Tarefa'}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+        '503': {$ref: '#/components/responses/FonteIndisponivel'}
+    get:
+      tags: [minutas]
+      operationId: listarMinutas
+      summary: Minutas do ciclo
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-12
+      x-requisitos: [RF-MIN-01, RF-MIN-02, RF-MIN-03]
+      responses:
+        '200':
+          description: Minutas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Minuta'}
+  /minutas/{minuta_id}:
+    parameters:
+      - $ref: '#/components/parameters/MinutaId'
+    get:
+      tags: [minutas]
+      operationId: obterMinuta
+      summary: Minuta com citações e situação de cada uma (TL-08)
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-12
+      x-requisitos: [RF-MIN-04]
+      responses:
+        '200':
+          description: Minuta
+          headers:
+            ETag: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Minuta'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+    patch:
+      tags: [minutas]
+      operationId: editarMinuta
+      summary: Editar trechos da minuta (cada edição é registrada para a taxa de edição)
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-12
+      x-requisitos: [RF-MIN-05]
+      parameters:
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [edicoes]
+              additionalProperties: false
+              properties:
+                edicoes:
+                  type: array
+                  minItems: 1
+                  items: {$ref: '#/components/schemas/EdicaoMinuta'}
+      responses:
+        '200':
+          description: Minuta atualizada; citações reverificadas
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Minuta'}
+        '409': {$ref: '#/components/responses/Conflito'}
+        '412': {$ref: '#/components/responses/PreCondicaoFalhou'}
+  /minutas/{minuta_id}/verificacao-citacoes:
+    parameters:
+      - $ref: '#/components/parameters/MinutaId'
+    post:
+      tags: [minutas]
+      operationId: verificarCitacoes
+      summary: Verificar cada citação contra o texto da fonte
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-11
+      x-requisitos: [RF-MIN-04]
+      responses:
+        '200':
+          description: Citações com situação
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Citacao'}
+        '503': {$ref: '#/components/responses/FonteIndisponivel'}
+  /minutas/{minuta_id}/revisao:
+    parameters:
+      - $ref: '#/components/parameters/MinutaId'
+    post:
+      tags: [minutas]
+      operationId: concluirRevisaoMinuta
+      summary: Marcar a minuta como revisada (exige zero citação inválida); gera a peça para exportação
+      x-perfis: [PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-12
+      x-requisitos: [RF-MIN-04, RF-MIN-05]
+      responses:
+        '201':
+          description: Peça gerada a partir da minuta revisada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Peca'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /tarefas/{tarefa_id}:
+    parameters:
+      - {name: tarefa_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      tags: [minutas]
+      operationId: obterTarefa
+      summary: Situação de uma tarefa assíncrona (geração de minuta, atualização de séries, conferência de remessa)
+      x-perfis: [PER-ANA, PER-PRO, PER-REL, PER-ADM]
+      x-caso-de-uso: UC-05
+      x-requisitos: [RF-MIN-01, RF-SER-01, RF-FAT-02]
+      responses:
+        '200':
+          description: Tarefa
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Tarefa'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+
+  # ------------------------------------------------------------------ faturas
+  /remessas:
+    get:
+      tags: [faturas]
+      operationId: listarRemessas
+      summary: Remessas de faturamento (TL-12)
+      x-perfis: [PER-CON, PER-ANA, PER-GES]
+      x-caso-de-uso: UC-17
+      x-requisitos: [RF-FAT-01]
+      parameters:
+        - {name: contrato_id, in: query, schema: {type: string, format: uuid}}
+        - {name: competencia, in: query, schema: {$ref: '#/components/schemas/Mes'}}
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Página de remessas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/RemessaRegistro'}}
+    post:
+      tags: [faturas]
+      operationId: enviarRemessa
+      summary: Enviar remessa de faturamento sem dados pessoais
+      description: Campo fora do layout faz a remessa inteira ser recusada (422) e nada é guardado (RNF-05).
+      x-perfis: [PER-CON]
+      x-caso-de-uso: UC-16
+      x-requisitos: [RF-FAT-01]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: './remessa_faturamento.schema.json'}
+      responses:
+        '201':
+          description: Remessa registrada; conferência agendada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/RemessaRegistro'}
+        '200':
+          description: Repetição idempotente
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/RemessaRegistro'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '409': {$ref: '#/components/responses/Conflito'}
+        '413': {$ref: '#/components/responses/MuitoGrande'}
+        '422': {$ref: '#/components/responses/CampoForaDoLayout'}
+  /remessas/{remessa_id}:
+    parameters:
+      - $ref: '#/components/parameters/RemessaId'
+    get:
+      tags: [faturas]
+      operationId: obterRemessa
+      summary: Remessa com o resumo da conferência
+      x-perfis: [PER-CON, PER-ANA, PER-GES]
+      x-caso-de-uso: UC-17
+      x-requisitos: [RF-FAT-02]
+      responses:
+        '200':
+          description: Remessa
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/RemessaRegistro'}
+        '404': {$ref: '#/components/responses/NaoEncontrado'}
+  /remessas/{remessa_id}/conferencia:
+    parameters:
+      - $ref: '#/components/parameters/RemessaId'
+    post:
+      tags: [faturas]
+      operationId: conferirRemessa
+      summary: Recalcular as faturas contra a tabela homologada
+      x-perfis: [PER-ANA]
+      x-caso-de-uso: UC-17
+      x-requisitos: [RF-FAT-02]
+      responses:
+        '202':
+          description: Conferência iniciada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Tarefa'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /remessas/{remessa_id}/divergencias:
+    parameters:
+      - $ref: '#/components/parameters/RemessaId'
+    get:
+      tags: [faturas]
+      operationId: listarDivergencias
+      summary: Só as faturas divergentes, agrupáveis por categoria e faixa
+      x-perfis: [PER-ANA, PER-CON]
+      x-caso-de-uso: UC-17
+      x-requisitos: [RF-FAT-02]
+      parameters:
+        - {name: agrupar, in: query, schema: {enum: [nenhum, categoria, categoria_faixa]}}
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Divergências
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/DivergenciaFatura'}}
+  /divergencias/{divergencia_id}:
+    parameters:
+      - {name: divergencia_id, in: path, required: true, schema: {type: string, format: uuid}}
+    patch:
+      tags: [faturas]
+      operationId: analisarDivergencia
+      summary: Registrar a análise da divergência
+      x-perfis: [PER-ANA]
+      x-caso-de-uso: UC-17
+      x-requisitos: [RF-FAT-02]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [situacao]
+              additionalProperties: false
+              properties:
+                situacao: {enum: [procedente, improcedente, em_analise]}
+                observacao: {type: string}
+      responses:
+        '200':
+          description: Divergência atualizada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DivergenciaFatura'}
+
+  # ------------------------------------------------------------------ indicadores
+  /indicadores:
+    get:
+      tags: [indicadores]
+      operationId: listarIndicadores
+      summary: Indicadores I-P01 com a última medição, linha de base e meta (TL-13)
+      x-perfis: [PER-GES, PER-ANA, PER-SEC, PER-ADM]
+      x-caso-de-uso: UC-18
+      x-requisitos: [RF-IND-01]
+      responses:
+        '200':
+          description: Indicadores
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Indicador'}
+  /indicadores/{indicador_id}/medicoes:
+    parameters:
+      - {name: indicador_id, in: path, required: true, schema: {type: string, pattern: '^I-P01-(0[1-9]|10)$'}}
+    get:
+      tags: [indicadores]
+      operationId: listarMedicoes
+      summary: Série de medições de um indicador
+      x-perfis: [PER-GES, PER-ANA, PER-SEC, PER-ADM]
+      x-caso-de-uso: UC-18
+      x-requisitos: [RF-IND-01]
+      responses:
+        '200':
+          description: Medições
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/MedicaoIndicador'}
+  /auditoria-continua/testes:
+    get:
+      tags: [indicadores]
+      operationId: listarTestesRequisitos
+      summary: Resultado dos testes R-P01 por ciclo
+      x-perfis: [PER-GES, PER-ADM, PER-SEC, PER-PRO]
+      x-caso-de-uso: UC-18
+      x-requisitos: [RF-IND-02]
+      parameters:
+        - {name: requisito, in: query, schema: {type: string, pattern: '^R-P01-(0[1-9]|1[0-9]|20)$'}}
+        - {name: ciclo_id, in: query, schema: {type: string, format: uuid}}
+        - {name: resultado, in: query, schema: {$ref: '#/components/schemas/ResultadoTeste'}}
+      responses:
+        '200':
+          description: Resultados
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/TesteRequisito'}
+  /auditoria-continua/execucoes:
+    post:
+      tags: [indicadores]
+      operationId: executarAuditoriaContinua
+      summary: Rodar os testes R-P01 agora (também roda a cada marco e diariamente)
+      x-perfis: [PER-ADM, PER-GES]
+      x-caso-de-uso: UC-18
+      x-requisitos: [RF-IND-02]
+      responses:
+        '202':
+          description: Execução agendada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Tarefa'}
+  /controles-qualidade:
+    get:
+      tags: [indicadores]
+      operationId: listarControlesQualidade
+      summary: Controles Q-P01-01 a 04 medidos
+      x-perfis: [PER-GES, PER-ADM, PER-ANA, PER-PRO, PER-REL]
+      x-caso-de-uso: UC-18
+      x-requisitos: [RF-IND-03, RF-MIN-05]
+      responses:
+        '200':
+          description: Controles
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/ControleQualidade'}
+
+  # ------------------------------------------------------------------ administracao
+  /usuarios/eu:
+    get:
+      tags: [administracao]
+      operationId: obterUsuarioAtual
+      summary: Usuário da sessão, perfis e concessionária vinculada (TL-16)
+      x-perfis: [PER-CON, PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      responses:
+        '200':
+          description: Usuário
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Usuario'}
+        '401': {$ref: '#/components/responses/NaoAutenticado'}
+  /usuarios:
+    get:
+      tags: [administracao]
+      operationId: listarUsuarios
+      summary: Usuários (TL-15)
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      parameters:
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Página de usuários
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/Usuario'}}
+        '403': {$ref: '#/components/responses/SemPermissao'}
+    post:
+      tags: [administracao]
+      operationId: criarUsuario
+      summary: Criar usuário; o externo é vinculado a uma concessionária
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UsuarioNovo'}
+      responses:
+        '201':
+          description: Usuário criado; convite enviado para definir a senha
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Usuario'}
+        '400': {$ref: '#/components/responses/RequisicaoInvalida'}
+        '409': {$ref: '#/components/responses/Conflito'}
+  /usuarios/{usuario_id}:
+    parameters:
+      - {name: usuario_id, in: path, required: true, schema: {type: string, format: uuid}}
+    patch:
+      tags: [administracao]
+      operationId: atualizarUsuario
+      summary: Alterar perfis, unidade ou situação (ativo, bloqueado)
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                perfis: {type: array, items: {$ref: '#/components/schemas/CodigoPerfil'}}
+                unidade: {type: [string, 'null']}
+                ativo: {type: boolean}
+      responses:
+        '200':
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Usuario'}
+        '422': {$ref: '#/components/responses/RegraDeNegocio'}
+  /perfis:
+    get:
+      tags: [administracao]
+      operationId: listarPerfis
+      summary: Perfis e permissões
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      responses:
+        '200':
+          description: Perfis
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Perfil'}
+  /integracoes:
+    get:
+      tags: [administracao]
+      operationId: listarIntegracoes
+      summary: Integrações INT-01 a INT-08 com situação
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01, RF-SER-04]
+      responses:
+        '200':
+          description: Integrações
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Integracao'}
+  /integracoes/{integracao_id}:
+    parameters:
+      - {name: integracao_id, in: path, required: true, schema: {type: string, pattern: '^INT-0[1-8]$'}}
+    patch:
+      tags: [administracao]
+      operationId: configurarIntegracao
+      summary: Ativar, desativar ou ajustar a configuração (segredos ficam no cofre, nunca na resposta)
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                ativa: {type: boolean}
+                configuracao: {type: object, description: 'Parâmetros não secretos (URL, agenda, provedor)'}
+      responses:
+        '200':
+          description: Integração atualizada
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Integracao'}
+  /calendario/feriados:
+    get:
+      tags: [administracao]
+      operationId: listarFeriados
+      summary: Feriados e pontos facultativos usados na contagem de dias úteis
+      x-perfis: [PER-ADM, PER-SEC, PER-ANA, PER-PRO, PER-REL, PER-GES]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-PRZ-01]
+      parameters:
+        - {name: ano, in: query, schema: {type: integer}}
+      responses:
+        '200':
+          description: Feriados
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Feriado'}
+    post:
+      tags: [administracao]
+      operationId: incluirPontoFacultativo
+      summary: Incluir ponto facultativo decretado
+      x-perfis: [PER-ADM]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-PRZ-01]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Feriado'}
+      responses:
+        '201':
+          description: Incluído; prazos abertos são recalculados
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Feriado'}
+  /registros-auditoria:
+    get:
+      tags: [administracao]
+      operationId: listarRegistrosAuditoria
+      summary: Trilha de auditoria (somente leitura, imutável)
+      x-perfis: [PER-ADM, PER-GES]
+      x-caso-de-uso: UC-19
+      x-requisitos: [RF-ADM-02]
+      parameters:
+        - {name: entidade, in: query, schema: {type: string}}
+        - {name: entidade_id, in: query, schema: {type: string}}
+        - {name: usuario_id, in: query, schema: {type: string, format: uuid}}
+        - {name: de, in: query, schema: {type: string, format: date-time}}
+        - {name: ate, in: query, schema: {type: string, format: date-time}}
+        - $ref: '#/components/parameters/Pagina'
+        - $ref: '#/components/parameters/PorPagina'
+      responses:
+        '200':
+          description: Página de registros
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Pagina'
+                  - type: object
+                    properties:
+                      itens: {type: array, items: {$ref: '#/components/schemas/RegistroAuditoria'}}
+
+components:
+  securitySchemes:
+    sessao:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+      description: Sessão do NextAuth (JWT em cookie httpOnly) para as telas
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Mesmo JWT, para chamadas de sistema da concessionária
+
+  parameters:
+    CicloId: {name: ciclo_id, in: path, required: true, schema: {type: string, format: uuid}}
+    PleitoId: {name: pleito_id, in: path, required: true, schema: {type: string, format: uuid}}
+    ContratoId: {name: contrato_id, in: path, required: true, schema: {type: string, format: uuid}}
+    Versao: {name: versao, in: path, required: true, schema: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$'}, description: 'Código da versão contratual, ex.: 3TA-2024'}
+    PecaId: {name: peca_id, in: path, required: true, schema: {type: string, format: uuid}}
+    MinutaId: {name: minuta_id, in: path, required: true, schema: {type: string, format: uuid}}
+    RemessaId: {name: remessa_id, in: path, required: true, schema: {type: string, format: uuid}}
+    Pagina: {name: pagina, in: query, schema: {type: integer, minimum: 1, default: 1}}
+    PorPagina: {name: por_pagina, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 20}}
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, format: uuid}
+      description: Chave gerada pelo cliente por envio. Mesma chave e mesmo conteúdo devolvem a resposta original; mesma chave e conteúdo diferente dão 409. Guardada por 30 dias.
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema: {type: string}
+      description: ETag lido no GET; evita sobrescrever alteração concorrente (412 se mudou)
+
+  responses:
+    RequisicaoInvalida:
+      description: Corpo ou parâmetro malformado (JSON inválido, multipart sem a parte pleito)
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    NaoAutenticado:
+      description: Sem sessão válida
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    SemPermissao:
+      description: Perfil sem permissão para a operação
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    NaoEncontrado:
+      description: Recurso inexistente ou de outra concessionária
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    NaoAceitavel:
+      description: Formato pedido no Accept não disponível
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    Conflito:
+      description: Conflito de estado (pacote já enviado com o mesmo SHA-256, chave de idempotência reutilizada com outro conteúdo, ciclo já aberto)
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    PreCondicaoFalhou:
+      description: If-Match diferente do ETag atual
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    MuitoGrande:
+      description: Pacote acima do limite
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    TipoNaoSuportado:
+      description: Content-Type não aceito
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    CampoForaDoLayout:
+      description: 'Propriedade fora do layout (codigo campo-fora-do-layout) ou dado pessoal detectado (codigo dado-pessoal); recusado sem guardar nada (RNF-05)'
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    RegraDeNegocio:
+      description: Operação contrária a uma regra de negócio (RN-*); o problema diz qual
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    MuitasRequisicoes:
+      description: Limite de chamadas excedido
+      headers:
+        Retry-After: {schema: {type: integer}}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+    FonteIndisponivel:
+      description: Fonte externa fora do ar e sem cache utilizável
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problema'}
+
+  schemas:
+    Problema:
+      type: object
+      description: RFC 9457 (problem+json)
+      required: [type, title, status]
+      properties:
+        type: {type: string, format: uri-reference, examples: ['/problemas/campo-fora-do-layout']}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        instance: {type: string, format: uri-reference}
+        codigo: {type: string, description: 'Código estável, ex.: campo-fora-do-layout, idempotencia-conflito, regra-negocio'}
+        regra: {type: string, description: 'RN-* violada, quando houver'}
+        erros:
+          type: array
+          items:
+            type: object
+            required: [mensagem]
+            properties:
+              campo: {type: string, description: JSON Pointer}
+              mensagem: {type: string}
+        correlacao_id: {type: string}
+    Pagina:
+      type: object
+      required: [itens, pagina, por_pagina, total]
+      properties:
+        itens: {type: array, items: {}}
+        pagina: {type: integer}
+        por_pagina: {type: integer}
+        total: {type: integer}
+    Mes: {type: string, pattern: '^\d{4}-(0[1-9]|1[0-2])$'}
+    ProcessoSei: {type: string, pattern: '^SEI-\d{6}/\d{6}/\d{4}$', examples: ['SEI-480002/009982/2025']}
+    CodigoPerfil: {enum: [PER-CON, PER-ANA, PER-GCA, PER-PRO, PER-SEC, PER-REL, PER-GES, PER-ADM]}
+    SituacaoCiclo: {description: 'Estados do ciclo (04_CASOS_DE_USO.md §5; enum SituacaoCiclo do prisma/schema.prisma em minúsculas)', enum: [protocolado, em_validacao, devolvido, a_reconferir, em_analise_tecnica, em_analise_juridica, em_instrucao, em_razoes_finais, apto_para_pauta, decidido_em_reuniao_interna, pautado, deliberado, publicado, em_prazo_recursal, aguardando_encerramento, encerrado, arquivado]}
+    SubsituacaoCiclo: {description: 'Subestados de em_instrucao e aguardando_encerramento', enum: [avaliando_instrucao, em_diligencia, aguardando_resposta, em_conciliacao, acesso_aos_autos, conferindo_faturas, lista_completa, consulta_juridica]}
+    SituacaoPrazo: {enum: [correndo, a_vencer, vencido, cumprido, suspenso, prorrogado]}
+    ResultadoTeste: {enum: [conforme, nao_conforme, sem_evidencia, nao_aplicavel]}
+    TipoMinuta: {enum: [parecer_tecnico, parecer_juridico, relatorio, voto, deliberacao]}
+    TipoMarco:
+      enum: [protocolo, validacao, devolucao, parecer_tecnico, parecer_juridico, diligencia, reiteracao, conciliacao, acesso_autos, razoes_finais, decisao_reuniao_interna, inclusao_pauta, deliberacao, publicacao, notificacao, divulgacao, envio_alerj, vigencia_tarifa, recurso, conferencia_faturas, parecer_arquivamento, certidao_ausencia_recurso, encerramento]
+    CicloNovo:
+      type: object
+      required: [contrato_id, vigencia_pretendida]
+      additionalProperties: false
+      properties:
+        contrato_id: {type: string, format: uuid}
+        vigencia_pretendida: {type: string, format: date}
+        processo_sei: {$ref: '#/components/schemas/ProcessoSei'}
+    CicloResumo:
+      type: object
+      required: [id, contrato, vigencia_pretendida, situacao, dono, idade_dias_uteis]
+      properties:
+        id: {type: string, format: uuid}
+        processo_sei: {type: [string, 'null']}
+        contrato: {type: object, properties: {id: {type: string, format: uuid}, numero: {type: string}, concessionaria: {type: string}}}
+        vigencia_pretendida: {type: string, format: date}
+        situacao: {$ref: '#/components/schemas/SituacaoCiclo'}
+        dono: {$ref: '#/components/schemas/Dono'}
+        proximo_prazo: {oneOf: [{$ref: '#/components/schemas/Prazo'}, {type: 'null'}]}
+        idade_dias_uteis: {type: number}
+        erros: {type: integer}
+        avisos: {type: integer}
+    Ciclo:
+      allOf:
+        - $ref: '#/components/schemas/CicloResumo'
+        - type: object
+          properties:
+            versao_contratual: {type: [string, 'null']}
+            mes_o: {oneOf: [{$ref: '#/components/schemas/Mes'}, {type: 'null'}]}
+            mes_i: {oneOf: [{$ref: '#/components/schemas/Mes'}, {type: 'null'}]}
+            pleito_atual_id: {type: [string, 'null'], format: uuid}
+            apuracao_id: {type: [string, 'null'], format: uuid}
+            marcos: {type: array, items: {$ref: '#/components/schemas/Marco'}}
+            prazos: {type: array, items: {$ref: '#/components/schemas/Prazo'}}
+            pendencias: {type: array, items: {$ref: './resultado_validacao.schema.json#/$defs/item'}}
+    Dono:
+      type: object
+      required: [unidade, desde]
+      properties:
+        unidade: {type: string}
+        usuario_id: {type: [string, 'null'], format: uuid}
+        desde: {type: string, format: date-time}
+    CicloHistorico:
+      type: object
+      required: [ciclo_id, vigencia, mes_o, mes_i]
+      properties:
+        ciclo_id: {type: string, format: uuid}
+        processo_sei: {type: [string, 'null']}
+        vigencia: {type: string, format: date}
+        versao_contratual: {type: string}
+        mes_o: {$ref: '#/components/schemas/Mes'}
+        mes_i: {$ref: '#/components/schemas/Mes'}
+        ir_declarado_pct: {type: [number, 'null']}
+        ir_refeito_pct: {type: [number, 'null']}
+        ir_deliberado_pct: {type: [number, 'null']}
+        total_deliberado_pct: {type: [number, 'null']}
+        ato: {type: [string, 'null']}
+        encadeia_com_anterior: {type: [boolean, 'null'], description: 'mes_o igual ao mes_i do ciclo anterior (RN-CAL-07)'}
+        meses_acumulados: {type: [integer, 'null']}
+    PacotePleito:
+      type: object
+      required: [pleito]
+      properties:
+        pleito: {$ref: './pleito_reajuste.schema.json'}
+        anexos:
+          type: array
+          items: {type: string, format: binary}
+          description: 'series.csv, energia.csv, tabela_tarifaria.csv, evidências, memória de cálculo, publicação; nomes iguais aos de pleito.anexos[].arquivo'
+        canal: {enum: [direto, sei], default: direto, description: 'sei = pacote importado do peticionamento do SEI pela Secretaria (DEC-03)'}
+        processo_sei: {$ref: '#/components/schemas/ProcessoSei'}
+    PleitoRegistro:
+      type: object
+      required: [id, ciclo_id, recebido_em, sha256, canal, rodada]
+      properties:
+        id: {type: string, format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        recebido_em: {type: string, format: date-time}
+        enviado_por: {type: string, format: uuid}
+        canal: {enum: [direto, sei]}
+        rodada: {type: integer, minimum: 1, description: 'Número do envio no ciclo'}
+        sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
+        anexos:
+          type: array
+          items:
+            type: object
+            required: [arquivo, sha256, confere]
+            properties:
+              arquivo: {type: string}
+              tipo: {type: string}
+              sha256: {type: string}
+              confere: {type: boolean, description: 'SHA-256 calculado igual ao declarado'}
+        resultado: {oneOf: [{$ref: './resultado_validacao.schema.json'}, {type: 'null'}]}
+    ContratoNovo:
+      type: object
+      required: [numero, nome, concessionaria_cnpj, servico]
+      additionalProperties: false
+      properties:
+        numero: {type: string, examples: ['008/2014']}
+        nome: {type: string, examples: ['Contrato de Concessão nº 008/2014']}
+        concessionaria_cnpj: {type: string, pattern: '^\d{14}$'}
+        servico: {enum: [saneamento, resíduos sólidos]}
+    Contrato:
+      allOf:
+        - $ref: '#/components/schemas/ContratoNovo'
+        - type: object
+          required: [id]
+          properties:
+            id: {type: string, format: uuid}
+            concessionaria: {type: string}
+            versao_vigente: {type: [string, 'null']}
+            proxima_data_base: {type: [string, 'null'], format: date}
+    VersaoRegistro:
+      type: object
+      required: [contrato_id, versao, situacao, conteudo]
+      properties:
+        contrato_id: {type: string, format: uuid}
+        versao: {type: string}
+        situacao: {enum: [rascunho, publicada, substituida]}
+        resolvida: {type: boolean}
+        conteudo: {$ref: './cadastro_contrato.schema.json#/$defs/versao'}
+        conferencia: {$ref: '#/components/schemas/ConferenciaTrechos'}
+        criado_por: {type: string, format: uuid}
+        publicado_em: {type: [string, 'null'], format: date-time}
+    ConferenciaTrechos:
+      type: object
+      required: [conferido_em, achados, nao_achados]
+      properties:
+        conferido_em: {type: string, format: date-time}
+        achados: {type: integer}
+        nao_achados: {type: integer}
+        fontes:
+          type: array
+          items:
+            type: object
+            required: [documento, parametro, achado]
+            properties:
+              documento: {type: string}
+              parametro: {type: string}
+              achado: {type: boolean}
+    Apuracao:
+      allOf:
+        - $ref: './resultado_validacao.schema.json#/$defs/apuracao_resumo'
+        - type: object
+          properties:
+            pleito_id: {type: string, format: uuid}
+            versao_contratual: {type: string}
+            versao_regras: {type: string}
+            calculada_em: {type: string, format: date-time}
+    MemoriaCalculo:
+      type: object
+      required: [apuracao, linhas]
+      properties:
+        apuracao: {$ref: '#/components/schemas/Apuracao'}
+        linhas:
+          type: array
+          items:
+            type: object
+            required: [descricao, valor, origem]
+            properties:
+              descricao: {type: string}
+              valor: {type: [number, string]}
+              origem:
+                type: object
+                required: [tipo]
+                properties:
+                  tipo: {enum: [pleito, serie_publica, cadastro, calculo]}
+                  referencia: {type: string, description: 'Campo e anexo; série e data da consulta; versão, documento e trecho'}
+    SerieExterna:
+      type: object
+      required: [id, base, codigo, nome, publica]
+      properties:
+        id: {type: string, format: uuid}
+        base: {enum: [IPEADATA, IBGE SIDRA, ANEEL, FGV]}
+        codigo: {type: string}
+        nome: {type: string}
+        publica: {type: boolean}
+        ultima_consulta: {type: [string, 'null'], format: date-time}
+        situacao: {enum: [atualizada, desatualizada, indisponivel]}
+        ultimo_mes: {oneOf: [{$ref: '#/components/schemas/Mes'}, {type: 'null'}]}
+    ValorSerie:
+      type: object
+      required: [mes, valor, consultado_em]
+      properties:
+        mes: {$ref: '#/components/schemas/Mes'}
+        valor: {type: number}
+        consultado_em: {type: string, format: date-time}
+    MarcoNovo:
+      type: object
+      required: [tipo, ocorrido_em]
+      additionalProperties: false
+      properties:
+        tipo: {$ref: '#/components/schemas/TipoMarco'}
+        ocorrido_em: {type: string, format: date-time}
+        documento_sei: {type: [string, 'null']}
+        prazo_concedido_dias: {type: [integer, 'null'], minimum: 1}
+        observacao: {type: string}
+    Marco:
+      allOf:
+        - $ref: '#/components/schemas/MarcoNovo'
+        - type: object
+          required: [id, atividade, registrado_por, registrado_em]
+          properties:
+            id: {type: string, format: uuid}
+            atividade: {type: [string, 'null'], pattern: '^t([1-9]|1[0-6])$', description: 'Atividade do BPMN (t1 a t16)'}
+            registrado_por: {type: string, format: uuid}
+            registrado_em: {type: string, format: date-time}
+    Prazo:
+      type: object
+      required: [id, ciclo_id, tipo, inicio, vencimento, contagem, dono, situacao]
+      properties:
+        id: {type: string, format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        tipo: {enum: [pronunciamento, razoes_finais, deliberacao, procuradoria, recursal, inicio_conferencia_faturas, envio_faturas, publicidade, envio_alerj, memoria_calculo_blocos, resposta_diligencia, resposta_complementacao]}
+        regra: {type: string, description: 'RN-PRZ-* que fixa o prazo'}
+        norma: {type: [string, 'null'], description: 'N-P01-* e R-P01-*'}
+        marco_inicial_id: {type: string, format: uuid}
+        inicio: {type: string, format: date}
+        duracao: {type: integer}
+        contagem: {enum: [dias_uteis, dias_corridos]}
+        vencimento: {type: string, format: date}
+        dono: {$ref: '#/components/schemas/Dono'}
+        situacao: {$ref: '#/components/schemas/SituacaoPrazo'}
+        prorrogacoes:
+          type: array
+          items:
+            type: object
+            properties:
+              dias: {type: integer}
+              justificativa: {type: string}
+              autorizado_por: {type: string, format: uuid}
+              em: {type: string, format: date-time}
+    Alerta:
+      type: object
+      required: [id, prazo_id, tipo, criado_em, lido]
+      properties:
+        id: {type: string, format: uuid}
+        prazo_id: {type: [string, 'null'], format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        tipo: {enum: [antes_do_vencimento, no_vencimento, vencido, sem_dono, data_base, serie_divergente, a_refazer]}
+        mensagem: {type: string}
+        criado_em: {type: string, format: date-time}
+        lido: {type: boolean}
+    Quesito:
+      type: object
+      required: [id, texto, autor_unidade, situacao]
+      properties:
+        id: {type: string, format: uuid}
+        texto: {type: string}
+        destinatario: {enum: [concessionaria, poder_concedente, verificador_independente]}
+        autor_unidade: {type: string}
+        situacao: {enum: [aberto, enviado, respondido]}
+    DiligenciaNova:
+      type: object
+      required: [destinatario, prazo_dias_uteis]
+      additionalProperties: false
+      properties:
+        destinatario: {enum: [concessionaria, poder_concedente, verificador_independente]}
+        prazo_dias_uteis: {type: integer, minimum: 1}
+        incluir_pendencias_validacao: {type: boolean, default: true}
+    Diligencia:
+      type: object
+      required: [id, ciclo_id, destinatario, quesitos, peca, prazo]
+      properties:
+        id: {type: string, format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        destinatario: {type: string}
+        quesitos: {type: array, items: {$ref: '#/components/schemas/Quesito'}}
+        peca: {$ref: '#/components/schemas/Peca'}
+        prazo: {$ref: '#/components/schemas/Prazo'}
+        reiteracoes: {type: integer, minimum: 0}
+    ItemPauta:
+      type: object
+      required: [ciclo_id, apto, impedimentos]
+      properties:
+        ciclo_id: {type: string, format: uuid}
+        processo_sei: {type: [string, 'null']}
+        contrato: {type: string}
+        relator_unidade: {type: string}
+        razoes_finais_vencidas_em: {type: [string, 'null'], format: date}
+        apto: {type: boolean}
+        impedimentos: {type: array, items: {type: string}, description: 'Requisitos não atendidos (R-P01-01, R-P01-02, R-P01-03, R-P01-20)'}
+        data_sessao: {type: [string, 'null'], format: date}
+    ListaVerificacao:
+      type: object
+      required: [ciclo_id, pode_encerrar, itens]
+      properties:
+        ciclo_id: {type: string, format: uuid}
+        pode_encerrar: {type: boolean}
+        itens:
+          type: array
+          items:
+            type: object
+            required: [item, bloqueia, atendido]
+            properties:
+              item: {type: string}
+              bloqueia: {type: boolean}
+              atendido: {type: boolean}
+              requisito: {type: [string, 'null']}
+              evidencia: {type: [string, 'null'], description: 'Marco ou peça que atende'}
+    ModeloNovo:
+      type: object
+      required: [codigo, nome, tipo_peca, corpo]
+      additionalProperties: false
+      properties:
+        codigo: {type: string, examples: ['oficio-razoes-finais']}
+        nome: {type: string}
+        tipo_peca: {enum: [oficio_recebimento, oficio_complementacao, oficio_diligencia, oficio_reiteracao, notificacao_razoes_finais, oficio_acesso_autos, notificacao_deliberacao, oficio_alerj, oficio_pedido_faturas, certidao_ausencia_recurso, termo_encerramento, parecer_tecnico, parecer_juridico, relatorio, voto, deliberacao]}
+        corpo: {type: string, description: 'Texto com campos {{ciclo.*}}, {{prazo.*}}, {{pendencias}}'}
+        campos_obrigatorios: {type: array, items: {type: string}}
+    ModeloDocumento:
+      allOf:
+        - $ref: '#/components/schemas/ModeloNovo'
+        - type: object
+          required: [id, versao]
+          properties:
+            id: {type: string, format: uuid}
+            versao: {type: integer, minimum: 1}
+            criado_em: {type: string, format: date-time}
+    PecaNova:
+      type: object
+      required: [modelo_codigo]
+      additionalProperties: false
+      properties:
+        modelo_codigo: {type: string}
+        destinatario: {type: string}
+        prazo_concedido_dias: {type: [integer, 'null'], minimum: 1}
+    Peca:
+      type: object
+      required: [id, ciclo_id, tipo_peca, situacao, gerada_em]
+      properties:
+        id: {type: string, format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        tipo_peca: {type: string}
+        modelo_id: {type: [string, 'null'], format: uuid}
+        modelo_versao: {type: [integer, 'null']}
+        minuta_id: {type: [string, 'null'], format: uuid}
+        situacao: {enum: [minuta, pronta_para_assinatura, juntada]}
+        gerada_em: {type: string, format: date-time}
+        documento_sei: {type: [string, 'null']}
+        sha256: {type: [string, 'null']}
+    Minuta:
+      type: object
+      required: [id, ciclo_id, tipo, situacao, trechos, citacoes]
+      properties:
+        id: {type: string, format: uuid}
+        ciclo_id: {type: string, format: uuid}
+        tipo: {$ref: '#/components/schemas/TipoMinuta'}
+        situacao: {enum: [gerada, em_revisao, revisada]}
+        gerada_em: {type: string, format: date-time}
+        provedor_modelo: {type: string, description: 'Adaptador do INT-06 usado'}
+        trechos:
+          type: array
+          items:
+            type: object
+            required: [id, texto]
+            properties:
+              id: {type: string}
+              texto: {type: string}
+              editado: {type: boolean}
+        citacoes: {type: array, items: {$ref: '#/components/schemas/Citacao'}}
+        taxa_edicao: {type: [number, 'null'], minimum: 0, maximum: 1}
+    EdicaoMinuta:
+      type: object
+      required: [trecho_id, texto_novo]
+      additionalProperties: false
+      properties:
+        trecho_id: {type: string}
+        texto_novo: {type: string}
+        motivo: {type: string}
+    Citacao:
+      type: object
+      required: [id, fonte_tipo, fonte_id, trecho, situacao]
+      properties:
+        id: {type: string}
+        fonte_tipo: {enum: [norma, contrato, deliberacao, peca]}
+        fonte_id: {type: string, examples: ['N-P01-07']}
+        dispositivo: {type: [string, 'null']}
+        trecho: {type: string}
+        situacao: {enum: [valida, invalida, nao_verificada]}
+        motivo: {type: [string, 'null'], enum: [fonte_inexistente, dispositivo_inexistente, trecho_nao_achado, fora_de_vigencia, null]}
+        verificada_em: {type: [string, 'null'], format: date-time}
+    RemessaRegistro:
+      type: object
+      required: [id, contrato_id, competencia, recebida_em, faturas, situacao]
+      properties:
+        id: {type: string, format: uuid}
+        contrato_id: {type: string, format: uuid}
+        competencia: {$ref: '#/components/schemas/Mes'}
+        recebida_em: {type: string, format: date-time}
+        sha256: {type: string}
+        faturas: {type: integer}
+        situacao: {enum: [recebida, em_conferencia, conferida, sem_regra_de_aplicacao]}
+        divergencias: {type: [integer, 'null']}
+        soma_diferencas: {type: [number, 'null']}
+    DivergenciaFatura:
+      type: object
+      required: [id, codigo_economia, categoria, consumo, valor_cobrado, valor_esperado, diferenca]
+      properties:
+        id: {type: string, format: uuid}
+        codigo_economia: {type: string}
+        mes: {$ref: '#/components/schemas/Mes'}
+        categoria: {type: string}
+        faixa: {type: [string, 'null']}
+        consumo: {type: number}
+        valor_cobrado: {type: number}
+        valor_esperado: {type: number}
+        diferenca: {type: number}
+        situacao: {enum: [em_analise, procedente, improcedente]}
+        quantidade: {type: integer, description: 'Quando agrupada'}
+    Indicador:
+      type: object
+      required: [id, nome, unidade, linha_base]
+      properties:
+        id: {type: string, pattern: '^I-P01-(0[1-9]|10)$'}
+        nome: {type: string}
+        unidade: {type: string}
+        frequencia: {type: string}
+        linha_base: {type: number}
+        metas: {type: array, items: {type: object, properties: {fase: {type: integer}, valor: {type: number}}}}
+        ultima_medicao: {oneOf: [{$ref: '#/components/schemas/MedicaoIndicador'}, {type: 'null'}]}
+        hipotese: {type: boolean, description: 'true para horas (I-P01-02) até a calibração com servidores'}
+    MedicaoIndicador:
+      type: object
+      required: [indicador_id, periodo, valor, calculado_em]
+      properties:
+        indicador_id: {type: string}
+        periodo: {type: string}
+        valor: {type: number}
+        n_casos: {type: integer}
+        calculado_em: {type: string, format: date-time}
+    TesteRequisito:
+      type: object
+      required: [requisito, ciclo_id, resultado, executado_em]
+      properties:
+        requisito: {type: string, pattern: '^R-P01-(0[1-9]|1[0-9]|20)$'}
+        ciclo_id: {type: string, format: uuid}
+        resultado: {$ref: '#/components/schemas/ResultadoTeste'}
+        detalhe: {type: string, examples: ['99 dc (máx. 30)']}
+        executado_em: {type: string, format: date-time}
+    ControleQualidade:
+      type: object
+      required: [id, indicador, valor]
+      properties:
+        id: {type: string, pattern: '^Q-P01-0[1-4]$'}
+        indicador: {type: string}
+        valor: {type: [number, 'null']}
+        meta: {type: string}
+        periodo: {type: string}
+    UsuarioNovo:
+      type: object
+      required: [nome, email, perfis]
+      additionalProperties: false
+      properties:
+        nome: {type: string}
+        email: {type: string, format: email}
+        perfis: {type: array, minItems: 1, items: {$ref: '#/components/schemas/CodigoPerfil'}}
+        unidade: {type: [string, 'null'], description: 'Unidade interna (CAPET, PROC, SCEXEC, CONS-02...)'}
+        concessionaria_cnpj: {type: [string, 'null'], pattern: '^\d{14}$', description: 'Obrigatório para PER-CON'}
+    Usuario:
+      allOf:
+        - $ref: '#/components/schemas/UsuarioNovo'
+        - type: object
+          required: [id, ativo]
+          properties:
+            id: {type: string, format: uuid}
+            ativo: {type: boolean}
+            ultimo_acesso: {type: [string, 'null'], format: date-time}
+    Perfil:
+      type: object
+      required: [codigo, nome, permissoes]
+      properties:
+        codigo: {$ref: '#/components/schemas/CodigoPerfil'}
+        nome: {type: string}
+        permissoes: {type: array, items: {type: string, description: operationId}}
+    Integracao:
+      type: object
+      required: [id, nome, ativa, situacao]
+      properties:
+        id: {type: string, pattern: '^INT-0[1-8]$'}
+        nome: {type: string}
+        ativa: {type: boolean}
+        situacao: {enum: [ok, degradada, indisponivel, nao_configurada]}
+        ultima_execucao: {type: [string, 'null'], format: date-time}
+        configuracao: {type: object}
+    Feriado:
+      type: object
+      required: [data, nome, tipo]
+      properties:
+        data: {type: string, format: date}
+        nome: {type: string}
+        tipo: {enum: [nacional, estadual, municipal, movel, ponto_facultativo]}
+        ato: {type: [string, 'null'], description: 'Decreto do ponto facultativo'}
+    RegistroAuditoria:
+      type: object
+      required: [id, em, usuario_id, acao, entidade, entidade_id]
+      properties:
+        id: {type: string, format: uuid}
+        em: {type: string, format: date-time}
+        usuario_id: {type: string, format: uuid}
+        perfil: {$ref: '#/components/schemas/CodigoPerfil'}
+        acao: {type: string, description: operationId}
+        entidade: {type: string}
+        entidade_id: {type: string}
+        antes_sha256: {type: [string, 'null']}
+        depois_sha256: {type: [string, 'null']}
+        correlacao_id: {type: string}
+    Tarefa:
+      type: object
+      required: [id, tipo, situacao]
+      properties:
+        id: {type: string, format: uuid}
+        tipo: {enum: [validacao, minuta, atualizacao_series, conferencia_remessa, auditoria_continua]}
+        situacao: {enum: [agendada, em_execucao, concluida, falhou]}
+        resultado_url: {type: [string, 'null']}
+        erro: {oneOf: [{$ref: '#/components/schemas/Problema'}, {type: 'null'}]}

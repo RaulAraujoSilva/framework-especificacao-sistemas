@@ -1,0 +1,57 @@
+{
+ "processos": 17,
+ "apuracoes_com_valores": 33,
+ "apuracoes_avaliadas": 28,
+ "conferem": 24,
+ "divergem": [
+  {
+   "processo": "SEI-220007/004053/2022",
+   "doc": "43014673",
+   "emissor": "CAPET",
+   "ir_escrito": 10.37,
+   "ir_pelos_indices": 9.5601,
+   "ir_pelas_variacoes": 10.3223
+  },
+  {
+   "processo": "SEI-480002/001912/2024",
+   "doc": "69248862",
+   "emissor": "concessionária",
+   "ir_escrito": 4.8,
+   "ir_pelos_indices": 4.7845,
+   "ir_pelas_variacoes": 2.5312
+  },
+  {
+   "processo": "SEI-480002/001913/2024",
+   "doc": "69248357",
+   "emissor": "concessionária",
+   "ir_escrito": 4.8,
+   "ir_pelos_indices": 4.7845,
+   "ir_pelas_variacoes": 2.5312
+  },
+  {
+   "processo": "SEI-480002/009058/2025",
+   "doc": "118597733",
+   "emissor": "CAPET",
+   "ir_escrito": 4.1245,
+   "ir_pelos_indices": 5.3195,
+   "ir_pelas_variacoes": NaN
+  }
+ ],
+ "tipos_formula": {
+  "paramétrica ponderada": 10,
+  "índice único": 7
+ },
+ "regra_total": {
+  "multiplicativa": 11,
+  "não fecha": 2
+ },
+ "componentes_por_disponibilidade": {
+  "pública": 24,
+  "assinatura": 17,
+  "pública com regra": 10,
+  "outro reajuste": 4,
+  "documento": 2
+ },
+ "numeros_indice_buscados": 70,
+ "achados_na_serie_publica": 70
+}

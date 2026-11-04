@@ -1,0 +1,105 @@
+{
+  "processo": "SEI-480002/009940/2024",
+  "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos do Rio de Janeiro (15 municípios do interior)",
+  "servico": "saneamento",
+  "contrato": "Contratos de Programa e Termos Aditivos de Itaperuna, Varre-Sai, Mangaratiba, Santa Maria Madalena, Laje do Muriaé e Engenheiro Paulo de Frontin; Decreto Estadual nº 45.344/2015 (redação do Decreto nº 46.855/2019)",
+  "clausula_reajuste": "Cláusula 18 (18.1 a 18.3) dos Termos Aditivos; art. 9º, §2º, do Decreto Estadual nº 45.344/2015",
+  "vigencia_pretendida": "22/01/2025",
+  "data_pleito": "21/11/2024",
+  "data_recebimento_agenersa": "21/11/2024",
+  "formula": {
+    "texto": "TARIFAb = TARIFAb−1 ∗ IRC",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "componentes": [
+      {
+        "sigla": "IRC (IPCA)",
+        "indice": "IPCA - Índice Nacional de Preços ao Consumidor Amplo",
+        "fonte": "IBGE",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "Variação acumulada dos últimos 12 meses, referente ao quarto mês anterior à data do reajuste tarifário; se publicado com atraso, usa-se a variação mais recente disponível (18.2)",
+        "doc_id": "88625762"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "87820614",
+      "emissor": "concessionária",
+      "tipo_doc": "Ofício CEDAE DPR nº 214/2024",
+      "data": "21/11/2024",
+      "periodo_referencia": "setembro de 2023 a outubro de 2024",
+      "valores": [
+        {"sigla": "IPCA", "i_texto": "7036,33", "i": 7036.33, "o_texto": "6683,28", "o": 6683.28,
+         "variacao_texto": null, "variacao": null, "peso_usado": null, "fator_texto": "1,052826", "fator": 1.052826}
+      ],
+      "ir_texto": "5,2826%",
+      "ir_pct": 5.2826,
+      "outros_componentes": [],
+      "reajuste_total_texto": "5,2826%",
+      "reajuste_total_pct": 5.2826,
+      "conclusao": "outra",
+      "divergencias": []
+    },
+    {
+      "doc_id": "88625762",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico CAPET nº 313/2024",
+      "data": "03/12/2024",
+      "periodo_referencia": "agosto/2023 a setembro/2024",
+      "valores": [
+        {"sigla": "IPCA", "i_texto": "6.997,15", "i": 6997.15, "o_texto": "6.683,28", "o": 6683.28,
+         "variacao_texto": null, "variacao": null, "peso_usado": null, "fator_texto": "1,046963", "fator": 1.046963}
+      ],
+      "ir_texto": "4,6963%",
+      "ir_pct": 4.6963,
+      "outros_componentes": [],
+      "reajuste_total_texto": "4,6963%",
+      "reajuste_total_pct": 4.6963,
+      "conclusao": "diverge do pleito",
+      "divergencias": [
+        "Mês final: a regra do 'quarto mês anterior à data do reajuste' (22/01/2025) aponta setembro, e não outubro, usado no pedido; índice final 6.997,15 (set/2024) em vez de 7036,33 (out/2024).",
+        "Resultado: IRC 1,046963 (4,6963%) contra 1,052826 (5,2826%) pleiteado.",
+        "Mantém a base em agosto/2023 (6.683,28), acumulando mais de 12 meses, com a justificativa de que os últimos ciclos foram atípicos e 12 meses não garantiriam a manutenção da arrecadação em termos reais."
+      ]
+    },
+    {
+      "doc_id": "89783521",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação AGENERSA (número em branco no texto), de 18/12/2024",
+      "data": "18/12/2024",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [],
+      "reajuste_total_texto": "4,6963%",
+      "reajuste_total_pct": 4.6963,
+      "conclusao": "diverge do pleito",
+      "divergencias": ["Homologa o percentual da CAPET (4,6963%), não o pleiteado (5,2826%)."]
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "89783521",
+    "deliberacao": null,
+    "reajuste_pct": 4.6963,
+    "observacao": "Número da deliberação em branco no texto ('Nº. ___'). Vigência a partir de 22/01/2025, desde que respeitado o prazo de 30 dias da publicação do quadro tarifário no Diário Oficial. Não é cautelar."
+  },
+  "insumos_do_pleito": [
+    "Planilha/memória de cálculo da variação do IPCA (set/2023 a out/2024)",
+    "Referência à página de downloads do IPCA no site do IBGE",
+    "Estrutura tarifária vigente (anexo 'Proposta de Estrutura Tarifária'), com tarifa social",
+    "Referência ao reajuste anterior (Deliberação AGENERSA nº 4.669/2023, 4,1338%, e reajuste provisório de 11,82% da Deliberação 4.495/2022)"
+  ],
+  "inconsistencias_textuais": [
+    "A Cláusula 18 manda usar a variação acumulada dos últimos 12 meses, mas pleito e CAPET acumulam desde agosto/2023 (mês final do reajuste anterior) até out/2024 e set/2024, respectivamente.",
+    "O pleito usou outubro (índice mais recente divulgado), enquanto a cláusula manda o quarto mês anterior à data do reajuste (setembro, para 22/01/2025).",
+    "A cláusula chama de 'fórmula paramétrica' uma fórmula de índice único.",
+    "O pleito cita a cláusula 18 dos aditivos de quatro municípios (Itaperuna, Varre-Sai, Mangaratiba e Laje do Muriaé) no início e de seis municípios adiante; o reajuste é aplicado aos 15 municípios, embora só seis tenham termo aditivo assinado.",
+    "No parecer, a linha da fórmula foi omitida (só aparece 'Em que:' e as definições); o quadro tarifário dos itens 5 e 6 não aparece no texto.",
+    "O anexo do pleito se intitula 'Proposta de Estrutura Tarifária', mas o quadro mostrado é a 'ESTRUTURA TARIFÁRIA VIGENTE'."
+  ],
+  "observacoes": "IPCA número-índice é série pública do IBGE, então o fator é automatizável. A dificuldade está na regra de período: a base é o mês final do último reajuste (ago/2023), não 12 meses corridos, e o mês final segue o 'quarto mês anterior' à data do reajuste, que é definida pela agência. Arredondamentos: IRC na sexta casa decimal; tarifa social na segunda casa e demais tarifas na sexta. O quadro tarifário reajustado não aparece no texto do parecer nem da deliberação (só o vigente, no anexo do pleito)."
+}

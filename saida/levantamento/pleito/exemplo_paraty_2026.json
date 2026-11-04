@@ -1,0 +1,48 @@
+{
+  "versao_layout": "0.1",
+  "contrato": {"numero": "008/2014", "versao_contratual": "3TA-2024"},
+  "concessionaria": {"nome": "Águas de Paraty", "cnpj": "00000000000000"},
+  "vigencia_pretendida": "2026-01-01",
+  "tarifa_em_vigor": {"vigente_desde": "2025-01-12", "ato": "Deliberação AGENERSA nº 4.857/2025"},
+  "periodo_referencia": {"o": "2024-10", "i": "2025-10"},
+  "componentes": [
+    {"sigla": "IMO", "codigo_serie": "159401", "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 1466.05}, {"mes": "2025-10", "valor": 1576.75}],
+     "evidencia": {"arquivo": "anexo_II_series_fgv.csv", "pagina": null, "extraido_em": null}},
+    {"sigla": "IEE", "codigo_serie": null, "fonte": "ANEEL",
+     "serie": [{"mes": "2024-10", "valor": 511.75}, {"mes": "2025-10", "valor": 471.91}],
+     "evidencia": {"arquivo": "anexo_III_energia.csv", "pagina": null, "extraido_em": null}},
+    {"sigla": "IPA", "codigo_serie": "1006819", "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 367.637}, {"mes": "2025-10", "valor": 356.857}],
+     "evidencia": {"arquivo": "anexo_II_series_fgv.csv", "pagina": null, "extraido_em": null}},
+    {"sigla": "IPQ", "codigo_serie": "1006820", "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 199.691}, {"mes": "2025-10", "valor": 209.255}],
+     "evidencia": {"arquivo": "anexo_II_series_fgv.csv", "pagina": null, "extraido_em": null}},
+    {"sigla": "IPC", "codigo_serie": null, "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 761.643}, {"mes": "2025-10", "valor": 789.092}],
+     "evidencia": {"arquivo": "anexo_II_series_fgv.csv", "pagina": null, "extraido_em": null}},
+    {"sigla": "ICC", "codigo_serie": "160868", "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 1149.17}, {"mes": "2025-10", "valor": 1222.36}],
+     "evidencia": {"arquivo": "anexo_II_series_fgv.csv", "pagina": null, "extraido_em": null}}
+  ],
+  "energia": {
+    "distribuidora": "não informada no processo",
+    "subgrupo": "A4", "modalidade": "Convencional", "posto": null,
+    "composicao": "não informada no processo",
+    "resolucoes": [{"reh": "não informada", "vigencia_inicio": "2025-03-15", "tusd_mwh": 0, "te_mwh": 0,
+                    "bandeira_mwh": null, "desconto_pct": null}]
+  },
+  "resultado_declarado": {
+    "ir_pct": 3.967,
+    "outros": [{"nome": "realinhamento", "parcela": 2, "pct": 2.72,
+                "ato": "3º Termo Aditivo; art. 18 da Deliberação AGENERSA nº 4.830/2024"}],
+    "total_pct": 6.795
+  },
+  "casas_decimais": {"indice": 3, "ir": 3, "tarifa": 4},
+  "publicacao": {"veiculo": "Diário do Vale", "data": "2025-11-30", "arquivo": "publicacao_jornal.pdf"},
+  "anexos": [
+    {"arquivo": "anexo_II_series_fgv.csv", "tipo": "séries de índices", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"arquivo": "anexo_III_energia.csv", "tipo": "tarifas de energia", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"},
+    {"arquivo": "publicacao_jornal.pdf", "tipo": "publicação da tabela", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"}
+  ]
+}

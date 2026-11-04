@@ -1,0 +1,177 @@
+{
+  "processo": "SEI-480002/000036/2023",
+  "concessionaria": "Concessionária Vale do Café",
+  "servico": "saneamento",
+  "servico_observacao": "resíduos sólidos (aterro sanitário, RSS, RCC, triagem, compostagem)",
+  "contrato": "Contrato de Concessão (número não citado no texto)",
+  "clausula_reajuste": "Cláusula Décima Sétima do Contrato de Concessão (reajuste anual pelo IPCA-E/IBGE); Parágrafo Primeiro (data-base)",
+  "vigencia_pretendida": "01/12/2023 (pleito e parecer CAPET); homologada para 01/01/2024",
+  "data_pleito": "11/10/2023 (Ofício CVC-067/2023 (CVC Nº 067-2023_0001), SEI 61434643)",
+  "data_recebimento_agenersa": "11/10/2023 ('recebido na AGENERSA no mesmo dia', doc 62049880)",
+  "formula": {
+    "texto": "Tcn = Tco * ( (IPCA-En/IPCA-Eo) - 1 )",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "doc_id": "62049880",
+    "componentes": [
+      {
+        "sigla": "IPCA-E",
+        "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+        "fonte": "IBGE",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "n = valor do IPCA-E publicado no mês de setembro da data prevista do reajuste; o = valor publicado no mês de setembro do último reajuste",
+        "doc_id": "62049880"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "62049880",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito (Ofício CVC-067/2023 (CVC Nº 067-2023_0001), SEI 61434643) — valores relatados no Parecer CAPET 230/2023",
+      "data": "11/10/2023",
+      "periodo_referencia": "setembro/2021 a setembro/2023 (24 meses)",
+      "valores": [],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "outra",
+      "divergencias": [],
+      "doc_pleito_citado": "61434643"
+    },
+    {
+      "doc_id": "62049880",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 230/2023",
+      "data": "24/10/2023",
+      "periodo_referencia": "set/2021 a set/2023",
+      "valores": [
+        {
+          "sigla": "IPCA-E",
+          "i_texto": "6.583,85",
+          "i": 6583.85,
+          "o_texto": "5.808,14",
+          "o": 5808.14,
+          "variacao_texto": null,
+          "variacao": null,
+          "peso_usado": null,
+          "observacao": "n = set/2023; o = set/2021"
+        }
+      ],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Item 5 dizia 'com divergências aos valores apresentados pela Delegatária', mas o item 4.2 diz que o índice coincide com o pleito; o item 5 foi retificado para 'sem divergências' pelo doc 63019045 (Parecer 230/2023 (retificação), 08/11/2023).",
+        "Período de 24 meses porque o pleito de janeiro de 2023 (Ofício CVC-003/23 (SEI 45747499), processo SEI-220007/000375/2023) não foi homologado."
+      ]
+    },
+    {
+      "doc_id": "66185664",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação AGENERSA Nº 4663, de 27/12/2023 (publicação no DOERJ de 29/12/2023)",
+      "data": "27/12/2023",
+      "periodo_referencia": "IPCA-E - PER.SET/2021 A SET/2023",
+      "valores": [
+        {
+          "sigla": "IPCA-E",
+          "i_texto": "6.583,85",
+          "i": 6583.85,
+          "o_texto": "5.808,14",
+          "o": 5808.14,
+          "variacao_texto": "13,3556%",
+          "variacao": 13.3556,
+          "peso_usado": null,
+          "observacao": "'(( 6.583,85/5.808,14)-1)=13,3556%'"
+        }
+      ],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Tabela publicada com rótulo 'VIGÊNCIA DEZ/2023', mas o Art. 1º homologa a partir de 01/01/2024."
+      ],
+      "tarifas_homologadas": [
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DO ATERRAMENTO SANITÁRIO",
+          "unidade": "T",
+          "preco_texto": "R$ 102,38",
+          "preco": 102.38
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE RSS",
+          "unidade": "T",
+          "preco_texto": "R$ 4.767,07",
+          "preco": 4767.07
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE RCC",
+          "unidade": "T",
+          "preco_texto": "R$ 21,48",
+          "preco": 21.48
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DA E.T. DE VALENÇA E TRANSPORTE PARA O CTDR VASSOURAS",
+          "unidade": "T",
+          "preco_texto": "R$ 94,87",
+          "preco": 94.87
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DA E.T. DE BARRA DO PIRAÍ E TRANSPORTE PARA O CTDR VASSOURAS",
+          "unidade": "T",
+          "preco_texto": "R$ 69,50",
+          "preco": 69.5
+        },
+        {
+          "servico": "GERENCIAMENTO INTEGRADO E EDUCAÇÃO AMBIENTAL",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 28.839,04",
+          "preco": 28839.04
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE DE TRIAGEM E APOIO A COLETIVA SELETIVA",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 20.727,79",
+          "preco": 20727.79
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE DE COMPOSTAGEM",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 11.182,48",
+          "preco": 11182.48
+        }
+      ]
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "66185664",
+    "deliberacao": "4663/2023 (minuta sem número: doc 65986005)",
+    "reajuste_pct": 13.3556,
+    "observacao": "Vigência a partir de 01/01/2024. Art. 2º manda a CAPET apurar possível desequilíbrio pela não aplicação do reajuste em 2023 e calcular a compensação no processo revisional; Art. 3º aplica advertência por não cooperar no processo do pleito anterior. Não é cautelar."
+  },
+  "insumos_do_pleito": [
+    "Ofício CVC-067/2023 (CVC Nº 067-2023_0001) (SEI 61434643) — conteúdo não consta do dump",
+    "Pleito anterior de janeiro de 2023: Ofício CVC-003/23 (SEI 45747499), processo SEI-220007/000375/2023 (não homologado)"
+  ],
+  "inconsistencias_textuais": [
+    "A fórmula escrita 'Tcn = Tco * ((IPCA-En/IPCA-Eo) - 1)' daria só o acréscimo, não a tarifa reajustada (faltaria '1 +' ou retirar o '- 1'); o cálculo usa a expressão como percentual de reajuste.",
+    "A fórmula manda usar setembro 'do último reajuste' (set/2021), mas o período acumulado de 24 meses decorre do reajuste de 2023 não homologado.",
+    "Vigência: 01/12/2023 no pleito e no parecer CAPET; 01/01/2024 na deliberação; 'VIGÊNCIA DEZ/2023' no cabeçalho da tabela publicada.",
+    "Item 5 do parecer 230/2023 ('com divergências') contradiz o item 4.2 ('coincide'); retificado pelo doc 63019045.",
+    "O parecer chama o reajuste ordinário de 'realinhamento tarifário' (item 6).",
+    "A cláusula exige data-base na apresentação da Proposta Financeira, mas na prática se adota dezembro desde 2017 (item 2.1).",
+    "O doc publicado (SEI 66185664) é a página do DOERJ, com as Deliberações 4662, 4663 e 4664 e uma portaria intercaladas pelo OCR; a tabela de preços tem de ser atribuída à concessionária certa.",
+    "O documento de retificação (doc 63019045) traz no cabeçalho o mesmo número (230/2023) e a data (24/10/2023) do parecer retificado, embora assinado em 08/11/2023."
+  ],
+  "observacoes": "É o caso mais simples de automatizar: índice único, série pública do IBGE (o IPCA-E é trimestral; o texto não cita código de série) e preços unitários por serviço. Dificuldades: (1) a tarifa vigente (Tco) não aparece no texto, porque o último reajuste homologado não está no dump; (2) o mês de referência é setembro, já que dezembro ainda não estaria divulgado na data-limite, e isso diverge da data-base contratual; (3) o acúmulo de 24 meses por pleito anterior não homologado exige guardar o histórico de homologações; (4) a deliberação assinada não traz a tabela no texto, que só aparece na publicação do DOERJ misturada com outras deliberações."
+}

@@ -1,0 +1,10 @@
+# fora do git: caches, textos de contrato com assinaturas, pareceres com nome de avaliador
+dados/
+saida/pareceres/
+__pycache__/
+*.pyc
+.env
+.env.*
+~$*
+.pytest_cache/
+.claude/settings.local.json

@@ -1,0 +1,96 @@
+{
+  "_leia": "Define as versões de leitura do pacote: o que vira PDF, para quem e com que nome. Lido por scripts/gerar_documentos.py. Nomes de arquivo: NN_Palavras_com_sublinhado, sem acento e sem espaço; a versão vai na capa e no rodapé, nunca no nome.",
+  "sistema": "Reajusta",
+  "titulo_pacote": "Especificação do sistema Reajusta",
+  "subtitulo": "Sistema de reajuste tarifário anual das concessões de saneamento",
+  "orgao": "AGENERSA",
+  "versao": "1.0",
+  "situacao": "Minuta para avaliação",
+  "palavras_por_minuto": 150,
+  "termos_bloqueados": ["\\b(?:feit|gerad|escrit|produzid|elaborad|redigid)[oa]s? (?:\\w+ ){0,2}(?:por|com) (?:a )?(?:IA|intelig[eê]ncia artificial)\\b"],
+  "capitulos": [
+    {"id": "01", "fonte": ["especificacao/01_VISAO_ESCOPO.md"], "arquivo": "01_Visao_e_escopo", "titulo": "Visão, escopo e identificadores"},
+    {"id": "02", "fonte": ["especificacao/02_PERFIS_E_JORNADAS.md"], "arquivo": "02_Perfis_e_jornadas", "titulo": "Perfis de usuário e jornadas"},
+    {"id": "03", "fonte": ["especificacao/03_REQUISITOS.md"], "arquivo": "03_Requisitos", "titulo": "Requisitos"},
+    {"id": "04", "fonte": ["especificacao/04_CASOS_DE_USO.md"], "arquivo": "04_Casos_de_uso", "titulo": "Casos de uso"},
+    {"id": "05", "fonte": ["especificacao/05_ARQUITETURA.md", "especificacao/adr/*.md"], "arquivo": "05_Arquitetura_e_decisoes", "titulo": "Arquitetura e decisões registradas"},
+    {"id": "06", "fonte": ["especificacao/06_MODELO_DADOS.md"], "arquivo": "06_Modelo_de_dados", "titulo": "Modelo de dados"},
+    {"id": "07", "fonte": ["especificacao/07_CONTRATOS_API.md"], "arquivo": "07_Contratos_e_API", "titulo": "Contratos de dados e API"},
+    {"id": "08", "fonte": ["especificacao/08_REGRAS_NEGOCIO.md"], "arquivo": "08_Regras_de_negocio", "titulo": "Regras de negócio"},
+    {"id": "09", "fonte": ["especificacao/09_INTEGRACOES.md"], "arquivo": "09_Integracoes", "titulo": "Integrações"},
+    {"id": "10", "fonte": ["especificacao/10_UX_UI.md"], "arquivo": "10_Experiencia_e_interface", "titulo": "Experiência do usuário e interface"},
+    {"id": "11", "fonte": ["especificacao/11_TELAS.md"], "arquivo": "11_Telas", "titulo": "Telas"},
+    {"id": "12", "fonte": ["especificacao/12_TESTES.md"], "arquivo": "12_Testes_de_aceitacao", "titulo": "Testes de aceitação"},
+    {"id": "13", "fonte": ["especificacao/13_BACKLOG.md"], "arquivo": "13_Backlog_e_entregas", "titulo": "Backlog e entregas"},
+    {"id": "14", "fonte": ["especificacao/14_OPERACAO.md"], "arquivo": "14_Operacao", "titulo": "Operação, acesso e LGPD"},
+    {"id": "15", "fonte": ["especificacao/15_SEGURANCA.md"], "arquivo": "15_Seguranca", "titulo": "Segurança"},
+    {"id": "16", "fonte": ["docs/LEVANTAMENTO_MOTOR_CALCULO.md"], "arquivo": "16_Levantamento_dos_calculos", "titulo": "Levantamento dos cálculos da coorte"},
+    {"id": "17", "fonte": ["docs/ESPECIFICACAO_DADOS_PLEITO.md"], "arquivo": "17_Layout_e_validacao_do_pleito", "titulo": "Layout e validação do pleito"}
+  ],
+  "cadernos": [
+    {
+      "arquivo": "01_Caderno_Gestao",
+      "titulo": "Caderno da gestão",
+      "publico": "Conselho-Diretor e gestor do processo",
+      "o_que_avaliar": [
+        "O problema e as metas descritos são os que a agência quer resolver?",
+        "O escopo de cada entrega (R1, R2, R3) está na ordem certa de prioridade?",
+        "As jornadas descrevem como o trabalho deve acontecer depois do sistema?",
+        "Quem decide cada uma das decisões pendentes, e até quando?"
+      ],
+      "capitulos": ["01", "02", "13"]
+    },
+    {
+      "arquivo": "02_Caderno_Area_Tecnica",
+      "titulo": "Caderno da área técnica",
+      "publico": "Área técnica responsável pelo cálculo e pela análise do pleito",
+      "o_que_avaliar": [
+        "Cada requisito e cada regra de negócio está correto e completo?",
+        "Os casos reais usados como teste têm o resultado esperado certo?",
+        "As telas mostram o que o analista precisa para decidir?",
+        "O layout do pleito pede tudo o que a análise usa, e só isso?"
+      ],
+      "capitulos": ["03", "04", "08", "11", "12", "16", "17"]
+    },
+    {
+      "arquivo": "03_Caderno_Procuradoria",
+      "titulo": "Caderno da Procuradoria",
+      "publico": "Procuradoria e área jurídica",
+      "o_que_avaliar": [
+        "A base legal citada sustenta cada exigência feita ao regulado?",
+        "Os prazos e marcos seguem a norma e o contrato?",
+        "Que instrumento torna o layout do pleito obrigatório?",
+        "O tratamento de dados pessoais atende à LGPD?"
+      ],
+      "capitulos": ["01", "08", "14", "17"]
+    },
+    {
+      "arquivo": "04_Caderno_TI",
+      "titulo": "Caderno da TI",
+      "publico": "Tecnologia da informação e segurança",
+      "o_que_avaliar": [
+        "A arquitetura e as tecnologias escolhidas são sustentáveis pela agência?",
+        "As integrações (SEI, séries públicas, base normativa) são viáveis como descritas?",
+        "Os requisitos de segurança, operação e cópia de segurança são suficientes?",
+        "Onde o sistema vai rodar e quem o mantém?"
+      ],
+      "capitulos": ["05", "06", "07", "09", "10", "14", "15"]
+    }
+  ],
+  "itens_avaliaveis": {
+    "RF": "03", "RNF": "03", "UC": "04", "RN": "08", "DEC": "08", "INT": "09",
+    "TL": "11", "AT": "12", "HIS": "13", "SEG": "15"
+  },
+  "decisoes_pendentes": {"fonte": "especificacao/README.md", "secao": "PARADA 11"},
+  "prototipo": "especificacao/prototipos/wireframes.html",
+  "descricao_saida": [
+    ["saida/levantamento/calculo/extracao_*.json", "Fórmula, pesos e números de cada apuração, copiados das peças do processo (sem cálculo)", "Área técnica"],
+    ["saida/levantamento/calculo/recalculo.csv", "Recálculo de cada apuração pelos números-índice e pelas variações escritas", "Área técnica"],
+    ["saida/levantamento/calculo/componentes.csv", "Fonte de cada componente da fórmula e se o número-índice foi achado na série pública", "Área técnica e TI"],
+    ["saida/levantamento/calculo/resumo.json", "Contagens do levantamento (cálculos que conferem, índices achados)", "Todos"],
+    ["saida/levantamento/contratos/*.json", "Cadastro de parâmetros do contrato-piloto, cada um com o trecho literal do contrato", "Área técnica e Procuradoria"],
+    ["saida/levantamento/pleito/pleito_reajuste.schema.json", "Layout do pleito (JSON Schema)", "TI e área técnica"],
+    ["saida/levantamento/pleito/exemplo_*.validacao.json", "Resultado das regras V01 a V12 no pleito real", "Área técnica"],
+    ["saida/levantamento/pleito/exemplo_*.json", "Pleito real escrito no layout", "Área técnica e TI"]
+  ]
+}

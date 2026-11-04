@@ -1,0 +1,82 @@
+{
+  "contrato": "Contrato de Concessão nº 008/2014",
+  "concessionaria": "Águas de Paraty",
+  "servico": "saneamento",
+  "situacao": "rascunho para validação com a CAPET",
+  "versoes": [
+    {
+      "versao": "contrato-2014",
+      "vigente_desde": null,
+      "ato": "Contrato de Concessão nº 008/2014, cláusula 20; Anexo X (Proposta Comercial)",
+      "periodicidade_meses": 12,
+      "formula": {
+        "tipo": "parametrica_ponderada",
+        "expressao": "IR = Σ Pk × (Ik_i − Ik_o) / Ik_o",
+        "mes_referencia": {"regra": "meses_antes_da_vigencia", "meses": 3,
+                           "i": "nova tarifa", "o": "tarifa em vigor"},
+        "casas_decimais_ir": 3,
+        "componentes": [
+          {"sigla": "IMO", "peso": 0.1951, "fonte": "FGV", "codigo_serie": "159401",
+           "indice": "ICC — Rio de Janeiro — Mão de Obra"},
+          {"sigla": "IEE", "peso": 0.0974, "fonte": "ANEEL", "codigo_serie": null,
+           "indice": "Tarifa de energia elétrica, Grupo A Convencional, subgrupo A4 (2,3 kV a 25 kV), valor de consumo em MWh, da concessionária de energia local",
+           "pendencia": "composição exata (TUSD + TE, tributos, bandeira) a confirmar com a CAPET; pedido de alteração do IEE (SEI-480002/003110/2024) remetido à revisão ordinária pelo art. 16 da Deliberação 4.830/2024"},
+          {"sigla": "IPA", "peso": 0.1082, "fonte": "FGV", "codigo_serie": "1006819",
+           "indice": "IPA — Origem — OG-DI — Produtos Industriais — Indústria de Transformação — Produtos Derivados do Petróleo e Álcool"},
+          {"sigla": "IPQ", "peso": 0.0405, "fonte": "FGV", "codigo_serie": "1006820",
+           "indice": "IPA — Origem — OG-DI — Produtos Industriais — Indústria de Transformação — Produtos Químicos"},
+          {"sigla": "IPC", "peso": 0.0662, "fonte": "FGV", "codigo_serie": null,
+           "indice": "IPC — Brasil — Geral — Índice de Preços ao Consumidor", "serie_publica": "IPEADATA IGP12_IPC12"},
+          {"sigla": "ICC", "peso": 0.4925, "fonte": "FGV", "codigo_serie": "160868",
+           "indice": "INCC — Índice Nacional de Preços da Construção Civil", "serie_publica": "IPEADATA IGP12_INCC12"}
+        ],
+        "observacao_pesos": "O Anexo X declara que os pesos somam 1,000; a soma dos seis valores escritos é 0,9999. O cálculo usa os pesos como escritos."
+      },
+      "fontes": [
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "periodicidade",
+         "trecho": "serão reajustados a cada período de 12 (doze) meses"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "mes_referencia",
+         "trecho": "correspondente, quando do cálculo dos posteriores reajustes, ao terceiro mês anterior ao da data de início de vigência da tarifa em vigor"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "IMO.codigo_serie",
+         "trecho": "Mão de Obra (159401)"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "IEE.indice",
+         "trecho": "IEFi: é o valor da tarifa de energia elétrica referente ao"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "IPA.codigo_serie",
+         "trecho": "Produtos Derivados do Petróleo e Álcool (1006819)"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "IPQ.codigo_serie",
+         "trecho": "Produtos Químicos (1006820)"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "IPC.indice",
+         "trecho": "IPC — Brasil — Geral — Índice de Preços ao Consumidor"},
+        {"documento": "contrato-concessao-aguas-paraty.txt", "parametro": "ICC.codigo_serie",
+         "trecho": "INCC — Índice Nacional de Preços da Construção Civil (160868)"},
+        {"documento": "Paraty-Anexo-X.txt", "parametro": "pesos",
+         "trecho": "são P1 = 0,1951 (zero vírgula um nove cinco um); P2 = 0,0974 (zero vírgula zero nove sete quatro); P3 = 0,1082 (zero vírgula um zero oito dois); P4 = 0,0405 (zero vírgula zero quatro zero cinco); P5 = 0,0662 (zero vírgula zero seis seis dois) e P6 = 0,4925 (zero vírgula quatro nove dois cinco)"}
+      ]
+    },
+    {
+      "versao": "3TA-2024",
+      "vigente_desde": "2024-12-16",
+      "ato": "3º Termo Aditivo (Paraty, 16/12/2024), cláusula quarta, em cumprimento à Deliberação AGENERSA nº 4.830/2024",
+      "herda": "contrato-2014",
+      "combinacao": "multiplicativa",
+      "realinhamento": [
+        {"parcela": 1, "referencia": "2025-01", "pct": 6.30},
+        {"parcela": 2, "referencia": "2026-01", "pct": 2.72},
+        {"parcela": 3, "referencia": "2027-01", "pct": 2.72},
+        {"parcela": 4, "referencia": "2028-01", "pct": 2.72},
+        {"parcela": 5, "referencia": "2029-01", "pct": 2.72},
+        {"parcela": 6, "referencia": "2030-01", "pct": 2.72},
+        {"parcela": 7, "referencia": "2031-01", "pct": 2.72}
+      ],
+      "observacao": "A cláusula diz que as parcelas são aplicadas cumulativamente ao reajuste ordinário; nos ciclos de 2025 e 2026 o total deliberado fecha pelo produto (1 + IR) × (1 + parcela) − 1. O cronograma segue além de 2031 no aditivo; aqui só até a 7ª parcela.",
+      "fontes": [
+        {"documento": "TerceiroTermoAditivo-Paraty.txt", "parametro": "combinacao",
+         "trecho": "que serão aplicados cumulativamente ao reajuste ordinário anual"},
+        {"documento": "TerceiroTermoAditivo-Paraty.txt", "parametro": "realinhamento.1",
+         "trecho": "1º: a partir da referência janeiro de 2025 — 6,30%"},
+        {"documento": "TerceiroTermoAditivo-Paraty.txt", "parametro": "realinhamento.2",
+         "trecho": "2º: a partir da referência janeiro de 2026 — 2,72%"}
+      ]
+    }
+  ]
+}

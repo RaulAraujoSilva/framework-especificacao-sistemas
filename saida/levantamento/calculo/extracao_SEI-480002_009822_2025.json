@@ -1,0 +1,119 @@
+{
+  "processo": "SEI-480002/009822/2025",
+  "concessionaria": "Águas da Imperatriz (Teresópolis; proposta comercial da Águas do Brasil SPE V S.A.)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão 067.001.2023 (Edital 002/2023); Primeiro Termo Aditivo, firmado em junho de 2024 (doc 90305395) e homologado pela Deliberação CODIR nº 4.830/2024 (doc 90451187)",
+  "clausula_reajuste": "Cláusula 28 do Contrato de Concessão e Anexo IV (Fatores de Ponderação para Reajuste das Tarifas) do Edital; realinhamento: Cláusula Quarta do Primeiro Termo Aditivo",
+  "vigencia_pretendida": "01/01/2026",
+  "data_pleito": "11/11/2025",
+  "data_recebimento_agenersa": "12/11/2025 (data do documento no SEI)",
+  "formula": {
+    "texto": "IR = [P1 x (IMOi − IMOo)/IMOo + P2 x (IEEi − IEEo)/IEEo + P3 x (IPAi − IPAo)/IPAo + P4 x (IPQi − IPQo)/IPQo + P5 x (IPCi − IPCo)/IPCo + P6 x (ICCi − ICCo)/ICCo]",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "multiplicativa",
+    "componentes": [
+      {"sigla": "IMO", "indice": "ICC - Mão de Obra (CAPET) / INCC-DI - Mão de Obra (pleito)", "fonte": "FGV", "codigo_serie": "160906",
+       "peso_texto": "0,200", "peso": 0.2, "regra_data": "3º mês anterior ao da data de início da nova tarifa (i); 3º mês anterior ao mês de início de vigência da tarifa em vigor nos reajustes posteriores ao primeiro (o)", "doc_id": "119567172"},
+      {"sigla": "IEE", "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh, praticada pela concessionária de energia local", "fonte": "ANEEL", "codigo_serie": null,
+       "peso_texto": "0,1930", "peso": 0.193, "regra_data": "3º mês anterior ao mês de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "119567172"},
+      {"sigla": "IPA", "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool", "fonte": "FGV", "codigo_serie": "1006819",
+       "peso_texto": "0,0890", "peso": 0.089, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "119567172"},
+      {"sigla": "IPQ", "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos", "fonte": "FGV", "codigo_serie": "1006820",
+       "peso_texto": "0,0330", "peso": 0.033, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "119567172"},
+      {"sigla": "IPC", "indice": "IPC/BR-DI - Brasil - Geral - Índice de Preços ao Consumidor", "fonte": "FGV", "codigo_serie": "1390594",
+       "peso_texto": "0,2120", "peso": 0.212, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "119567172"},
+      {"sigla": "ICC", "indice": "INCC - Índice Nacional de Preços da Construção Civil", "fonte": "FGV", "codigo_serie": "160868",
+       "peso_texto": "0,2730", "peso": 0.273, "regra_data": "3º mês anterior ao da data de início de vigência da nova tarifa (i) / da tarifa em vigor (o)", "doc_id": "119567172"}
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "118742802",
+      "emissor": "concessionária",
+      "tipo_doc": "Ofício DIR nº 661/2025 com Anexo I (memória de cálculo), Anexo II (índices FGV), Anexo III (variação do índice de energia) e Anexo IV (resoluções ANEEL)",
+      "data": "11/11/2025",
+      "periodo_referencia": "Outubro/24 e Outubro/25",
+      "valores": [
+        {"sigla": "IMO", "i_texto": "1605,115", "i": 1605.115, "o_texto": "1466,616", "o": 1466.616, "variacao_texto": "9,44%", "variacao": 0.0944, "peso_usado": 0.2, "variacao_ponderada_texto": "1,89%"},
+        {"sigla": "IEE", "i_texto": "471,91", "i": 471.91, "o_texto": "511,75", "o": 511.75, "variacao_texto": "-7,79% (Anexo III: -7,785%)", "variacao": -0.0779, "peso_usado": 0.193, "variacao_ponderada_texto": "-1,50%"},
+        {"sigla": "IPA", "i_texto": "356,857", "i": 356.857, "o_texto": "367,637", "o": 367.637, "variacao_texto": "-2,93%", "variacao": -0.0293, "peso_usado": 0.089, "variacao_ponderada_texto": "-0,26%"},
+        {"sigla": "IPQ", "i_texto": "209,255", "i": 209.255, "o_texto": "199,691", "o": 199.691, "variacao_texto": "4,79%", "variacao": 0.0479, "peso_usado": 0.033, "variacao_ponderada_texto": "0,16%"},
+        {"sigla": "IPC", "i_texto": "789,092", "i": 789.092, "o_texto": "761,643", "o": 761.643, "variacao_texto": "3,60%", "variacao": 0.036, "peso_usado": 0.212, "variacao_ponderada_texto": "0,76%"},
+        {"sigla": "ICC", "i_texto": "1222,356", "i": 1222.356, "o_texto": "1149,17", "o": 1149.17, "variacao_texto": "6,37%", "variacao": 0.0637, "peso_usado": 0.273, "variacao_ponderada_texto": "1,74%"}
+      ],
+      "ir_texto": "2,79%",
+      "ir_pct": 2.79,
+      "outros_componentes": [
+        {"nome": "realinhamento", "descricao": "Segunda parcela (segundo degrau) do realinhamento tarifário da Cláusula Quarta do Primeiro Termo Aditivo, aplicada cumulativamente: [(1 + 0,0279) x (1 + 0,0363) – 1]", "valor_texto": "3,63%", "valor_pct": 3.63}
+      ],
+      "reajuste_total_texto": "6,52%",
+      "reajuste_total_pct": 6.52,
+      "conclusao": "outra",
+      "divergencias": []
+    },
+    {
+      "doc_id": "119567172",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET nº 329/2025",
+      "data": "26/11/2025",
+      "periodo_referencia": "outubro/2024 a outubro/2025",
+      "valores": [
+        {"sigla": "IMO", "i_texto": "1605,115", "i": 1605.115, "o_texto": "1466,616", "o": 1466.616, "variacao_texto": "0,0944", "variacao": 0.0944, "peso_usado": 0.2},
+        {"sigla": "IEE", "i_texto": "471,91", "i": 471.91, "o_texto": "511,75", "o": 511.75, "variacao_texto": "-0,0779", "variacao": -0.0779, "peso_usado": 0.193},
+        {"sigla": "IPA", "i_texto": "356,857", "i": 356.857, "o_texto": "367,637", "o": 367.637, "variacao_texto": "-0,0293", "variacao": -0.0293, "peso_usado": 0.089},
+        {"sigla": "IPQ", "i_texto": "209,255", "i": 209.255, "o_texto": "199,691", "o": 199.691, "variacao_texto": "0,0479", "variacao": 0.0479, "peso_usado": 0.033},
+        {"sigla": "IPC", "i_texto": "789,092", "i": 789.092, "o_texto": "761,643", "o": 761.643, "variacao_texto": "0,0360", "variacao": 0.036, "peso_usado": 0.212},
+        {"sigla": "ICC", "i_texto": "1222,356", "i": 1222.356, "o_texto": "1149,17", "o": 1149.17, "variacao_texto": "0,0637", "variacao": 0.0637, "peso_usado": 0.273}
+      ],
+      "ir_texto": "2,79%",
+      "ir_pct": 2.79,
+      "outros_componentes": [
+        {"nome": "realinhamento", "descricao": "Parcela de realinhamento tarifário do Primeiro Termo Aditivo (chamada de '1° parcela' no item 5.2), aplicada como IR = {(1+2,79%)x(1+3,63%) -1}", "valor_texto": "3,63%", "valor_pct": 3.63}
+      ],
+      "reajuste_total_texto": "6,52%",
+      "reajuste_total_pct": 6.52,
+      "conclusao": "confirma o pleito",
+      "divergencias": []
+    },
+    {
+      "doc_id": "125754701",
+      "emissor": "Conselho",
+      "tipo_doc": "Publicação no DOERJ de 26/02/2026 da Deliberação AGENERSA nº 4995",
+      "data": "03/02/2026 (publicada em 26/02/2026)",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [],
+      "reajuste_total_texto": "6,52%",
+      "reajuste_total_pct": 6.52,
+      "conclusao": "confirma o pleito",
+      "divergencias": []
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "125754701",
+    "deliberacao": "4995",
+    "reajuste_pct": 6.52,
+    "observacao": "Ratifica decisão da 19ª Reunião Interna; homologação definitiva, observada antecedência mínima de 30 dias da publicação. Minuta sem número: doc 124416062. Tabela publicada com tarifas de água e esgoto, incluindo a categoria Pequeno Comércio (limitada a 10 m³)."
+  },
+  "insumos_do_pleito": [
+    "Memória de cálculo (Anexo I), com variação, peso e variação ponderada por insumo",
+    "Série mensal out/24 a out/25 dos índices FGV: INCC-DI Mão de Obra, INCC, IPA origem Derivados de Petróleo e Álcool, IPA origem Produtos Químicos, IPC-Brasil Geral (Anexo II)",
+    "Cálculo do índice de energia com TUSD e TE da tarifa A4 Azul Fora de Ponta mais bandeira tarifária (Anexo III)",
+    "Resoluções Homologatórias ANEEL nº 3.312/2024 e nº 3.435/2025 da Enel Distribuição Rio (Anexo IV e docs 118742803 e 118742805)",
+    "Cálculo da TRA para janeiro/2026: R$ 4,9603/m³ x (1 + 6,52%) = R$ 5,2837/m³",
+    "Nenhuma tabela tarifária completa foi encaminhada (item 1.4 do parecer)"
+  ],
+  "inconsistencias_textuais": [
+    "O índice de energia é definido como tarifa 'Grupo A - Convencional, Sub-Grupo A4 - Valor de consumo', mas o pleito calcula com a modalidade A4 Azul Fora de Ponta (TUSD + TE) mais bandeira tarifária vermelha (patamar 2, 78,77, em out/2024; patamar 1, 44,63, em out/2025); a CAPET aceita sem comentar.",
+    "No Anexo III extraído, os rótulos das resoluções e meses aparecem deslocados em relação aos valores; pelos valores das tabelas das resoluções (TUSD 153,49 e TE 279,49 constam da RH 3.312/2024), 511,75 corresponde a out/2024 e 471,91 a out/2025.",
+    "Pleito chama a parcela de realinhamento de 'segunda parcela'/'segundo degrau'; o item 5.2 do parecer diz '1° parcela'.",
+    "A fórmula do pleito, como extraída, não tem o sinal '+' entre o termo de P1 e o de P2; o parecer da CAPET não reproduz a fórmula (só 'Onde:' e as definições).",
+    "Nome do IMO: 'ICC - Mão de Obra - (160906)' no parecer e 'INCC-DI - Mão de Obra' no pleito; o processo da Águas da Condessa chama a mesma série 160906 de 'INCC - Mão de Obra'.",
+    "O pleito calcula TRA de R$ 5,2837/m³, e a tabela deliberada traz 5,2836 para Domiciliar 0 a 15 m³ (água).",
+    "O item 4 do parecer anuncia a subcláusula II da Cláusula Quarta do aditivo, mas o texto dela não aparece.",
+    "Variações e IR com poucas casas (4 casas nas variações, IR de 2,79% com 2 casas), o que limita a conferência exata."
+  ],
+  "observacoes": "Único processo do lote com o pleito completo no arquivo: traz índices mensais, memória de cálculo e as resoluções ANEEL usadas. Dificuldades: (1) o IEE não é série pronta: precisa da resolução homologatória ANEEL da distribuidora local (Enel RJ), da escolha de modalidade e posto (o pleito usa A4 Azul Fora de Ponta, não a 'Convencional' do contrato) e do valor da bandeira tarifária do mês, que vem de ato separado da ANEEL e não está juntado; (2) as séries FGV (160906, 1006819, 1006820, 1390594, 160868) não estão em portal aberto; (3) a concessionária não enviou a tabela tarifária, que só aparece na deliberação publicada; (4) o realinhamento é parcela fixa do aditivo, com cronograma próprio; (5) a tabela no DOERJ vem com espaços dentro dos números ('11 , 6 2 3 8') e repetida várias vezes na extração."
+}

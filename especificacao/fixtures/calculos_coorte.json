@@ -1,0 +1,2331 @@
+{
+ "versao": "1",
+ "descricao": "Apurações completas da coorte do P01 (28), recalculadas pelo oráculo: entradas, IR e total esperados e classificação. Fonte dos testes AT-01 a AT-04 de especificacao/12_TESTES.md.",
+ "regra": {
+  "ir_parametrica": "IR = 100 × Σ peso_k × termo_k, com termo_k = i/o − 1 (numeros_indice) ou a variação escrita (variacoes)",
+  "ir_indice_unico": "IR = 100 × termo do componente principal",
+  "total_pelo_produto": "100 × ((1 + IR_escrito/100) × Π (1 + outro/100) − 1)",
+  "tolerancia_pp": 0.01,
+  "classificacao": "ok se |ir_recalculado_pct − ir_escrito_pct| ≤ tolerancia_pp, sem arredondar antes",
+  "base_conferencia": "numeros_indice quando todos os componentes têm i e o; senão variacoes",
+  "total_conferivel": "o total só é conferido quando há outros componentes e fecha pelo produto (regra_total multiplicativa)"
+ },
+ "origem": {
+  "oraculo": "scripts/recalcular_reajuste.py",
+  "arquivos": {
+   "saida/levantamento/calculo/extracao_SEI-220007_001126_2023.json": "fd20ef78e5e3be1d15af6a3b1eb6aa7ca34ae6a7bc038bef933a29fc80521f3b",
+   "saida/levantamento/calculo/extracao_SEI-220007_004053_2022.json": "49a4f6658b56e1a7fd2dbdfb467d59ec50db359a3316dcd42b7ac10638245bce",
+   "saida/levantamento/calculo/extracao_SEI-220007_004205_2022.json": "e718febf6c343664ccef7956e7a72f99327be0a86f7c340a42308b98d5fb53ce",
+   "saida/levantamento/calculo/extracao_SEI-220007_004207_2022.json": "6bb322bcd08e884f306e4a826c49ed907de05513adbb63b85938f1a628f37f9e",
+   "saida/levantamento/calculo/extracao_SEI-480002_000036_2023.json": "997878277bc51502bd6e05f58395982fef787eb50498e811b9d29891959e43e0",
+   "saida/levantamento/calculo/extracao_SEI-480002_000037_2023.json": "00a45568d671fd0ff36eb16527d6bc129113f6fa6016854356401ab5a4ab4a6f",
+   "saida/levantamento/calculo/extracao_SEI-480002_001912_2024.json": "0f06a5d6869b6abcc2f51aa3da9e91cc04f1dc0a263e8c94aad0fe9ff80ea77a",
+   "saida/levantamento/calculo/extracao_SEI-480002_001913_2024.json": "6c65c01b7c80c43289539a1d2c45a02433bfa6242a72590862053740e4c98c2f",
+   "saida/levantamento/calculo/extracao_SEI-480002_001914_2024.json": "f5a7707af4f29d1511b59aeee2e9b0275366d5efa16c53aa121a29fcb3733643",
+   "saida/levantamento/calculo/extracao_SEI-480002_007635_2024.json": "f67edeee2b8e76e59ec30b80ec99ec24d893ef076fbd7bd7f4bc49893ea3288b",
+   "saida/levantamento/calculo/extracao_SEI-480002_007637_2024.json": "6cfede150d80ec5adab65ee52630c4bcd1d18933eaa16d437b818ffce66b6d4b",
+   "saida/levantamento/calculo/extracao_SEI-480002_007639_2024.json": "30d7880b5f28e5c699e96cf093341a96ecc85a1ab4944a0fa18adc2371d663ec",
+   "saida/levantamento/calculo/extracao_SEI-480002_009058_2025.json": "f126fccdd362a52259037be64406f0956f3fa966e9860bbb25a2a8e3994a8fd7",
+   "saida/levantamento/calculo/extracao_SEI-480002_009594_2025.json": "6baedb097ae40957e7e738d95f3574f59a0d52631889491fb7697f1d1ffd07f5",
+   "saida/levantamento/calculo/extracao_SEI-480002_009822_2025.json": "d2fb65647d78e2f067d8fc2fdc85cd56be6f953cc9b81f8c8c9d90f6b7fabc67",
+   "saida/levantamento/calculo/extracao_SEI-480002_009837_2025.json": "b9214ed0429b8af0299cf5401df3e00979f324cf147b18b3c3fcc4108757525d",
+   "saida/levantamento/calculo/extracao_SEI-480002_009940_2024.json": "b454c4879cf4a918278a5e10ad299ccb3a7c3cff57c83d40478ee21cef903884",
+   "saida/levantamento/calculo/extracao_SEI-480002_009982_2025.json": "c5651aab110ac793ae0df06f2e6abfa1b1ee95cede5581b24cb40cf2e6ebc2b2",
+   "saida/levantamento/calculo/recalculo.csv": "e86cfd9d4e0de5be9dc7b813e49d30a3bfe6f3c552b99798e9d3071646282f95",
+   "saida/levantamento/calculo/resumo.json": "f283fa434e5254593416d4fc63bc70e02a2e48925ae207363da64d8da1c58c60"
+  }
+ },
+ "contagens": {
+  "casos": 28,
+  "ok": 24,
+  "divergentes": 4
+ },
+ "casos": [
+  {
+   "id": "SEI-220007/004053/2022#43014673",
+   "processo": "SEI-220007/004053/2022",
+   "doc": "43014673",
+   "emissor": "CAPET",
+   "concessionaria": "Águas de Paraty",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "outubro/2021 a outubro/2022",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IMO",
+      "sigla_no_texto": "IMO",
+      "indice": "ICC - Mão de Obra - Rio de Janeiro",
+      "peso": 0.1951,
+      "principal": null,
+      "o": 1166.087,
+      "o_texto": "1166,087",
+      "i": 1293.443,
+      "i_texto": "1293,443",
+      "variacao": 0.10922,
+      "variacao_texto": "0,10922"
+     },
+     {
+      "sigla": "IEE",
+      "sigla_no_texto": "IEE",
+      "indice": "Tarifa de energia elétrica \"Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh\", praticada",
+      "peso": 0.0974,
+      "principal": null,
+      "o": 500.1306,
+      "o_texto": "500,1306",
+      "i": 458.1407,
+      "i_texto": "458,1407",
+      "variacao": -0.0085,
+      "variacao_texto": "-0,0085"
+     },
+     {
+      "sigla": "IPA",
+      "sigla_no_texto": "IPA",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação – Produtos Derivados do Petróleo e Álcool",
+      "peso": 0.1082,
+      "principal": null,
+      "o": 362.733,
+      "o_texto": "362,733",
+      "i": 450.008,
+      "i_texto": "450,008",
+      "variacao": 0.2406,
+      "variacao_texto": "0,2406"
+     },
+     {
+      "sigla": "IPQ",
+      "sigla_no_texto": "IPQ",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação – Produtos Químicos",
+      "peso": 0.0405,
+      "principal": null,
+      "o": 198.266,
+      "o_texto": "198,266",
+      "i": 219.523,
+      "i_texto": "219,523",
+      "variacao": 0.10721,
+      "variacao_texto": "0,10721"
+     },
+     {
+      "sigla": "IPC",
+      "sigla_no_texto": "IPC",
+      "indice": "IPC – Brasil – Geral – Índice de Preços ao Consumidor",
+      "peso": 0.0662,
+      "principal": null,
+      "o": 668.289,
+      "o_texto": "668,289",
+      "i": 702.014,
+      "i_texto": "702,014",
+      "variacao": 0.0546,
+      "variacao_texto": "0,0546"
+     },
+     {
+      "sigla": "ICC",
+      "sigla_no_texto": "ICC",
+      "indice": "INCC – Índice Nacional de Preços da Construção Civil",
+      "peso": 0.4925,
+      "principal": null,
+      "o": 952.596,
+      "o_texto": "952,596",
+      "i": 1046.896,
+      "i_texto": "1046,896",
+      "variacao": 0.09899,
+      "variacao_texto": "0,09899"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "realinhamento",
+      "pct": 6.96,
+      "descricao": "3ª parcela do realinhamento (Segundo TA) — CAPET sugere não aplicar (absorção pelo Poder Concedente via contraprestação orçamentária municipal, subcláusula 4.2; reequilíbrio em curso no SEI-220007/001749/2022)"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 10.37,
+    "ir_escrito_texto": "10,37%",
+    "ir_recalculado_pct": 9.5601,
+    "ir_pelos_indices_pct": 9.5601,
+    "ir_pelas_variacoes_pct": 10.3223,
+    "total_escrito_pct": 18.051,
+    "total_pelo_produto_pct": 18.0518,
+    "total_pela_soma_pct": 17.33,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "divergente",
+   "causa": {
+    "tipo": "erro no texto",
+    "descricao": "As variações escritas da energia (-0,0085) e do IPC (0,0546) não batem com os números-índice citados (-0,0840 e 0,0505). Foram deliberados 10,37% (cenário B). A confirmar com a CAPET pela planilha anexa, que não foi extraída.",
+    "fonte": "docs/LEVANTAMENTO_MOTOR_CALCULO.md, seção 2"
+   },
+   "testes_aceitacao": [
+    "AT-02"
+   ]
+  },
+  {
+   "id": "SEI-220007/004205/2022#43930994",
+   "processo": "SEI-220007/004205/2022",
+   "doc": "43930994",
+   "emissor": "CAPET",
+   "concessionaria": "CEG RIO",
+   "servico": "gás",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "Nov/21 a Nov/22 (anual); Nov/20 a Nov/21 (resíduo)",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IGP-M",
+      "sigla_no_texto": "IGP-M",
+      "indice": "Índice Geral de Preços - Mercado",
+      "peso": null,
+      "principal": true,
+      "o": 1091.483,
+      "o_texto": "1.091,483",
+      "i": 1155.829,
+      "i_texto": "1.155,829",
+      "variacao": 0.05895,
+      "variacao_texto": "0,05895"
+     },
+     {
+      "sigla": "IGP-M",
+      "sigla_no_texto": "IGP-M (resíduo, A)",
+      "indice": "Índice Geral de Preços - Mercado",
+      "peso": null,
+      "principal": false,
+      "o": 925.887,
+      "o_texto": "925,887",
+      "i": 1091.483,
+      "i_texto": "1.091,483",
+      "variacao": 0.178851,
+      "variacao_texto": "0,178851"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "outro",
+      "pct": 6.46,
+      "descricao": "Resíduo do reajuste de 01/01/2022: IR = (1 + 0,1789) / (1 + 0,1074) = 1,0646"
+     },
+     {
+      "nome": "outro",
+      "pct": 10.74,
+      "descricao": "B = percentual aplicado de acordo com a liminar (escrito 'B = 0,1 = 10,74%')"
+     },
+     {
+      "nome": "outro",
+      "pct": 9.25,
+      "descricao": "PIS/COFINS sobre GNV a partir de 01/01/2023"
+     },
+     {
+      "nome": "outro",
+      "pct": 2.72,
+      "descricao": "Variação do custo do GLP para jan/2023"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 5.9,
+    "ir_escrito_texto": "5,9%",
+    "ir_recalculado_pct": 5.8953,
+    "ir_pelos_indices_pct": 5.8953,
+    "ir_pelas_variacoes_pct": 5.895,
+    "total_escrito_pct": 12.74,
+    "total_pelo_produto_pct": 40.1081,
+    "total_pela_soma_pct": 35.07,
+    "regra_total": "não fecha",
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-220007/004207/2022#43919024",
+   "processo": "SEI-220007/004207/2022",
+   "doc": "43919024",
+   "emissor": "CAPET",
+   "concessionaria": "CEG",
+   "servico": "gás",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "Nov/21 a Nov/22 (anual); Nov/20 a Nov/21 (resíduo)",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IGP-M",
+      "sigla_no_texto": "IGP-M",
+      "indice": "Índice Geral de Preços - Mercado",
+      "peso": null,
+      "principal": true,
+      "o": 1091.483,
+      "o_texto": "1.091,483",
+      "i": 1155.829,
+      "i_texto": "1.155,829",
+      "variacao": 0.05895,
+      "variacao_texto": "0,05895"
+     },
+     {
+      "sigla": "IGP-M",
+      "sigla_no_texto": "IGP-M (resíduo, A)",
+      "indice": "Índice Geral de Preços - Mercado",
+      "peso": null,
+      "principal": false,
+      "o": 925.887,
+      "o_texto": "925,887",
+      "i": 1091.483,
+      "i_texto": "1.091,483",
+      "variacao": 0.178851,
+      "variacao_texto": "0,178851"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "outro",
+      "pct": 6.46,
+      "descricao": "Resíduo do reajuste de 01/01/2022: IR = (1 + 0,1789) / (1 + 0,1074) = 1,0646"
+     },
+     {
+      "nome": "outro",
+      "pct": 10.74,
+      "descricao": "B = percentual aplicado de acordo com a liminar (escrito 'B = 0,1 = 10,74%')"
+     },
+     {
+      "nome": "outro",
+      "pct": 9.25,
+      "descricao": "PIS/COFINS sobre GNV a partir de 01/01/2023"
+     },
+     {
+      "nome": "outro",
+      "pct": 2.72,
+      "descricao": "Variação do custo do GLP para jan/2023"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 5.9,
+    "ir_escrito_texto": "5,9%",
+    "ir_recalculado_pct": 5.8953,
+    "ir_pelos_indices_pct": 5.8953,
+    "ir_pelas_variacoes_pct": 5.895,
+    "total_escrito_pct": 12.74,
+    "total_pelo_produto_pct": 40.1081,
+    "total_pela_soma_pct": 35.07,
+    "regra_total": "não fecha",
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/000036/2023#62049880",
+   "processo": "SEI-480002/000036/2023",
+   "doc": "62049880",
+   "emissor": "CAPET",
+   "concessionaria": "Concessionária Vale do Café",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "set/2021 a set/2023",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+      "peso": null,
+      "principal": true,
+      "o": 5808.14,
+      "o_texto": "5.808,14",
+      "i": 6583.85,
+      "i_texto": "6.583,85",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 13.3556,
+    "ir_escrito_texto": "13,3556%",
+    "ir_recalculado_pct": 13.3556,
+    "ir_pelos_indices_pct": 13.3556,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 13.3556,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/000036/2023#66185664",
+   "processo": "SEI-480002/000036/2023",
+   "doc": "66185664",
+   "emissor": "Conselho",
+   "concessionaria": "Concessionária Vale do Café",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "IPCA-E - PER.SET/2021 A SET/2023",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+      "peso": null,
+      "principal": true,
+      "o": 5808.14,
+      "o_texto": "5.808,14",
+      "i": 6583.85,
+      "i_texto": "6.583,85",
+      "variacao": 12.3556,
+      "variacao_texto": "13,3556%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 13.3556,
+    "ir_escrito_texto": "13,3556%",
+    "ir_recalculado_pct": 13.3556,
+    "ir_pelos_indices_pct": 13.3556,
+    "ir_pelas_variacoes_pct": 1235.56,
+    "total_escrito_pct": 13.3556,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/000037/2023#62037534",
+   "processo": "SEI-480002/000037/2023",
+   "doc": "62037534",
+   "emissor": "CAPET",
+   "concessionaria": "Concessionária Centro Sul (Centro Sul I)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "set/2021 a set/2023",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+      "peso": null,
+      "principal": true,
+      "o": 5808.14,
+      "o_texto": "5.808,14",
+      "i": 6583.85,
+      "i_texto": "6.583,85",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 13.3556,
+    "ir_escrito_texto": "13,3556%",
+    "ir_recalculado_pct": 13.3556,
+    "ir_pelos_indices_pct": 13.3556,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 13.3556,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/000037/2023#66186613",
+   "processo": "SEI-480002/000037/2023",
+   "doc": "66186613",
+   "emissor": "Conselho",
+   "concessionaria": "Concessionária Centro Sul (Centro Sul I)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "IPCA-E - PER.SET/2021 A SET/2023",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+      "peso": null,
+      "principal": true,
+      "o": 5808.14,
+      "o_texto": "5.808,14",
+      "i": 6583.85,
+      "i_texto": "6.583,85",
+      "variacao": 12.3556,
+      "variacao_texto": "13,3556%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 13.3556,
+    "ir_escrito_texto": "13,3556%",
+    "ir_recalculado_pct": 13.3556,
+    "ir_pelos_indices_pct": 13.3556,
+    "ir_pelas_variacoes_pct": 1235.56,
+    "total_escrito_pct": 13.3556,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/001912/2024#69248862",
+   "processo": "SEI-480002/001912/2024",
+   "doc": "69248862",
+   "emissor": "concessionária",
+   "concessionaria": "Águas do Rio 4 SPE S.A. (Bloco 4)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "27/04/2023 a 26/04/2024",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "ICC - São Paulo - DI - Mão de Obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": 1178.922,
+      "o_texto": "1178,922",
+      "i": 1255.824,
+      "i_texto": "1255,824",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul, Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, distribuidora local (Light), {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": 515.06,
+      "o_texto": "515,060",
+      "i": 503.953,
+      "i_texto": "503,953",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA - Índice Nacional de Preços ao Consumidor Amplo (substituiu o IPA-OG-DI Produtos Químicos 1006820 pelo Termo de Conciliação)",
+      "peso": 0.025,
+      "principal": null,
+      "o": 6474.09,
+      "o_texto": "6474,09",
+      "i": 6773.27,
+      "i_texto": "6773,27",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D",
+      "indice": "Preço da água no atacado cobrado pela CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": 2.09,
+      "o_texto": "2,09",
+      "i": 2.23,
+      "i_texto": "2,23",
+      "variacao": 0.0675,
+      "variacao_texto": "6,75%"
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E",
+      "indice": "INCC - Brasil - DI - Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": 1051.632,
+      "o_texto": "1051,632",
+      "i": 1088.312,
+      "i_texto": "1088,312",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "ITS",
+      "pct": 4.26,
+      "descricao": "Índice de Tarifa Social; TS = 13,30% (308.934 economias sociais ativas menos 56.196 em áreas SABREN, sobre 1.955.870 economias ativas); fórmula ITS = (0,5 x TS - 2,5%)/97,5%"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "104,80%",
+    "ir_recalculado_pct": 4.7845,
+    "ir_pelos_indices_pct": 4.7845,
+    "ir_pelas_variacoes_pct": 2.5312,
+    "total_escrito_pct": 9.26,
+    "total_pelo_produto_pct": 9.2645,
+    "total_pela_soma_pct": 9.06,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "divergente",
+   "causa": {
+    "tipo": "arredondamento de insumo",
+    "descricao": "O preço da água da CEDAE foi escrito com 2 casas (2,23/2,09). A variação oficial é 6,75%; com ela o IR fecha.",
+    "fonte": "docs/LEVANTAMENTO_MOTOR_CALCULO.md, seção 2",
+    "prova": {
+     "componente": "D",
+     "variacao_oficial": 0.0675,
+     "ir_com_variacao_oficial_pct": 4.8038,
+     "fecha_com_variacao_oficial": true
+    }
+   },
+   "testes_aceitacao": [
+    "AT-04"
+   ]
+  },
+  {
+   "id": "SEI-480002/001912/2024#70897417",
+   "processo": "SEI-480002/001912/2024",
+   "doc": "70897417",
+   "emissor": "CAPET",
+   "concessionaria": "Águas do Rio 4 SPE S.A. (Bloco 4)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "tabela de out/22 a jan/24 (variações em 12 meses)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A (ICC-SP Mão de Obra)",
+      "indice": "ICC - São Paulo - DI - Mão de Obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.06523,
+      "variacao_texto": "6,523%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B (A4 Azul Light)",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul, Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, distribuidora local (Light), {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": -0.02157,
+      "variacao_texto": "-2,157%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C (IPCA)",
+      "indice": "IPCA - Índice Nacional de Preços ao Consumidor Amplo (substituiu o IPA-OG-DI Produtos Químicos 1006820 pelo Termo de Conciliação)",
+      "peso": 0.025,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.04621,
+      "variacao_texto": "4,621%"
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D (Preço Água CEDAE)",
+      "indice": "Preço da água no atacado cobrado pela CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0675,
+      "variacao_texto": "6,750%"
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E (INCC-DI-Total)",
+      "indice": "INCC - Brasil - DI - Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.03488,
+      "variacao_texto": "3,488%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "4,80%",
+    "ir_recalculado_pct": 4.8038,
+    "ir_pelos_indices_pct": null,
+    "ir_pelas_variacoes_pct": 4.8038,
+    "total_escrito_pct": null,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/001913/2024#69248357",
+   "processo": "SEI-480002/001913/2024",
+   "doc": "69248357",
+   "emissor": "concessionária",
+   "concessionaria": "Águas do Rio 1 SPE S.A. (Bloco 1)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "27/04/2023 a 26/04/2024",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "ICC - São Paulo - DI - Mão de Obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": 1178.922,
+      "o_texto": "1178,922",
+      "i": 1255.824,
+      "i_texto": "1255,824",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul, Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, distribuidora local (Light), {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": 515.06,
+      "o_texto": "515,060",
+      "i": 503.953,
+      "i_texto": "503,953",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA (substituiu o IPA-OG-DI Produtos Químicos 1006820 pelo Termo de Conciliação)",
+      "peso": 0.025,
+      "principal": null,
+      "o": 6474.09,
+      "o_texto": "6474,09",
+      "i": 6773.27,
+      "i_texto": "6773,27",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D",
+      "indice": "Preço da água no atacado cobrado pela CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": 2.09,
+      "o_texto": "2,09",
+      "i": 2.23,
+      "i_texto": "2,23",
+      "variacao": 0.0675,
+      "variacao_texto": "6,75%"
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E",
+      "indice": "INCC - Brasil - DI - Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": 1051.632,
+      "o_texto": "1051,632",
+      "i": 1088.312,
+      "i_texto": "1088,312",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "ITS",
+      "pct": 1.33,
+      "descricao": "Índice de Tarifa Social; TS = 7,60% (76.354 economias sociais ativas menos 15.077 em áreas SABREN, sobre 821.377 economias ativas); ITS = (0,5 x TS - 2,5%)/97,5%"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "104,80%",
+    "ir_recalculado_pct": 4.7845,
+    "ir_pelos_indices_pct": 4.7845,
+    "ir_pelas_variacoes_pct": 2.5312,
+    "total_escrito_pct": 6.2,
+    "total_pelo_produto_pct": 6.1938,
+    "total_pela_soma_pct": 6.13,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "divergente",
+   "causa": {
+    "tipo": "arredondamento de insumo",
+    "descricao": "O preço da água da CEDAE foi escrito com 2 casas (2,23/2,09). A variação oficial é 6,75%; com ela o IR fecha.",
+    "fonte": "docs/LEVANTAMENTO_MOTOR_CALCULO.md, seção 2",
+    "prova": {
+     "componente": "D",
+     "variacao_oficial": 0.0675,
+     "ir_com_variacao_oficial_pct": 4.8038,
+     "fecha_com_variacao_oficial": true
+    }
+   },
+   "testes_aceitacao": [
+    "AT-04"
+   ]
+  },
+  {
+   "id": "SEI-480002/001913/2024#70900763",
+   "processo": "SEI-480002/001913/2024",
+   "doc": "70900763",
+   "emissor": "CAPET",
+   "concessionaria": "Águas do Rio 1 SPE S.A. (Bloco 1)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "tabela de out/22 a jan/24 (variações em 12 meses)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E (INCC-Brasil-DI)",
+      "indice": "INCC - Brasil - DI - Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0349,
+      "variacao_texto": "3,49%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B (ANEEL Grupo A4)",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul, Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, distribuidora local (Light), {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": -0.0216,
+      "variacao_texto": "-2,16%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C (IPCA)",
+      "indice": "IPCA (substituiu o IPA-OG-DI Produtos Químicos 1006820 pelo Termo de Conciliação)",
+      "peso": 0.025,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0462,
+      "variacao_texto": "4,62%"
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D (Tarifa de água CEDAE)",
+      "indice": "Preço da água no atacado cobrado pela CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0675,
+      "variacao_texto": "6,75%"
+     },
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A (ICC-SP)",
+      "indice": "ICC - São Paulo - DI - Mão de Obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0652,
+      "variacao_texto": "6,52%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "4,80%",
+    "ir_recalculado_pct": 4.8042,
+    "ir_pelos_indices_pct": null,
+    "ir_pelas_variacoes_pct": 4.8042,
+    "total_escrito_pct": null,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/001914/2024#69249156",
+   "processo": "SEI-480002/001914/2024",
+   "doc": "69249156",
+   "emissor": "concessionária",
+   "concessionaria": "Iguá Rio de Janeiro S.A. (Bloco 2)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "abril de 2023 a abril de 2024",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "ICC-São Paulo-DI-Mão de obra (substitui o ICC - Mão de Obra 161368 - Col. 56, por comunicado da FGV de julho/2023)",
+      "peso": 0.103,
+      "principal": null,
+      "o": 1178.92,
+      "o_texto": "1.178,92",
+      "i": 1255.82,
+      "i_texto": "1.255,82",
+      "variacao": 0.065231,
+      "variacao_texto": "1,065231"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Energia elétrica com bandeiras e benefícios tarifários da categoria 'água, esgoto e saneamento - grupo A' (Grupo A - Convencional, Subgrupo A4 - 2,3 kV a 25 kV, fora ponta), média de 12 meses",
+      "peso": 0.044,
+      "principal": null,
+      "o": 515.06,
+      "o_texto": "515,06",
+      "i": 503.95,
+      "i_texto": "503,95",
+      "variacao": -0.021565,
+      "variacao_texto": "0,978435"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA (Números Índices), em substituição ao IPA-Origem-OG-DI-Produtos Industriais-Indústria de Transformação-Produtos Químicos (1006820)",
+      "peso": 0.025,
+      "principal": null,
+      "o": 6474.09,
+      "o_texto": "6.474,09",
+      "i": 6773.27,
+      "i_texto": "6.773,27",
+      "variacao": 0.046212,
+      "variacao_texto": "1,046212"
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D",
+      "indice": "Valor de venda da água da CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0675,
+      "variacao_texto": "1,067500 (Di/Do 6,75%)"
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E",
+      "indice": "INCC-Brasil-DI-Todos os itens (substitui o INCC total média 160868 - Col. 6)",
+      "peso": 0.453,
+      "principal": null,
+      "o": 1051.63,
+      "o_texto": "1.051,63",
+      "i": 1088.31,
+      "i_texto": "1.088,31",
+      "variacao": 0.034879,
+      "variacao_texto": "1,034879"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "4,80%",
+    "ir_recalculado_pct": 4.8038,
+    "ir_pelos_indices_pct": 2.2725,
+    "ir_pelas_variacoes_pct": 4.8038,
+    "total_escrito_pct": null,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/001914/2024#70892875",
+   "processo": "SEI-480002/001914/2024",
+   "doc": "70892875",
+   "emissor": "CAPET",
+   "concessionaria": "Iguá Rio de Janeiro S.A. (Bloco 2)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "tabela de out/22 a jan/24 (variações em 12 meses)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E (INCC-Brasil-DI)",
+      "indice": "INCC-Brasil-DI-Todos os itens (substitui o INCC total média 160868 - Col. 6)",
+      "peso": 0.453,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.03488,
+      "variacao_texto": "3,488%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B (ANEEL Grupo A4)",
+      "indice": "Energia elétrica com bandeiras e benefícios tarifários da categoria 'água, esgoto e saneamento - grupo A' (Grupo A - Convencional, Subgrupo A4 - 2,3 kV a 25 kV, fora ponta), média de 12 meses",
+      "peso": 0.044,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": -0.02157,
+      "variacao_texto": "-2,157%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C (IPCA)",
+      "indice": "IPCA (Números Índices), em substituição ao IPA-Origem-OG-DI-Produtos Industriais-Indústria de Transformação-Produtos Químicos (1006820)",
+      "peso": 0.025,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.04621,
+      "variacao_texto": "4,621%"
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D (Tarifa de água CEDAE)",
+      "indice": "Valor de venda da água da CEDAE (R$/m³)",
+      "peso": 0.375,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0675,
+      "variacao_texto": "6,750%"
+     },
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A (ICC-SP)",
+      "indice": "ICC-São Paulo-DI-Mão de obra (substitui o ICC - Mão de Obra 161368 - Col. 56, por comunicado da FGV de julho/2023)",
+      "peso": 0.103,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.06523,
+      "variacao_texto": "6,523%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.8,
+    "ir_escrito_texto": "4,80%",
+    "ir_recalculado_pct": 4.8038,
+    "ir_pelos_indices_pct": null,
+    "ir_pelas_variacoes_pct": 4.8038,
+    "total_escrito_pct": 4.8,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007635/2024#82748586",
+   "processo": "SEI-480002/007635/2024",
+   "doc": "82748586",
+   "emissor": "concessionária",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos (preço da água no atacado fornecida aos Blocos I, II e IV)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "08/11/2024 a 07/11/2025 (índices: ACT 2023, energia jan/23 a jan/24, IPCA dez/22 a dez/23)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "Índice de reajuste salarial do Acordo Coletivo de Trabalho entre a CEDAE e o sindicato (12 meses anteriores ao reajuste)",
+      "peso": 0.3,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0418,
+      "variacao_texto": "4,18%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A, Subgrupo A2 (88 kV a 138 kV), fora de ponta, Light, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.4,
+      "principal": null,
+      "o": 458.93,
+      "o_texto": "R$ 458,93",
+      "i": 443.85,
+      "i_texto": "R$ 443,85",
+      "variacao": -0.0329,
+      "variacao_texto": "-3,29%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA (substituiu o IPA-Origem-OG-DI-Produtos Industriais-Indústria de Transformação-Produtos Químicos 1006820)",
+      "peso": 0.3,
+      "principal": null,
+      "o": 6474.09,
+      "o_texto": "6474,09",
+      "i": 6773.27,
+      "i_texto": "6773,27",
+      "variacao": 0.0462,
+      "variacao_texto": "4,62%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 1.3257,
+    "ir_escrito_texto": "1,3257%",
+    "ir_recalculado_pct": 1.324,
+    "ir_pelos_indices_pct": 0.072,
+    "ir_pelas_variacoes_pct": 1.324,
+    "total_escrito_pct": 1.3257,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007635/2024#86356765",
+   "processo": "SEI-480002/007635/2024",
+   "doc": "86356765",
+   "emissor": "CAPET",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos (preço da água no atacado fornecida aos Blocos I, II e IV)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "27/04/2023 a 01/12/2024 (Bi fev/23 a ago/24; Bo fev/22 a jan/23; Ci ago/24; Co dez/22)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "Índice de reajuste salarial do Acordo Coletivo de Trabalho entre a CEDAE e o sindicato (12 meses anteriores ao reajuste)",
+      "peso": 0.3,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0418,
+      "variacao_texto": "1,0418 (4,18%)"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A, Subgrupo A2 (88 kV a 138 kV), fora de ponta, Light, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.4,
+      "principal": null,
+      "o": 458.93,
+      "o_texto": "458,93",
+      "i": 442.31,
+      "i_texto": "442,31",
+      "variacao": -0.03622,
+      "variacao_texto": "0,9638 (-3,622%)"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA (substituiu o IPA-Origem-OG-DI-Produtos Industriais-Indústria de Transformação-Produtos Químicos 1006820)",
+      "peso": 0.3,
+      "principal": null,
+      "o": 6474.09,
+      "o_texto": "6.474,09",
+      "i": 6966.5,
+      "i_texto": "6.966,50",
+      "variacao": 0.0761,
+      "variacao_texto": "1,0761 (7,61%)"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 2.087,
+    "ir_escrito_texto": "1,02087 = 2,087%",
+    "ir_recalculado_pct": 2.0882,
+    "ir_pelos_indices_pct": 0.8332,
+    "ir_pelas_variacoes_pct": 2.0882,
+    "total_escrito_pct": 2.087,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007637/2024#82750326",
+   "processo": "SEI-480002/007637/2024",
+   "doc": "82750326",
+   "emissor": "concessionária",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos (preço da água no atacado fornecida à concessionária do Bloco III)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "08/11/2024 a 07/11/2025 (energia ago/23 a ago/24; IPA jul/23 a jul/24)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "Índice de reajuste salarial do Acordo Coletivo de Trabalho entre a CEDAE e o sindicato",
+      "peso": 0.3,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0418,
+      "variacao_texto": "4,18%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Pleito: média da tarifa Light Grupo A, Subgrupo A4 (2,3 kV a 25 kV), Azul fora de ponta; 1º Termo Aditivo: Grupo A - Azul, Subgrupo A2 (88 kV a 138 kV), fora de ponta, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.4,
+      "principal": null,
+      "o": 496.77,
+      "o_texto": "R$ 496,77",
+      "i": 504.05,
+      "i_texto": "R$ 504,05",
+      "variacao": 0.0147,
+      "variacao_texto": "1,47%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "Pleito: IPA-OG-DI Produtos Químicos (o texto cita 1006820 na definição e 1420683 nos valores); 1º Termo Aditivo: IPCA",
+      "peso": 0.3,
+      "principal": null,
+      "o": 189.367,
+      "o_texto": "189,367",
+      "i": 195.19,
+      "i_texto": "195,190",
+      "variacao": 0.0307,
+      "variacao_texto": "3,07%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 2.7627,
+    "ir_escrito_texto": "2,7627%",
+    "ir_recalculado_pct": 2.763,
+    "ir_pelos_indices_pct": 1.5087,
+    "ir_pelas_variacoes_pct": 2.763,
+    "total_escrito_pct": 2.7627,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007637/2024#86417039",
+   "processo": "SEI-480002/007637/2024",
+   "doc": "86417039",
+   "emissor": "CAPET",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos (preço da água no atacado fornecida à concessionária do Bloco III)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "08/11/2023 a 01/12/2024 (Bi set/23 a ago/24; Bo set/22 a ago/23; Ci ago/24; Co jul/23)",
+   "base_conferencia": "variacoes",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "Índice de reajuste salarial do Acordo Coletivo de Trabalho entre a CEDAE e o sindicato",
+      "peso": 0.3,
+      "principal": null,
+      "o": null,
+      "o_texto": null,
+      "i": null,
+      "i_texto": null,
+      "variacao": 0.0418,
+      "variacao_texto": "1,0418 (4,18%)"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Pleito: média da tarifa Light Grupo A, Subgrupo A4 (2,3 kV a 25 kV), Azul fora de ponta; 1º Termo Aditivo: Grupo A - Azul, Subgrupo A2 (88 kV a 138 kV), fora de ponta, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.4,
+      "principal": null,
+      "o": 438.61,
+      "o_texto": "438,61",
+      "i": 442.97,
+      "i_texto": "442,97",
+      "variacao": 0.0099,
+      "variacao_texto": "1,0099 (0,99%)"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "Pleito: IPA-OG-DI Produtos Químicos (o texto cita 1006820 na definição e 1420683 nos valores); 1º Termo Aditivo: IPCA",
+      "peso": 0.3,
+      "principal": null,
+      "o": 6667.94,
+      "o_texto": "6.667,94",
+      "i": 6966.5,
+      "i_texto": "6.966,50",
+      "variacao": 0.0448,
+      "variacao_texto": "1,0448 (4,48%)"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 2.9944,
+    "ir_escrito_texto": "2,9944% (1,02994)",
+    "ir_recalculado_pct": 2.994,
+    "ir_pelos_indices_pct": 1.7409,
+    "ir_pelas_variacoes_pct": 2.994,
+    "total_escrito_pct": 2.9944,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007639/2024#82752476",
+   "processo": "SEI-480002/007639/2024",
+   "doc": "82752476",
+   "emissor": "concessionária",
+   "concessionaria": "Rio+ Saneamento BL3 S.A. (Bloco 3)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "jul/2023 a jul/2024 (energia ago/2023 a ago/2024), 12 meses",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "ICC-São Paulo-DI-Mão de obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": 1235.102,
+      "o_texto": "1235,102",
+      "i": 1331.066,
+      "i_texto": "1331,066",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul (a carta diz 'Azul ou Verde'), Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, Light, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": 498.109,
+      "o_texto": "498,109",
+      "i": 500.769,
+      "i_texto": "500,769",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA",
+      "peso": 0.025,
+      "principal": null,
+      "o": 6667.94,
+      "o_texto": "6667,940",
+      "i": 6967.89,
+      "i_texto": "6967,890",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D",
+      "indice": "Preço da água cobrado pela CEDAE (Di = valor já reajustado pela fórmula do Contrato de Interdependência; Do = valor vigente no momento do pedido)",
+      "peso": 0.375,
+      "principal": null,
+      "o": 2.091,
+      "o_texto": "2,091",
+      "i": 2.148,
+      "i_texto": "2,148",
+      "variacao": null,
+      "variacao_texto": null
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E",
+      "indice": "INCC-Brasil-DI-Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": 1076.626,
+      "o_texto": "1076,626",
+      "i": 1126.916,
+      "i_texto": "1126,916",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "ITS",
+      "pct": 9.312,
+      "descricao": "TS = 25,426% (173.356 economias sociais sobre 681.817 economias ativas: Interior/Região Metropolitana 20.274/205.818 = 9,85%; AP-5 153.082/475.999 = 32,16%, desconsideradas as de favelas); ITS = (0,5 x TS - 3,75%)/96,25%"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.08,
+    "ir_escrito_texto": "1,040800 (4,0800%)",
+    "ir_recalculado_pct": 4.0745,
+    "ir_pelos_indices_pct": 4.0745,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 13.77193,
+    "total_pelo_produto_pct": 13.7719,
+    "total_pela_soma_pct": 13.392,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/007639/2024#86568566",
+   "processo": "SEI-480002/007639/2024",
+   "doc": "86568566",
+   "emissor": "CAPET",
+   "concessionaria": "Rio+ Saneamento BL3 S.A. (Bloco 3)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "08/11/2023 a 01/12/2024 (A, C, E: jul/2023 a ago/2024; B: ago/2023 a ago/2024; D: jul/2023 a dez/2024)",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "A",
+      "sigla_no_texto": "A",
+      "indice": "ICC-São Paulo-DI-Mão de obra",
+      "peso": 0.103,
+      "principal": null,
+      "o": 1235.102,
+      "o_texto": "1235,102",
+      "i": 1339.322,
+      "i_texto": "1339,322",
+      "variacao": 0.084382,
+      "variacao_texto": "8,4382%"
+     },
+     {
+      "sigla": "B",
+      "sigla_no_texto": "B",
+      "indice": "Média da tarifa de energia elétrica Grupo A - Azul (a carta diz 'Azul ou Verde'), Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, Light, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}",
+      "peso": 0.044,
+      "principal": null,
+      "o": 496.766,
+      "o_texto": "496,766",
+      "i": 502.475,
+      "i_texto": "502,475",
+      "variacao": 0.011493,
+      "variacao_texto": "1,1493%"
+     },
+     {
+      "sigla": "C",
+      "sigla_no_texto": "C",
+      "indice": "IPCA",
+      "peso": 0.025,
+      "principal": null,
+      "o": 6667.94,
+      "o_texto": "6667,94",
+      "i": 6966.5,
+      "i_texto": "6966,50",
+      "variacao": 0.044775,
+      "variacao_texto": "4,4775%"
+     },
+     {
+      "sigla": "D",
+      "sigla_no_texto": "D",
+      "indice": "Preço da água cobrado pela CEDAE (Di = valor já reajustado pela fórmula do Contrato de Interdependência; Do = valor vigente no momento do pedido)",
+      "peso": 0.375,
+      "principal": null,
+      "o": 2.09,
+      "o_texto": "2,09",
+      "i": 2.15,
+      "i_texto": "2,15",
+      "variacao": 0.028708,
+      "variacao_texto": "2,8708%"
+     },
+     {
+      "sigla": "E",
+      "sigla_no_texto": "E",
+      "indice": "INCC-Brasil-DI-Todos os itens",
+      "peso": 0.453,
+      "principal": null,
+      "o": 1076.626,
+      "o_texto": "1076,626",
+      "i": 1134.775,
+      "i_texto": "1134,775",
+      "variacao": 0.05401,
+      "variacao_texto": "5,4010%"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "ITS",
+      "pct": 9.3052,
+      "descricao": "TS = 25,4126% apurado pela FIPE (NT 85992975) após exclusão de inativos e de residentes em favelas; concessionária: TS 25,4256% e ITS 9,3120%"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.5549,
+    "ir_escrito_texto": "1,045549",
+    "ir_recalculado_pct": 4.5549,
+    "ir_pelos_indices_pct": 4.5549,
+    "ir_pelas_variacoes_pct": 4.5548,
+    "total_escrito_pct": 14.2839,
+    "total_pelo_produto_pct": 14.2839,
+    "total_pela_soma_pct": 13.8601,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009058/2025#118597733",
+   "processo": "SEI-480002/009058/2025",
+   "doc": "118597733",
+   "emissor": "CAPET",
+   "concessionaria": "Concessionária Centro Sul SPE 1 Ltda (interessado: Centro Sul I / Consórcio Centro Sul)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "set/2024 a set/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial (IPCA-E)",
+      "peso": null,
+      "principal": true,
+      "o": 6855.4,
+      "o_texto": "6855,40",
+      "i": 7220.07,
+      "i_texto": "7220,07",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.1245,
+    "ir_escrito_texto": "4,1245 %",
+    "ir_recalculado_pct": 5.3195,
+    "ir_pelos_indices_pct": 5.3195,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 4.1245,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "divergente",
+   "causa": {
+    "tipo": "erro no texto",
+    "descricao": "Os índices do próprio parecer dão 5,3195%, que foi o percentual deliberado. O 4,1245% do texto é erro de digitação.",
+    "fonte": "docs/LEVANTAMENTO_MOTOR_CALCULO.md, seção 2"
+   },
+   "testes_aceitacao": [
+    "AT-03"
+   ]
+  },
+  {
+   "id": "SEI-480002/009594/2025#118999195",
+   "processo": "SEI-480002/009594/2025",
+   "doc": "118999195",
+   "emissor": "CAPET",
+   "concessionaria": "Concessionária Vale do Café (Consórcio Intermunicipal de Gestão de Resíduos Sólidos do Vale do Café - CONVALE)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "set/2024 a set/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial (IPCA-E)",
+      "peso": null,
+      "principal": true,
+      "o": 6855.4,
+      "o_texto": "6.855,40",
+      "i": 7220.07,
+      "i_texto": "7.220,07",
+      "variacao": 0.053195,
+      "variacao_texto": "5,3195%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 5.3195,
+    "ir_escrito_texto": "5,3195%",
+    "ir_recalculado_pct": 5.3195,
+    "ir_pelos_indices_pct": 5.3195,
+    "ir_pelas_variacoes_pct": 5.3195,
+    "total_escrito_pct": 5.3195,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009594/2025#125755397",
+   "processo": "SEI-480002/009594/2025",
+   "doc": "125755397",
+   "emissor": "Conselho",
+   "concessionaria": "Concessionária Vale do Café (Consórcio Intermunicipal de Gestão de Resíduos Sólidos do Vale do Café - CONVALE)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "SET/2024 A SET/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA-E",
+      "sigla_no_texto": "IPCA-E",
+      "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial (IPCA-E)",
+      "peso": null,
+      "principal": true,
+      "o": 6855.4,
+      "o_texto": "6.855,40",
+      "i": 7220.07,
+      "i_texto": "7.220,07",
+      "variacao": 0.053195,
+      "variacao_texto": "5,3195%"
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 5.3195,
+    "ir_escrito_texto": "5,3195%",
+    "ir_recalculado_pct": 5.3195,
+    "ir_pelos_indices_pct": 5.3195,
+    "ir_pelas_variacoes_pct": 5.3195,
+    "total_escrito_pct": 5.3195,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009822/2025#118742802",
+   "processo": "SEI-480002/009822/2025",
+   "doc": "118742802",
+   "emissor": "concessionária",
+   "concessionaria": "Águas da Imperatriz (Teresópolis; proposta comercial da Águas do Brasil SPE V S.A.)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "Outubro/24 e Outubro/25",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IMO",
+      "sigla_no_texto": "IMO",
+      "indice": "ICC - Mão de Obra (CAPET) / INCC-DI - Mão de Obra (pleito)",
+      "peso": 0.2,
+      "principal": null,
+      "o": 1466.616,
+      "o_texto": "1466,616",
+      "i": 1605.115,
+      "i_texto": "1605,115",
+      "variacao": 0.0944,
+      "variacao_texto": "9,44%"
+     },
+     {
+      "sigla": "IEE",
+      "sigla_no_texto": "IEE",
+      "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh, praticada pela concessionária de energia local",
+      "peso": 0.193,
+      "principal": null,
+      "o": 511.75,
+      "o_texto": "511,75",
+      "i": 471.91,
+      "i_texto": "471,91",
+      "variacao": -0.0779,
+      "variacao_texto": "-7,79% (Anexo III: -7,785%)"
+     },
+     {
+      "sigla": "IPA",
+      "sigla_no_texto": "IPA",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool",
+      "peso": 0.089,
+      "principal": null,
+      "o": 367.637,
+      "o_texto": "367,637",
+      "i": 356.857,
+      "i_texto": "356,857",
+      "variacao": -0.0293,
+      "variacao_texto": "-2,93%"
+     },
+     {
+      "sigla": "IPQ",
+      "sigla_no_texto": "IPQ",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos",
+      "peso": 0.033,
+      "principal": null,
+      "o": 199.691,
+      "o_texto": "199,691",
+      "i": 209.255,
+      "i_texto": "209,255",
+      "variacao": 0.0479,
+      "variacao_texto": "4,79%"
+     },
+     {
+      "sigla": "IPC",
+      "sigla_no_texto": "IPC",
+      "indice": "IPC/BR-DI - Brasil - Geral - Índice de Preços ao Consumidor",
+      "peso": 0.212,
+      "principal": null,
+      "o": 761.643,
+      "o_texto": "761,643",
+      "i": 789.092,
+      "i_texto": "789,092",
+      "variacao": 0.036,
+      "variacao_texto": "3,60%"
+     },
+     {
+      "sigla": "ICC",
+      "sigla_no_texto": "ICC",
+      "indice": "INCC - Índice Nacional de Preços da Construção Civil",
+      "peso": 0.273,
+      "principal": null,
+      "o": 1149.17,
+      "o_texto": "1149,17",
+      "i": 1222.356,
+      "i_texto": "1222,356",
+      "variacao": 0.0637,
+      "variacao_texto": "6,37%"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "realinhamento",
+      "pct": 3.63,
+      "descricao": "Segunda parcela (segundo degrau) do realinhamento tarifário da Cláusula Quarta do Primeiro Termo Aditivo, aplicada cumulativamente: [(1 + 0,0279) x (1 + 0,0363) – 1]"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 2.79,
+    "ir_escrito_texto": "2,79%",
+    "ir_recalculado_pct": 2.7859,
+    "ir_pelos_indices_pct": 2.7859,
+    "ir_pelas_variacoes_pct": 2.784,
+    "total_escrito_pct": 6.52,
+    "total_pelo_produto_pct": 6.5213,
+    "total_pela_soma_pct": 6.42,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01",
+    "AT-07"
+   ]
+  },
+  {
+   "id": "SEI-480002/009822/2025#119567172",
+   "processo": "SEI-480002/009822/2025",
+   "doc": "119567172",
+   "emissor": "CAPET",
+   "concessionaria": "Águas da Imperatriz (Teresópolis; proposta comercial da Águas do Brasil SPE V S.A.)",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "outubro/2024 a outubro/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IMO",
+      "sigla_no_texto": "IMO",
+      "indice": "ICC - Mão de Obra (CAPET) / INCC-DI - Mão de Obra (pleito)",
+      "peso": 0.2,
+      "principal": null,
+      "o": 1466.616,
+      "o_texto": "1466,616",
+      "i": 1605.115,
+      "i_texto": "1605,115",
+      "variacao": 0.0944,
+      "variacao_texto": "0,0944"
+     },
+     {
+      "sigla": "IEE",
+      "sigla_no_texto": "IEE",
+      "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh, praticada pela concessionária de energia local",
+      "peso": 0.193,
+      "principal": null,
+      "o": 511.75,
+      "o_texto": "511,75",
+      "i": 471.91,
+      "i_texto": "471,91",
+      "variacao": -0.0779,
+      "variacao_texto": "-0,0779"
+     },
+     {
+      "sigla": "IPA",
+      "sigla_no_texto": "IPA",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool",
+      "peso": 0.089,
+      "principal": null,
+      "o": 367.637,
+      "o_texto": "367,637",
+      "i": 356.857,
+      "i_texto": "356,857",
+      "variacao": -0.0293,
+      "variacao_texto": "-0,0293"
+     },
+     {
+      "sigla": "IPQ",
+      "sigla_no_texto": "IPQ",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos",
+      "peso": 0.033,
+      "principal": null,
+      "o": 199.691,
+      "o_texto": "199,691",
+      "i": 209.255,
+      "i_texto": "209,255",
+      "variacao": 0.0479,
+      "variacao_texto": "0,0479"
+     },
+     {
+      "sigla": "IPC",
+      "sigla_no_texto": "IPC",
+      "indice": "IPC/BR-DI - Brasil - Geral - Índice de Preços ao Consumidor",
+      "peso": 0.212,
+      "principal": null,
+      "o": 761.643,
+      "o_texto": "761,643",
+      "i": 789.092,
+      "i_texto": "789,092",
+      "variacao": 0.036,
+      "variacao_texto": "0,0360"
+     },
+     {
+      "sigla": "ICC",
+      "sigla_no_texto": "ICC",
+      "indice": "INCC - Índice Nacional de Preços da Construção Civil",
+      "peso": 0.273,
+      "principal": null,
+      "o": 1149.17,
+      "o_texto": "1149,17",
+      "i": 1222.356,
+      "i_texto": "1222,356",
+      "variacao": 0.0637,
+      "variacao_texto": "0,0637"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "realinhamento",
+      "pct": 3.63,
+      "descricao": "Parcela de realinhamento tarifário do Primeiro Termo Aditivo (chamada de '1° parcela' no item 5.2), aplicada como IR = {(1+2,79%)x(1+3,63%) -1}"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 2.79,
+    "ir_escrito_texto": "2,79%",
+    "ir_recalculado_pct": 2.7859,
+    "ir_pelos_indices_pct": 2.7859,
+    "ir_pelas_variacoes_pct": 2.784,
+    "total_escrito_pct": 6.52,
+    "total_pelo_produto_pct": 6.5213,
+    "total_pela_soma_pct": 6.42,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01",
+    "AT-07"
+   ]
+  },
+  {
+   "id": "SEI-480002/009837/2025#119840430",
+   "processo": "SEI-480002/009837/2025",
+   "doc": "119840430",
+   "emissor": "CAPET",
+   "concessionaria": "Águas da Condessa",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "outubro/2024 a outubro/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IMO",
+      "sigla_no_texto": "IMO",
+      "indice": "INCC - Mão de Obra",
+      "peso": 0.301,
+      "principal": null,
+      "o": 1466.62,
+      "o_texto": "1.466,62",
+      "i": 1605.115,
+      "i_texto": "1.605,115",
+      "variacao": 0.09443,
+      "variacao_texto": "0,09443"
+     },
+     {
+      "sigla": "IEE",
+      "sigla_no_texto": "IEE",
+      "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh",
+      "peso": 0.133,
+      "principal": null,
+      "o": 570.64,
+      "o_texto": "570,64",
+      "i": 500.49,
+      "i_texto": "500,490",
+      "variacao": -0.12293,
+      "variacao_texto": "-0,12293"
+     },
+     {
+      "sigla": "IPA",
+      "sigla_no_texto": "IPA",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool",
+      "peso": 0.095,
+      "principal": null,
+      "o": 367.637,
+      "o_texto": "367,637",
+      "i": 356.857,
+      "i_texto": "356,857",
+      "variacao": -0.02932,
+      "variacao_texto": "-0,02932"
+     },
+     {
+      "sigla": "IPQ",
+      "sigla_no_texto": "IPQ",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos",
+      "peso": 0.059,
+      "principal": null,
+      "o": 199.691,
+      "o_texto": "199,691",
+      "i": 209.255,
+      "i_texto": "209,255",
+      "variacao": 0.04789,
+      "variacao_texto": "0,04789"
+     },
+     {
+      "sigla": "IPC",
+      "sigla_no_texto": "IPC",
+      "indice": "IPC - Brasil - DI - Índice de Preços ao Consumidor",
+      "peso": 0.176,
+      "principal": null,
+      "o": 761.643,
+      "o_texto": "761,643",
+      "i": 789.092,
+      "i_texto": "789,092",
+      "variacao": 0.03604,
+      "variacao_texto": "0,03604"
+     },
+     {
+      "sigla": "ICC",
+      "sigla_no_texto": "ICC",
+      "indice": "INCC - Índice Nacional de Preços da Construção Civil",
+      "peso": 0.236,
+      "principal": null,
+      "o": 1149.17,
+      "o_texto": "1.149,17",
+      "i": 1222.356,
+      "i_texto": "1.222,356",
+      "variacao": 0.06369,
+      "variacao_texto": "0,06369"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "realinhamento",
+      "pct": 3.958,
+      "descricao": "Quarta parcela do 1º Termo Aditivo (escalonamento em 4 parcelas anuais de 3,958% em 2023, 2024, 2025 e 2026, cumulativas com os reajustes ordinários); incluída só no Cenário B"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 3.349,
+    "ir_escrito_texto": "3,349%",
+    "ir_recalculado_pct": 3.3487,
+    "ir_pelos_indices_pct": 3.3487,
+    "ir_pelas_variacoes_pct": 3.3488,
+    "total_escrito_pct": 7.439,
+    "total_pelo_produto_pct": 7.4396,
+    "total_pela_soma_pct": 7.307,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009940/2024#87820614",
+   "processo": "SEI-480002/009940/2024",
+   "doc": "87820614",
+   "emissor": "concessionária",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos do Rio de Janeiro (15 municípios do interior)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "setembro de 2023 a outubro de 2024",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA",
+      "sigla_no_texto": "IPCA",
+      "indice": null,
+      "peso": null,
+      "principal": true,
+      "o": 6683.28,
+      "o_texto": "6683,28",
+      "i": 7036.33,
+      "i_texto": "7036,33",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 5.2826,
+    "ir_escrito_texto": "5,2826%",
+    "ir_recalculado_pct": 5.2826,
+    "ir_pelos_indices_pct": 5.2826,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 5.2826,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009940/2024#88625762",
+   "processo": "SEI-480002/009940/2024",
+   "doc": "88625762",
+   "emissor": "CAPET",
+   "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos do Rio de Janeiro (15 municípios do interior)",
+   "servico": "saneamento",
+   "tipo_formula": "índice único",
+   "periodo_referencia": "agosto/2023 a setembro/2024",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IPCA",
+      "sigla_no_texto": "IPCA",
+      "indice": null,
+      "peso": null,
+      "principal": true,
+      "o": 6683.28,
+      "o_texto": "6.683,28",
+      "i": 6997.15,
+      "i_texto": "6.997,15",
+      "variacao": null,
+      "variacao_texto": null
+     }
+    ],
+    "outros_componentes": []
+   },
+   "esperado": {
+    "ir_escrito_pct": 4.6963,
+    "ir_escrito_texto": "4,6963%",
+    "ir_recalculado_pct": 4.6963,
+    "ir_pelos_indices_pct": 4.6963,
+    "ir_pelas_variacoes_pct": null,
+    "total_escrito_pct": 4.6963,
+    "total_pelo_produto_pct": null,
+    "total_pela_soma_pct": null,
+    "regra_total": null,
+    "total_conferivel": false
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01"
+   ]
+  },
+  {
+   "id": "SEI-480002/009982/2025#120172748",
+   "processo": "SEI-480002/009982/2025",
+   "doc": "120172748",
+   "emissor": "CAPET",
+   "concessionaria": "Águas de Paraty",
+   "servico": "saneamento",
+   "tipo_formula": "paramétrica ponderada",
+   "periodo_referencia": "outubro/2024 a outubro/2025",
+   "base_conferencia": "numeros_indice",
+   "entradas": {
+    "componentes": [
+     {
+      "sigla": "IMO",
+      "sigla_no_texto": "IMO",
+      "indice": "ICC - Mão de Obra - Rio de Janeiro",
+      "peso": 0.1951,
+      "principal": null,
+      "o": 1466.05,
+      "o_texto": "1.466,05",
+      "i": 1576.75,
+      "i_texto": "1.576,75",
+      "variacao": 0.07551,
+      "variacao_texto": "0,07551"
+     },
+     {
+      "sigla": "IEE",
+      "sigla_no_texto": "IEE",
+      "indice": "Tarifa de energia elétrica Grupo A - Convencional, Sub-Grupo A4 (2,3kV a 25Kv) - Valor de consumo em MWh",
+      "peso": 0.0974,
+      "principal": null,
+      "o": 511.75,
+      "o_texto": "511,75",
+      "i": 471.91,
+      "i_texto": "471,91",
+      "variacao": -0.07785,
+      "variacao_texto": "-0,07785"
+     },
+     {
+      "sigla": "IPA",
+      "sigla_no_texto": "IPA",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Derivados do Petróleo e Álcool",
+      "peso": 0.1082,
+      "principal": null,
+      "o": 367.637,
+      "o_texto": "367,637",
+      "i": 356.857,
+      "i_texto": "356,857",
+      "variacao": -0.02932,
+      "variacao_texto": "-0,02932"
+     },
+     {
+      "sigla": "IPQ",
+      "sigla_no_texto": "IPQ",
+      "indice": "IPA - Origem - OG-DI - Produtos Industriais - Indústria de Transformação - Produtos Químicos",
+      "peso": 0.0405,
+      "principal": null,
+      "o": 199.691,
+      "o_texto": "199,691",
+      "i": 209.255,
+      "i_texto": "209,255",
+      "variacao": 0.04789,
+      "variacao_texto": "0,04789"
+     },
+     {
+      "sigla": "IPC",
+      "sigla_no_texto": "IPC",
+      "indice": "IPC - Brasil - Geral - Índice de Preços ao Consumidor",
+      "peso": 0.0662,
+      "principal": null,
+      "o": 761.643,
+      "o_texto": "761,643",
+      "i": 789.092,
+      "i_texto": "789,092",
+      "variacao": 0.03604,
+      "variacao_texto": "0,03604"
+     },
+     {
+      "sigla": "ICC",
+      "sigla_no_texto": "ICC",
+      "indice": "INCC - Índice Nacional de Preços da Construção Civil",
+      "peso": 0.4925,
+      "principal": null,
+      "o": 1149.17,
+      "o_texto": "1.149,17",
+      "i": 1222.36,
+      "i_texto": "1222,36",
+      "variacao": 0.0637,
+      "variacao_texto": "0,0637"
+     }
+    ],
+    "outros_componentes": [
+     {
+      "nome": "realinhamento",
+      "pct": 2.72,
+      "descricao": "Segunda parcela do realinhamento tarifário (art. 18 da Deliberação AGENERSA 4.830/2024, realinhamento total de 6,3% a partir de janeiro de 2025)"
+     }
+    ]
+   },
+   "esperado": {
+    "ir_escrito_pct": 3.967,
+    "ir_escrito_texto": "3,967%",
+    "ir_recalculado_pct": 3.9669,
+    "ir_pelos_indices_pct": 3.9669,
+    "ir_pelas_variacoes_pct": 3.9675,
+    "total_escrito_pct": 6.795,
+    "total_pelo_produto_pct": 6.7949,
+    "total_pela_soma_pct": 6.687,
+    "regra_total": "multiplicativa",
+    "total_conferivel": true
+   },
+   "classificacao": "ok",
+   "causa": null,
+   "testes_aceitacao": [
+    "AT-01",
+    "AT-06"
+   ]
+  }
+ ]
+}

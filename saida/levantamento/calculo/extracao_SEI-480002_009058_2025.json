@@ -1,0 +1,85 @@
+{
+  "processo": "SEI-480002/009058/2025",
+  "concessionaria": "Concessionária Centro Sul SPE 1 Ltda (interessado: Centro Sul I / Consórcio Centro Sul)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão com o Consórcio Centro Sul I (número não citado no texto)",
+  "clausula_reajuste": "Cláusula Décima Sétima do Contrato de Concessão (e Parágrafo Primeiro, data-base)",
+  "vigencia_pretendida": "30 dias após a comunicação oficial ao Consórcio Centro Sul (Ofício CCS-073/25)",
+  "data_pleito": "14/10/2025",
+  "data_recebimento_agenersa": "11/11/2025",
+  "formula": {
+    "texto": "Tc_n = Tc_o * (1 + (IPCA-E_n – IPCA-E_o)/IPCA-E_o)) - 1",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "componentes": [
+      {
+        "sigla": "IPCA-E",
+        "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial (IPCA-E)",
+        "fonte": "IBGE",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "IPCA-E_n: valor publicado no mês de setembro da data prevista do reajuste; IPCA-E_o: valor publicado no mês de setembro do ano anterior ao da data da proposta",
+        "doc_id": "118597733"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "118597733",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer nº 306/2025/AGENERSA/CAPET",
+      "data": "11/11/2025",
+      "periodo_referencia": "set/2024 a set/2025",
+      "valores": [
+        {"sigla": "IPCA-E", "i_texto": "7220,07", "i": 7220.07, "o_texto": "6855,40", "o": 6855.40,
+         "variacao_texto": null, "variacao": null, "peso_usado": null}
+      ],
+      "ir_texto": "4,1245 %",
+      "ir_pct": 4.1245,
+      "outros_componentes": [],
+      "reajuste_total_texto": "4,1245 %",
+      "reajuste_total_pct": 4.1245,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Nenhuma divergência apontada: o parecer diz que 'O índice apurado converge do pleiteado pela Delegatária', mas não informa o percentual pleiteado."
+      ]
+    },
+    {
+      "doc_id": "124824534",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação (minuta sem número, de 03/02/2026; nº 5001 segundo o despacho 127850127)",
+      "data": "03/02/2026 (assinada a partir de 24/02/2026)",
+      "periodo_referencia": null,
+      "valores": [],
+      "ir_texto": null,
+      "ir_pct": null,
+      "outros_componentes": [],
+      "reajuste_total_texto": "5,3195%",
+      "reajuste_total_pct": 5.3195,
+      "conclusao": "outra",
+      "divergencias": [
+        "Homologa 5,3195% 'conforme cálculo apresentado pela CAPET', mas o único parecer da CAPET no processo (118597733) escreve 4,1245%."
+      ]
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "124824534",
+    "deliberacao": "5001",
+    "reajuste_pct": 5.3195,
+    "observacao": "Homologação definitiva (não cautelar), observada antecedência mínima de 30 dias da publicação das tarifas. O número 5001 vem do despacho CAPET 127850127 (a minuta 124824534 está sem número). Art. 2º manda oficiar o Consórcio e a concessionária sobre a data-base do reajuste; o despacho 127850127 (19/03/2026) registra que a proposta financeira vencedora é de dezembro de 2015 e que o mês de reajuste é dezembro. A tabela de preços do Art. 1º não aparece no texto."
+  },
+  "insumos_do_pleito": [
+    "Ofício CCS-073/25 (doc 118570686), não incluído no arquivo",
+    "Indicadores de IPCA-E (set/2024 e set/2025) apontados pela Delegatária, segundo o parecer",
+    "Tabela de tarifas-limite / preços de serviços atualizados (citada no parecer, não extraída no texto)",
+    "Ofício CCS nº 213/2025 (doc 121581004), citado no Art. 3º da deliberação"
+  ],
+  "inconsistencias_textuais": [
+    "O parecer escreve 4,1245% como reajuste, mas a deliberação homologa 5,3195% 'conforme cálculo apresentado pela CAPET'. Verificação: a razão dos índices citados no próprio parecer (7220,07 / 6855,40) dá 5,3195%, o que sugere erro de digitação no percentual do parecer. A publicação da Deliberação 5001 no DOERJ (doc 125755521, que aparece no arquivo do processo SEI-480002/009837/2025) traz '(1+(7220,07-6855,40)/6855,40)-1)=5,3195%'.",
+    "A fórmula escrita tem parênteses desbalanceados e o '- 1' fica aplicado à tarifa reajustada (Tc_n), o que transformaria Tc_n em variação e não em tarifa.",
+    "A definição de IPCA-E_o é 'setembro do ano anterior ao da data da proposta', mas o cálculo usa set/2024 (mês do último reajuste); o próprio contrato fixa a data-base na apresentação da proposta financeira, o que a deliberação manda esclarecer.",
+    "O parecer fala em 'homologação do realinhamento tarifário' na conclusão, embora o objeto seja o reajuste ordinário."
+  ],
+  "observacoes": "Cálculo simples (um índice público do IBGE, IPCA-E número-índice de setembro contra setembro). O que dificulta automatizar: (1) a data-base não está resolvida no contrato (proposta financeira x prática de dezembro), então o mês de referência precisa ser um parâmetro confirmado por processo; (2) o pleito (Ofício CCS-073/25) não está no arquivo, só o parecer, então não se sabe o percentual pleiteado; (3) a tabela de preços homologada não aparece no texto da deliberação deste processo (só no DOERJ juntado em outro processo). Serviço: o texto deste arquivo não diz o setor; registrado como saneamento porque a tabela publicada da Deliberação 5001 é de serviços de resíduos sólidos (aterro sanitário, RSS, RCC, triagem, compostagem)."
+}

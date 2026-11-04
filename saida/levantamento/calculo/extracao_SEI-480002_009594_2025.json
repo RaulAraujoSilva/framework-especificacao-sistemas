@@ -1,0 +1,99 @@
+{
+  "processo": "SEI-480002/009594/2025",
+  "concessionaria": "Concessionária Vale do Café (Consórcio Intermunicipal de Gestão de Resíduos Sólidos do Vale do Café - CONVALE)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão com o CONVALE (número não citado no texto)",
+  "clausula_reajuste": "Cláusula Décima Sétima do Contrato de Concessão (e Parágrafo Primeiro, data-base)",
+  "vigencia_pretendida": "01/12/2025",
+  "data_pleito": "08/10/2025",
+  "data_recebimento_agenersa": "11/11/2025",
+  "formula": {
+    "texto": "Tc_n = Tc_o * ( (IPCA-E_n / IPCA-E_o) - 1 )",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "componentes": [
+      {
+        "sigla": "IPCA-E",
+        "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial (IPCA-E)",
+        "fonte": "IBGE",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "IPCA-E_n: valor publicado no mês de setembro da data prevista do reajuste; IPCA-E_o: valor publicado no mês de setembro do último reajuste (acumulado de 12 meses)",
+        "doc_id": "118999195"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "118999195",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito relatado no Parecer CAPET nº 316/2025 (Ofício CVC nº 050/2025, doc 118642512, não incluído no arquivo)",
+      "data": "08/10/2025",
+      "periodo_referencia": "setembro/2024 a setembro/2025",
+      "valores": [],
+      "ir_texto": "5,3195%",
+      "ir_pct": 5.3195,
+      "outros_componentes": [],
+      "reajuste_total_texto": "5,3195%",
+      "reajuste_total_pct": 5.3195,
+      "conclusao": "outra",
+      "divergencias": []
+    },
+    {
+      "doc_id": "118999195",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer nº 316/2025/AGENERSA/CAPET",
+      "data": "17/11/2025",
+      "periodo_referencia": "set/2024 a set/2025",
+      "valores": [
+        {"sigla": "IPCA-E", "i_texto": "7.220,07", "i": 7220.07, "o_texto": "6.855,40", "o": 6855.40,
+         "variacao_texto": "5,3195%", "variacao": 0.053195, "peso_usado": null}
+      ],
+      "ir_texto": "5,3195%",
+      "ir_pct": 5.3195,
+      "outros_componentes": [],
+      "reajuste_total_texto": "5,3195%",
+      "reajuste_total_pct": 5.3195,
+      "conclusao": "confirma o pleito",
+      "divergencias": []
+    },
+    {
+      "doc_id": "125755397",
+      "emissor": "Conselho",
+      "tipo_doc": "Publicação no DOERJ de 26/02/2026 da Deliberação AGENERSA nº 5002",
+      "data": "03/02/2026 (publicada em 26/02/2026)",
+      "periodo_referencia": "SET/2024 A SET/2025",
+      "valores": [
+        {"sigla": "IPCA-E", "i_texto": "7.220,07", "i": 7220.07, "o_texto": "6.855,40", "o": 6855.40,
+         "variacao_texto": "5,3195%", "variacao": 0.053195, "peso_usado": null}
+      ],
+      "ir_texto": "5,3195%",
+      "ir_pct": 5.3195,
+      "outros_componentes": [],
+      "reajuste_total_texto": "5,3195%",
+      "reajuste_total_pct": 5.3195,
+      "conclusao": "confirma o pleito",
+      "divergencias": []
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "125755397",
+    "deliberacao": "5002",
+    "reajuste_pct": 5.3195,
+    "observacao": "Homologação definitiva (não cautelar), vigência DEZ/2025, observada antecedência mínima de 30 dias da publicação. Minuta assinada sem número: doc 124825893. Art. 2º manda oficiar o CONVALE e a concessionária sobre a data-base do reajuste (cumprir a Cláusula Décima Sétima ou aditivar o contrato)."
+  },
+  "insumos_do_pleito": [
+    "Ofício CVC nº 050/2025 (doc 118642512), não incluído no arquivo",
+    "Tabela de tarifas-limite / preços unitários dos serviços (aterro sanitário, RSS, RCC, estações de transbordo, gerenciamento, triagem, compostagem), publicada no DOERJ",
+    "Ofício nº 64 – CONVALE e anexos (docs 118269312, 118269765, 118270432, 118269331, 118270433), citados no Art. 3º"
+  ],
+  "inconsistencias_textuais": [
+    "A fórmula do parecer, Tc_n = Tc_o * ((IPCA-E_n/IPCA-E_o) - 1), dá o acréscimo e não a tarifa reajustada (faltaria '1 +').",
+    "A publicação no DOERJ escreve '((7.220,07-6.855,40)-1)=5,3195%', com subtração no lugar da divisão.",
+    "O contrato fixa a data-base na apresentação da Proposta Financeira, mas o parecer registra que desde 2017 se adota dezembro; o índice usado é o de setembro, justificado por ser 'índice trimestral' e a taxa de dezembro não estar divulgada no prazo de publicação.",
+    "O parecer escreve 'Índice de Reajuste = 5.3195' (ponto decimal) e, na conclusão, fala em 'homologação do realinhamento tarifário', embora o objeto seja reajuste ordinário.",
+    "Cabeçalho do parecer indica 'SECEX / Assessoria Regulatória', embora o documento seja da CAPET."
+  ],
+  "observacoes": "Cálculo simples com série pública do IBGE (IPCA-E número-índice setembro x setembro). Dificuldades: (1) data-base contratual não resolvida, o mês de referência precisa ser parâmetro; (2) o ofício do pleito não está no arquivo, o percentual pleiteado só aparece relatado pela CAPET; (3) o reajuste incide sobre preços unitários de serviços de resíduos sólidos (R$/t e unid x mês), não sobre estrutura tarifária de água; (4) a tabela no DOERJ vem com espaços dentro dos números (ex.: 'R$ 11 2 , 2 7') e repetida várias vezes na extração, exigindo limpeza antes de conferir os preços."
+}

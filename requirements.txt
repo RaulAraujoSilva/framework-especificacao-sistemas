@@ -1,0 +1,11 @@
+# Dependências dos scripts (scripts/) e dos testes (tests/). Instalação: pip install -r requirements.txt
+# Depois: python -m playwright install chromium (navegador que imprime os PDFs). Python 3.12.
+pandas>=2.2          # recalcular_reajuste.py, validar_pleito.py
+jsonschema>=4.21     # validar_pleito.py (layout do pleito)
+markdown-it-py>=3.0  # gerar_documentos.py (Markdown → HTML)
+playwright>=1.46     # gerar_documentos.py (HTML → PDF marcado, diagramas, protótipo)
+openpyxl>=3.1        # planilha de avaliação e consolidação dos pareceres
+pytest>=7.4
+
+# opcional
+pymupdf>=1.24        # teste que lê o texto dos PDFs gerados (pulado sem ele)

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agenersa/pleito_reajuste/0.1",
+  "title": "Pleito de reajuste tarifário anual — dados para processamento automático",
+  "description": "Rascunho 0.1. Um arquivo por pleito, entregue junto do ofício. Datas ISO 8601 (AAAA-MM-DD; mês AAAA-MM), números com ponto decimal, sem separador de milhar, codificação UTF-8. Nenhum dado pessoal.",
+  "type": "object",
+  "required": ["versao_layout", "contrato", "concessionaria", "vigencia_pretendida", "tarifa_em_vigor",
+               "periodo_referencia", "componentes", "resultado_declarado", "casas_decimais", "anexos"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_layout": {"const": "0.1"},
+    "contrato": {
+      "type": "object", "required": ["numero", "versao_contratual"], "additionalProperties": false,
+      "properties": {
+        "numero": {"type": "string", "description": "Número do contrato de concessão, como no cadastro da agência"},
+        "versao_contratual": {"type": "string", "description": "Último termo aditivo que altera o reajuste (código do cadastro)"}
+      }
+    },
+    "concessionaria": {
+      "type": "object", "required": ["nome", "cnpj"], "additionalProperties": false,
+      "properties": {"nome": {"type": "string"}, "cnpj": {"type": "string", "pattern": "^\\d{14}$"}}
+    },
+    "vigencia_pretendida": {"type": "string", "format": "date"},
+    "tarifa_em_vigor": {
+      "type": "object", "required": ["vigente_desde", "ato"], "additionalProperties": false,
+      "properties": {
+        "vigente_desde": {"type": "string", "format": "date"},
+        "ato": {"type": "string", "description": "Deliberação que homologou a tarifa em vigor"}
+      }
+    },
+    "periodo_referencia": {
+      "type": "object", "required": ["o", "i"], "additionalProperties": false,
+      "properties": {
+        "o": {"type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$", "description": "Mês de referência da tarifa em vigor"},
+        "i": {"type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$", "description": "Mês de referência da nova tarifa"}
+      }
+    },
+    "componentes": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["sigla", "fonte", "serie", "evidencia"], "additionalProperties": false,
+        "properties": {
+          "sigla": {"type": "string"},
+          "codigo_serie": {"type": ["string", "null"], "description": "Código da série na fonte (FGV, IBGE); null se a fonte não tiver código"},
+          "fonte": {"enum": ["FGV", "IBGE", "ANEEL", "acordo coletivo", "deliberação AGENERSA", "outra"]},
+          "serie": {
+            "type": "array", "minItems": 2,
+            "description": "Valores mensais de o até i, todos os meses (não só as pontas), como publicados pela fonte",
+            "items": {
+              "type": "object", "required": ["mes", "valor"], "additionalProperties": false,
+              "properties": {"mes": {"type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"}, "valor": {"type": "number"}}
+            }
+          },
+          "evidencia": {
+            "type": "object", "required": ["arquivo"], "additionalProperties": false,
+            "properties": {
+              "arquivo": {"type": "string", "description": "Anexo com a série da fonte (exportação da FGV, REH da ANEEL, cláusula do acordo coletivo)"},
+              "pagina": {"type": ["integer", "null"]},
+              "extraido_em": {"type": ["string", "null"], "format": "date"}
+            }
+          }
+        }
+      }
+    },
+    "energia": {
+      "type": "object", "description": "Obrigatório quando a fórmula tem componente de energia",
+      "required": ["distribuidora", "subgrupo", "modalidade", "composicao", "resolucoes"], "additionalProperties": false,
+      "properties": {
+        "distribuidora": {"type": "string"},
+        "subgrupo": {"type": "string"},
+        "modalidade": {"type": "string"},
+        "posto": {"type": ["string", "null"]},
+        "composicao": {"type": "string", "description": "Regra aplicada, ex.: 'TUSD + TE em R$/MWh, sem tributos, sem bandeira'"},
+        "resolucoes": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "required": ["reh", "vigencia_inicio", "tusd_mwh", "te_mwh"], "additionalProperties": false,
+            "properties": {
+              "reh": {"type": "string"}, "vigencia_inicio": {"type": "string", "format": "date"},
+              "tusd_mwh": {"type": "number"}, "te_mwh": {"type": "number"},
+              "bandeira_mwh": {"type": ["number", "null"]}, "desconto_pct": {"type": ["number", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "resultado_declarado": {
+      "type": "object", "required": ["ir_pct", "total_pct", "outros"], "additionalProperties": false,
+      "properties": {
+        "ir_pct": {"type": "number"},
+        "outros": {
+          "type": "array",
+          "items": {
+            "type": "object", "required": ["nome", "pct", "ato"], "additionalProperties": false,
+            "properties": {"nome": {"type": "string"}, "parcela": {"type": ["integer", "null"]},
+                           "pct": {"type": "number"}, "ato": {"type": "string"}}
+          }
+        },
+        "total_pct": {"type": "number"}
+      }
+    },
+    "tabela_tarifaria": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["categoria", "unidade", "vigente", "proposta"], "additionalProperties": false,
+        "properties": {
+          "categoria": {"type": "string"}, "faixa_inicio": {"type": ["number", "null"]}, "faixa_fim": {"type": ["number", "null"]},
+          "unidade": {"type": "string"}, "vigente": {"type": "number"}, "proposta": {"type": "number"}
+        }
+      }
+    },
+    "casas_decimais": {
+      "type": "object", "required": ["indice", "ir", "tarifa"], "additionalProperties": false,
+      "properties": {"indice": {"type": "integer"}, "ir": {"type": "integer"}, "tarifa": {"type": "integer"}}
+    },
+    "publicacao": {
+      "type": "object", "additionalProperties": false,
+      "properties": {"veiculo": {"type": "string"}, "data": {"type": "string", "format": "date"}, "arquivo": {"type": "string"}}
+    },
+    "anexos": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["arquivo", "tipo", "sha256"], "additionalProperties": false,
+        "properties": {"arquivo": {"type": "string"}, "tipo": {"type": "string"},
+                       "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+      }
+    }
+  }
+}

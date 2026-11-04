@@ -1,0 +1,787 @@
+<title>Motor de Reajuste Tarifário</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Série "Automação de processos regulatórios" — estilo comum das páginas de aula.
+   Conceito: caderno técnico de autos — coluna de leitura larga, índice lateral fixo no desktop,
+   número de processo e datas em fonte mono; cobalto para o que é do método, âmbar para espera/hipótese. */
+:root {
+  --bg: #f4f6f8;        /* papel frio */
+  --surface: #ffffff;
+  --ink: #14202b;       /* texto */
+  --muted: #566573;     /* legenda, rótulo */
+  --line: #d7dde3;      /* fio, borda */
+  --accent: #1d4fc4;    /* cobalto: método, links */
+  --accent-soft: #e6edfb;
+  --amber: #a8660a;     /* espera, hipótese */
+  --amber-soft: #fbf1e1;
+  --ok: #1d7a46; --ok-soft: #e3f3ea;
+  --warn: #9a6700; --warn-soft: #fbf3dc;
+  --bad: #b3261e; --bad-soft: #fbe7e5;
+  --f-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --s-1: .8125rem; --s0: 1rem; --s1: 1.1875rem; --s2: 1.5rem; --s3: 2.125rem; --s4: 3rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f151b; --surface: #161e26; --ink: #e5eaef; --muted: #9aa8b5; --line: #2a3541;
+  --accent: #7fa3ff; --accent-soft: #1b2a4a; --amber: #e3a54a; --amber-soft: #33270f;
+  --ok: #5fcf8f; --ok-soft: #12301f; --warn: #e6c060; --warn-soft: #332a10; --bad: #ff8a80; --bad-soft: #3a1714;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f151b; --surface: #161e26; --ink: #e5eaef; --muted: #9aa8b5; --line: #2a3541;
+  --accent: #7fa3ff; --accent-soft: #1b2a4a; --amber: #e3a54a; --amber-soft: #33270f;
+  --ok: #5fcf8f; --ok-soft: #12301f; --warn: #e6c060; --warn-soft: #332a10; --bad: #ff8a80; --bad-soft: #3a1714;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 400 var(--s0)/1.65 var(--f-body); }
+a { color: var(--accent); text-underline-offset: .18em; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 4rem; }
+.serie { font: 600 var(--s-1)/1.3 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+         display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; padding-block: 1.5rem .75rem; border-bottom: 1px solid var(--line); }
+.serie b { color: var(--accent); font-weight: 700; }
+header.abertura { display: grid; gap: 1rem; padding-block: 2.5rem 2rem; max-width: 62rem; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 5vw, var(--s4)); letter-spacing: -.01em; }
+h2 { font-size: var(--s3); }
+h3 { font-size: var(--s2); }
+.tese { font-size: var(--s1); color: var(--muted); max-width: 46rem; margin: 0; }
+.mono, code { font-family: var(--f-mono); font-size: .9em; }
+.num { font-variant-numeric: tabular-nums; }
+
+.grade { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 3rem; align-items: start; }
+nav.indice { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 1rem); font-size: var(--s-1); }
+nav.indice ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; counter-reset: i; }
+nav.indice li { counter-increment: i; display: grid; grid-template-columns: 1.6rem 1fr; }
+nav.indice li::before { content: counter(i, decimal-leading-zero); font-family: var(--f-mono); color: var(--muted); }
+nav.indice a { color: var(--ink); text-decoration: none; }
+nav.indice a:hover { color: var(--accent); }
+main { min-width: 0; display: grid; gap: 3.5rem; }
+section { display: grid; gap: 1.1rem; scroll-margin-top: 1rem; }
+section > p, section > ul, section > ol { max-width: 68ch; margin: 0; }
+.rotulo { font: 600 var(--s-1)/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+
+.cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 1px; background: var(--line);
+          border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.cifras div { background: var(--surface); padding: 1rem 1.1rem; display: grid; gap: .25rem; align-content: start; }
+.cifras strong { font: 600 var(--s3)/1 var(--f-display); font-variant-numeric: tabular-nums; }
+.cifras span { color: var(--muted); font-size: var(--s-1); line-height: 1.4; }
+
+.tabela { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .9375rem; }
+th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: var(--s-1); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.nota { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: .8rem 1rem; border-radius: 0 6px 6px 0; max-width: 72ch; }
+.nota strong { color: var(--amber); }
+.chip { display: inline-block; font: 600 .75rem/1 var(--f-body); letter-spacing: .04em; padding: .3rem .5rem; border-radius: 999px; white-space: nowrap; }
+.chip.ok { color: var(--ok); background: var(--ok-soft); } .chip.aviso { color: var(--warn); background: var(--warn-soft); }
+.chip.erro { color: var(--bad); background: var(--bad-soft); } .chip.neutro { color: var(--accent); background: var(--accent-soft); }
+
+figure { margin: 0; display: grid; gap: .6rem; }
+figure .quadro { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1rem; }
+figcaption { font-size: var(--s-1); color: var(--muted); max-width: 72ch; }
+pre.mermaid { margin: 0; background: transparent; font-family: var(--f-body); }
+blockquote { margin: 0; padding: .7rem 1rem; border-left: 3px solid var(--line); font-family: var(--f-display); font-size: var(--s1); color: var(--ink); max-width: 68ch; }
+blockquote cite { display: block; font: 400 var(--s-1)/1.4 var(--f-body); color: var(--muted); margin-top: .35rem; font-style: normal; }
+details { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: .7rem 1rem; }
+details summary { cursor: pointer; font-weight: 600; }
+.duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; }
+.duas > * { min-width: 0; }
+footer.rodape { margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--s-1); display: grid; gap: .4rem; }
+
+@media (max-width: 900px) {
+  .grade { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  nav.indice { position: static; border: 1px solid var(--line); border-radius: 6px; padding: .8rem 1rem; background: var(--surface); }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* protótipos de tela */
+.tela { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; min-width: 0; }
+.tela-barra { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: space-between;
+              padding: .55rem .9rem; border-bottom: 1px solid var(--line); background: var(--accent-soft); font-size: var(--s-1); }
+.tela-barra b { font-family: var(--f-display); font-size: 1rem; }
+.tela-corpo { padding: .9rem; display: grid; gap: .8rem; }
+.tela table { font-size: .875rem; }
+.linha-regra { display: grid; grid-template-columns: 3rem 4.6rem minmax(0, 1fr); gap: .6rem; align-items: baseline;
+               padding: .45rem 0; border-bottom: 1px solid var(--line); font-size: .875rem; }
+.linha-regra:last-child { border-bottom: 0; }
+.linha-regra .mono { color: var(--muted); }
+.botoes { display: flex; flex-wrap: wrap; gap: .5rem; }
+.botao { font: 600 .8125rem/1 var(--f-body); padding: .55rem .8rem; border-radius: 5px; border: 1px solid var(--line);
+         background: var(--surface); color: var(--ink); }
+.botao.principal { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.trecho { font-family: var(--f-display); font-size: .95rem; background: var(--bg); border-left: 3px solid var(--accent);
+          padding: .4rem .7rem; border-radius: 0 4px 4px 0; }
+.campo { display: grid; gap: .2rem; font-size: .875rem; }
+.campo span { color: var(--muted); font-size: var(--s-1); }
+.req { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: .25rem 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.req:last-child { border-bottom: 0; }
+.req .id { font-family: var(--f-mono); font-weight: 600; color: var(--accent); }
+.req .origem { grid-column: 2; font-size: var(--s-1); color: var(--muted); }
+svg text { font-family: var(--f-body); }
+</style>
+
+<div class="wrap">
+  <div class="serie"><span>Automação de processos regulatórios</span><b>Aula 2</b><span>Especificação do piloto</span><span>AGENERSA · reajuste tarifário anual</span></div>
+
+  <header class="abertura">
+    <span class="rotulo">Do mapa ao sistema</span>
+    <h1>Especificar o motor de cálculo do reajuste a partir dos autos</h1>
+    <p class="tese">Na <a href="https://claude.ai/artifact/6LzGRdZvBe4WHFxZEwkv8u">aula 1</a>, o mapeamento do SEI apontou o reajuste tarifário anual (P01) como piloto da automação. Nesta aula, ele vira especificação. A regra da aula: nenhum requisito entra sem origem. Cada um aponta uma cláusula de contrato, uma peça de processo ou um caso real que o sistema tem de reproduzir.</p>
+  </header>
+
+  <div class="cifras" aria-label="Números do levantamento">
+    <div><strong class="num">18</strong><span>processos de reajuste da coorte lidos peça a peça</span></div>
+    <div><strong class="num">24 de 28</strong><span>cálculos refeitos com exatidão a partir dos números das peças</span></div>
+    <div><strong class="num">70 de 70</strong><span>números-índice públicos citados achados nas séries do IPEA e do IBGE</span></div>
+    <div><strong class="num">12 de 12</strong><span>trechos do contrato-piloto achados literalmente na base de contratos</span></div>
+    <div><strong class="num">12</strong><span>conferências automáticas na entrada do pleito</span></div>
+  </div>
+
+  <div class="grade" style="margin-top:2.5rem">
+    <nav class="indice" aria-label="Índice">
+      <ol>
+        <li><a href="#piloto">Do piloto ao escopo</a></li>
+        <li><a href="#rastreio">Rastreabilidade</a></li>
+        <li><a href="#casos">Casos e dados extraídos</a></li>
+        <li><a href="#regras">Origem das regras</a></li>
+        <li><a href="#bases">Bases externas</a></li>
+        <li><a href="#requisitos">Requisitos</a></li>
+        <li><a href="#usos">Casos de uso</a></li>
+        <li><a href="#dominio">Modelo de domínio</a></li>
+        <li><a href="#sequencia">Sequência e estados</a></li>
+        <li><a href="#layout">Dados do pleito</a></li>
+        <li><a href="#telas">Protótipos de tela</a></li>
+        <li><a href="#testes">Testes de aceitação</a></li>
+        <li><a href="#ondas">Ondas 2 e 3</a></li>
+        <li><a href="#pendencias">Decisões em aberto</a></li>
+        <li><a href="#pacote">Pacote para desenvolver</a></li>
+        <li><a href="#replicar">Como fazer no seu órgão</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <!-- 1 ------------------------------------------------------------- -->
+      <section id="piloto">
+        <span class="rotulo">Etapa 1</span>
+        <h2>Do piloto ao escopo</h2>
+        <p>A matriz de priorização da aula 1 deu ao P01 a maior nota (80 de 100). São cerca de 51 processos por ano em toda a agência. As regras são claras, e o trabalho mistura dado estruturado (índices, tarifas) com texto (pleito, contrato, parecer). A avaliação AS-IS indicou três funções de IA no processo. Elas entram em ondas, uma de cada vez:</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Onda</th><th>Função</th><th>Atividade do BPMN</th><th>Situação dos dados</th></tr></thead>
+          <tbody>
+            <tr><td><span class="chip neutro">1</span></td><td><b>Motor de cálculo:</b> refaz o reajuste pela fórmula do contrato, confere as séries e aponta divergências</td><td>Calcular reajuste pela fórmula paramétrica (CAPET)</td><td>Cálculos nas peças; regras nos contratos; séries públicas e pagas</td></tr>
+            <tr><td><span class="chip neutro">2</span></td><td>Minutas de parecer jurídico, relatório, voto e deliberação</td><td>Analisar legalidade; relatar, votar e deliberar</td><td>Todas as peças com texto; deliberações anteriores na base do Especialista</td></tr>
+            <tr><td><span class="chip neutro">3</span></td><td>Conferência das tarifas nas faturas</td><td>Verificar aplicação das tarifas</td><td>1 fatura em 1.228 documentos: falta o canal de dados</td></tr>
+          </tbody>
+        </table></div>
+        <p>Esta aula especifica a onda 1. O conceito é testado num contrato só, escolhido por ter regras e dados claros e completos:</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Critério</th><th>Águas de Paraty</th><th>Águas da Imperatriz</th><th>Vale do Café</th><th>Blocos 1 a 4</th></tr></thead>
+          <tbody>
+            <tr><td>Reajustes com deliberação na base</td><td class="n">4</td><td class="n">2</td><td class="n">4</td><td>não levantado</td></tr>
+            <tr><td>Contrato e aditivos em texto</td><td>contrato, 3 aditivos, pesos no Anexo X</td><td>contrato e 1 aditivo</td><td>contrato</td><td>contrato, interdependência, 1 aditivo</td></tr>
+            <tr><td>Fórmula</td><td>6 índices ponderados</td><td>6 índices ponderados</td><td>1 índice (IPCA-E)</td><td>5 índices + tarifa social e desempenho</td></tr>
+            <tr><td>Tipos de fonte</td><td>pública, paga, ANEEL, realinhamento</td><td>os mesmos</td><td>só pública</td><td>todos, mais preço da CEDAE</td></tr>
+            <tr><td>Caso de erro real para testar</td><td>sim (2022)</td><td>não</td><td>não</td><td>parecer final em imagem</td></tr>
+          </tbody>
+        </table></div>
+        <p><b>Águas de Paraty (Contrato 008/2014) é o piloto.</b> Águas da Imperatriz é o segundo contrato da mesma família. Serve para provar que o motor muda de contrato trocando só o cadastro de parâmetros, sem mudar o código.</p>
+      </section>
+
+      <!-- 2 ------------------------------------------------------------- -->
+      <section id="rastreio">
+        <span class="rotulo">Etapa 2</span>
+        <h2>Rastreabilidade: do mapa ao teste</h2>
+        <p>Toda peça da especificação aponta para trás, para a evidência, e para frente, para o teste. Assim, quem revisa um requisito sabe por que ele existe, e quem testa sabe qual resultado esperar.</p>
+        <figure><div class="quadro"><pre class="mermaid">
+flowchart LR
+  A["Atividade do BPMN<br/>t2 · cálculo da CAPET"] --> B["Evidência<br/>peças, contrato, casos"]
+  B --> C["Requisito<br/>RF e RNF com origem"]
+  C --> D["Caso de uso<br/>UC01 a UC06"]
+  D --> E["Classes e sequência"]
+  E --> F["Teste de aceitação<br/>caso real com resultado conhecido"]
+  F -.->|"falhou? volta"| C
+        </pre></div>
+        <figcaption>Cadeia de rastreabilidade usada nesta aula. Os requisitos seguem a forma da ISO/IEC/IEEE 29148; os diagramas, a UML 2.5; os testes, a ISO/IEC/IEEE 29119.</figcaption></figure>
+      </section>
+
+      <!-- 3 ------------------------------------------------------------- -->
+      <section id="casos">
+        <span class="rotulo">Etapa 3</span>
+        <h2>Casos e dados extraídos</h2>
+        <p>O levantamento usou os 18 processos de reajuste da coorte com trilha completa no SEI. Agentes de IA leram o pleito, cada parecer da CAPET e a deliberação de cada processo e copiaram a fórmula, os pesos, os números-índice e o resultado, sem fazer conta. Depois, um script refez cada cálculo de duas formas: pelos números-índice escritos e pelas variações escritas.</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Família de fórmula</th><th class="n">Processos</th><th>Exemplos</th></tr></thead>
+          <tbody>
+            <tr><td>Índice único do IBGE (IPCA, IPCA-E)</td><td class="n">5</td><td>resíduos sólidos (Vale do Café, Centro Sul); CEDAE interior</td></tr>
+            <tr><td>IGP-M com resíduo de decisão judicial</td><td class="n">2</td><td>CEG e CEG Rio (gás)</td></tr>
+            <tr><td>6 índices ponderados</td><td class="n">4</td><td>Águas de Paraty (2022 e 2025), Imperatriz, Condessa</td></tr>
+            <tr><td>5 índices dos Blocos, com tarifa social (ITS) e desempenho (IDG)</td><td class="n">4</td><td>Águas do Rio 1 e 4, Iguá, Rio+</td></tr>
+            <tr><td>Preço da água da CEDAE no atacado</td><td class="n">2</td><td>acordo coletivo, energia e IPCA</td></tr>
+          </tbody>
+        </table></div>
+        <p>Foram 28 cálculos completos, com todos os números escritos. <b>Em 24, o resultado refeito bate com o escrito até 0,01 ponto percentual.</b> Os 4 que não batem viram casos de teste:</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Processo</th><th>Peça</th><th class="n">Escrito</th><th class="n">Refeito</th><th>Causa</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">SEI-220007/004053/2022</td><td>parecer da CAPET, Paraty</td><td class="n">10,37%</td><td class="n">9,56%</td><td>Duas variações escritas erradas: energia −0,0085 contra −0,0840 pelos índices; IPC 0,0546 contra 0,0505. Os índices citados batem com a série pública. Foi deliberado 10,37%. <span class="chip aviso">a confirmar com a CAPET</span></td></tr>
+            <tr><td class="mono">SEI-480002/009058/2025</td><td>parecer da CAPET, Centro Sul</td><td class="n">4,1245%</td><td class="n">5,3195%</td><td>Erro de digitação: os índices do próprio parecer dão 5,3195%, que foi o deliberado</td></tr>
+            <tr><td class="mono">SEI-480002/001912/2024<br>SEI-480002/001913/2024</td><td>pleito, Blocos 4 e 1</td><td class="n">4,80%</td><td class="n">4,78%</td><td>Preço da água escrito com 2 casas (2,23 e 2,09); a variação oficial é 6,75%</td></tr>
+          </tbody>
+        </table></div>
+        <p>Dois achados mudam a especificação:</p>
+        <ul>
+          <li><b>Regra de combinação.</b> Nos 11 cálculos que trazem todas as parcelas, o total fecha pelo produto: (1 + reajuste) × (1 + realinhamento) × (1 + tarifa social) − 1. Mesmo assim, duas cartas de concessionária somam em vez de multiplicar. A regra tem de estar no cadastro do contrato, não ser deduzida.</li>
+          <li><b>Formato de entrada.</b> Em Paraty 2025, a CAPET pediu por ofício a memória de cálculo em Excel, com prazo de 3 dias úteis. Doze memórias de cálculo vieram em planilha, e os pareceres finais dos Blocos trazem as tabelas em imagem. O pleito precisa de um layout próprio (etapa 10).</li>
+        </ul>
+      </section>
+
+      <!-- 4 ------------------------------------------------------------- -->
+      <section id="regras">
+        <span class="rotulo">Etapa 4</span>
+        <h2>Origem das regras</h2>
+        <p>As regras de cálculo estão no contrato de concessão e nos termos aditivos. A base de conhecimento do Especialista AGENERSA guarda 198 documentos de contratos: 24 contratos, 39 aditivos e 62 anexos. Também guarda a linha do tempo de cada concessão. Para Paraty, o cadastro de parâmetros foi montado assim: cada parâmetro traz o trecho do documento que o sustenta, e um script confere se o trecho existe, palavra por palavra, no texto da base.</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Parâmetro</th><th>Valor no cadastro</th><th>Documento</th><th>Trecho que sustenta</th></tr></thead>
+          <tbody>
+            <tr><td>Periodicidade</td><td>12 meses</td><td>Contrato, cláusula 20.1.1</td><td><span class="trecho">serão reajustados a cada período de 12 (doze) meses</span></td></tr>
+            <tr><td>Mês de referência</td><td>3º mês antes da vigência (nova tarifa e tarifa em vigor)</td><td>Contrato, cláusula 20</td><td><span class="trecho">ao terceiro mês anterior ao da data de início de vigência da tarifa em vigor</span></td></tr>
+            <tr><td>Pesos P1 a P6</td><td class="num">0,1951 · 0,0974 · 0,1082 · 0,0405 · 0,0662 · 0,4925</td><td>Anexo X, proposta comercial</td><td><span class="trecho">são P1 = 0,1951 (zero vírgula um nove cinco um); P2 = 0,0974 …</span></td></tr>
+            <tr><td>Mão de obra (IMO)</td><td>ICC Rio de Janeiro, código 159401</td><td>Contrato, cláusula 20</td><td><span class="trecho">Mão de Obra (159401)</span></td></tr>
+            <tr><td>Derivados de petróleo (IPA)</td><td>IPA-OG-DI, código 1006819</td><td>Contrato, cláusula 20</td><td><span class="trecho">Produtos Derivados do Petróleo e Álcool (1006819)</span></td></tr>
+            <tr><td>Produtos químicos (IPQ)</td><td>IPA-OG-DI, código 1006820</td><td>Contrato, cláusula 20</td><td><span class="trecho">Produtos Químicos (1006820)</span></td></tr>
+            <tr><td>Construção (ICC)</td><td>INCC, código 160868</td><td>Contrato, cláusula 20</td><td><span class="trecho">INCC — Índice Nacional de Preços da Construção Civil (160868)</span></td></tr>
+            <tr><td>Combinação com o realinhamento</td><td>multiplicativa</td><td>3º termo aditivo, cláusula 4ª</td><td><span class="trecho">que serão aplicados cumulativamente ao reajuste ordinário anual</span></td></tr>
+            <tr><td>Realinhamento</td><td>6,30% em jan/2025; 2,72% a cada janeiro de 2026 em diante</td><td>3º termo aditivo, cláusula 4ª</td><td><span class="trecho">2º: a partir da referência janeiro de 2026 — 2,72%</span></td></tr>
+          </tbody>
+        </table></div>
+        <p>O cadastro é <b>versionado por termo aditivo</b>. Uma versão herda da anterior e muda só o que o aditivo muda. Isso não é detalhe: o 1º termo aditivo dos Blocos, de 15/10/2024, mudou de uma vez a data-base e a definição do preço da água; na fórmula da CEDAE, trocou a tarifa de energia (A4 por A2) e o índice de químicos (IPA por IPCA). Os pleitos já apresentados ficaram obsoletos.</p>
+        <div class="nota"><strong>O cadastro também corrige o parecer.</strong> O parecer de 2025 define P1 = 0,195, mas usa 0,1951 no cálculo, e o Anexo X confirma 0,1951. Outra diferença: o Anexo X diz que os pesos somam 1,000, mas os seis valores escritos somam 0,9999. A especificação manda usar os pesos como escritos e mostrar a diferença.</div>
+        <p><b>O que a base ainda não resolve.</b> De Águas da Condessa só há os aditivos, sem o contrato-base. Parte dos textos é OCR de página digitalizada: em Paraty, a fórmula escrita da cláusula 20 ficou ilegível e foi reconstruída pelas definições de cada índice. A linha do tempo junta os Blocos 1 e 4 sob a mesma concessionária, por isso o cadastro é por contrato e não por concessionária.</p>
+      </section>
+
+      <!-- 5 ------------------------------------------------------------- -->
+      <section id="bases">
+        <span class="rotulo">Etapa 5</span>
+        <h2>Bases externas e integração</h2>
+        <p>Cada componente da fórmula tem uma fonte. Contando os 57 componentes dos 17 processos com cálculo:</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Disponibilidade</th><th class="n">Componentes</th><th>Fonte</th><th>Como o sistema obtém</th></tr></thead>
+          <tbody>
+            <tr><td><span class="chip ok">pública</span></td><td class="n">24</td><td>IBGE (IPCA, IPCA-E) e IPEA (INCC, IPC-Brasil, IGP-M)</td><td>Busca automática na API, com cache</td></tr>
+            <tr><td><span class="chip aviso">pública, com regra</span></td><td class="n">10</td><td>ANEEL: tarifas homologadas e bandeiras</td><td>Dados abertos da ANEEL, mais a regra de composição de cada contrato</td></tr>
+            <tr><td><span class="chip erro">paga</span></td><td class="n">17</td><td>FGV Dados: mão de obra e IPA de petróleo e químicos</td><td>A série vem no pleito; o sistema compara com outros pleitos do mesmo mês</td></tr>
+            <tr><td><span class="chip neutro">outro reajuste</span></td><td class="n">4</td><td>Preço da água da CEDAE</td><td>Deliberação do reajuste da CEDAE, no próprio sistema</td></tr>
+            <tr><td><span class="chip neutro">documento</span></td><td class="n">2</td><td>Acordo coletivo da CEDAE</td><td>Cláusula anexada ao pleito</td></tr>
+          </tbody>
+        </table></div>
+        <figure><div class="quadro"><pre class="mermaid">
+flowchart LR
+  CON["Concessionária<br/>envia o pleito"] -->|"pacote no layout 0.1"| SEI["SEI<br/>peticionamento e autos"]
+  SEI --> MOT(["Motor de cálculo<br/>do reajuste"])
+  ESP["Base do Especialista<br/>contratos, aditivos, deliberações"] -->|"cadastro de parâmetros"| MOT
+  IPEA["IPEADATA<br/>INCC, IPC, IGP-M"] -->|"API OData"| MOT
+  IBGE["IBGE SIDRA<br/>IPCA, IPCA-E"] -->|"API SIDRA"| MOT
+  ANEEL["ANEEL dados abertos<br/>tarifas homologadas"] -->|"arquivo parquet"| MOT
+  FGV["FGV Dados<br/>séries pagas"] -.->|"opcional, se houver licença"| MOT
+  MOT -->|"resultado da validação<br/>memória de cálculo<br/>minuta do parecer"| CAPET["CAPET<br/>analista confere e assina"]
+  MOT -->|"pendências"| SEI
+        </pre></div>
+        <figcaption>Diagrama de contexto. A seta tracejada é uma integração opcional; sem ela, o sistema funciona com a série do pleito e a conferência cruzada.</figcaption></figure>
+        <div class="tabela"><table>
+          <thead><tr><th>Base</th><th>Acesso testado</th><th>O que foi verificado</th><th>Cuidado</th></tr></thead>
+          <tbody>
+            <tr><td>IPEADATA</td><td class="mono">api/odata4/ValoresSerie(SERCODIGO='IGP12_INCC12')</td><td>INCC e IPC de Paraty 2022 e 2025 iguais aos do parecer</td><td>Não tem os subíndices da FGV (mão de obra, IPA por produto)</td></tr>
+            <tr><td>IBGE SIDRA</td><td class="mono">values/t/3065/n1/all/v/1117/p/…</td><td>IPCA-E de set/2024 (6.855,40) e set/2025 (7.220,07), iguais aos de Vale do Café</td><td>O IPCA-E é o número-índice do IPCA-15 (tabela 3065)</td></tr>
+            <tr><td>ANEEL</td><td>dataset de tarifas homologadas (parquet, 657 mil linhas)</td><td>Acesso e filtros por distribuidora, subgrupo e modalidade</td><td>Nenhum valor de energia dos pareceres foi reproduzido: falta a regra de composição</td></tr>
+            <tr><td>FGV Dados</td><td>assinatura (contratos públicos: R$ 15 mil por 10 séries em 2019; R$ 30 mil por 20 séries em 2021)</td><td>Não contratada</td><td>A licença proíbe publicar ou redistribuir as séries</td></tr>
+            <tr><td>Base do Especialista</td><td>leitura da base SQLite (tabelas de contratos, normativos e deliberações)</td><td>12 trechos do cadastro de Paraty achados</td><td>Texto de OCR; linha do tempo por concessionária</td></tr>
+          </tbody>
+        </table></div>
+        <p>A conferência cruzada funciona porque o mesmo índice do mesmo mês aparece em vários pleitos. Os dois IPA de out/2024 e out/2025 têm o mesmo valor em Paraty, Imperatriz e Condessa. A mão de obra de São Paulo também coincide nos Blocos 1, 2 e 4. No Bloco 3, a conferência pegou uma diferença real: o pleito usou 1.331,066 e a CAPET usou 1.339,322, de outro mês, depois da mudança de data-base.</p>
+      </section>
+
+      <!-- 6 ------------------------------------------------------------- -->
+      <section id="requisitos">
+        <span class="rotulo">Etapa 6</span>
+        <h2>Requisitos</h2>
+        <p>Os requisitos são escritos como obrigação do sistema ("o sistema deve…"). Cada um tem identificador e origem e é verificável por um teste.</p>
+        <details open><summary>Requisitos funcionais (14)</summary>
+          <div class="req"><span class="id">RF01</span><span>Receber o pleito como pacote no layout 0.1: dados do pleito, séries, energia, tabela tarifária e evidências com hash.</span><span class="origem">Origem: Paraty 2025, memória de cálculo pedida por ofício; 12 memórias em planilha.</span></div>
+          <div class="req"><span class="id">RF02</span><span>Validar o pacote contra o layout e listar cada campo que falta ou está fora do formato (V01).</span><span class="origem">Origem: especificação dos dados do pleito.</span></div>
+          <div class="req"><span class="id">RF03</span><span>Manter o cadastro de parâmetros por contrato, com uma versão por termo aditivo e o trecho literal de cada parâmetro, e conferir que o trecho existe no texto do contrato (V02).</span><span class="origem">Origem: 1º termo aditivo dos Blocos (15/10/2024); cadastro de Paraty.</span></div>
+          <div class="req"><span class="id">RF04</span><span>Conferir o interstício e os meses de referência pela regra do contrato (V03, V04).</span><span class="origem">Origem: cláusula 20 de Paraty; CEDAE interior, em que o mês de referência mudou o resultado (5,2826% no pleito, 4,6963% na CAPET).</span></div>
+          <div class="req"><span class="id">RF05</span><span>Exigir os componentes e os códigos de série do cadastro (V05) e a série mensal completa de o até i (V06).</span><span class="origem">Origem: o mesmo IPC aparece com três nomes e códigos diferentes em três processos.</span></div>
+          <div class="req"><span class="id">RF06</span><span>Buscar as séries públicas e comparar cada número-índice do pleito, nas casas decimais enviadas (V07).</span><span class="origem">Origem: 70 de 70 números-índice públicos achados nas séries.</span></div>
+          <div class="req"><span class="id">RF07</span><span>Comparar cada série paga com o mesmo índice e mês em outros pleitos (V08).</span><span class="origem">Origem: valores iguais entre Paraty, Imperatriz e Condessa; diferença real no Bloco 3.</span></div>
+          <div class="req"><span class="id">RF08</span><span>Recalcular o índice de reajuste com os pesos do cadastro e arredondar nas casas do contrato (V09).</span><span class="origem">Origem: Paraty 2022 (10,37% escrito, 9,56% pelos índices) e Centro Sul 2025.</span></div>
+          <div class="req"><span class="id">RF09</span><span>Compor o total com a parcela de realinhamento do cronograma, pela regra de combinação do cadastro (V10).</span><span class="origem">Origem: 11 cálculos fecham pelo produto; cronograma do 3º termo aditivo de Paraty.</span></div>
+          <div class="req"><span class="id">RF10</span><span>Exigir, para o componente de energia, a distribuidora, a regra de composição e as resoluções da ANEEL usadas (V11).</span><span class="origem">Origem: energia sem fonte em Paraty; pedido de alteração do índice de energia remetido à revisão ordinária.</span></div>
+          <div class="req"><span class="id">RF11</span><span>Conferir a tabela tarifária proposta contra a vigente e o total (V12).</span><span class="origem">Origem: Condessa e Imperatriz sem tabela; tabelas do Diário Oficial com números quebrados.</span></div>
+          <div class="req"><span class="id">RF12</span><span>Devolver o pleito com erro e a lista do que corrigir, numa minuta de ofício de complementação.</span><span class="origem">Origem: AS-IS, diligências pela Secretaria em 61% dos casos e pelo gabinete em 50%.</span></div>
+          <div class="req"><span class="id">RF13</span><span>Gerar a memória de cálculo e a minuta do parecer técnico da CAPET para o pleito sem erro.</span><span class="origem">Origem: avaliação AS-IS, potencial alto de IA na atividade de cálculo.</span></div>
+          <div class="req"><span class="id">RF14</span><span>Guardar o histórico de cada contrato e conferir que o mês o de um ciclo é o mês i do ciclo anterior.</span><span class="origem">Origem: acúmulo de 24 meses quando um reajuste não foi homologado (resíduos sólidos, 2023).</span></div>
+        </details>
+        <details><summary>Requisitos não funcionais (8), pelas características da ISO/IEC 25010</summary>
+          <div class="req"><span class="id">RNF01</span><span><b>Exatidão.</b> Tolerância de 0,01 ponto percentual entre o índice refeito e o declarado, depois de arredondar nas casas do contrato.</span><span class="origem">Medida no levantamento: 24 de 28 cálculos dentro da tolerância.</span></div>
+          <div class="req"><span class="id">RNF02</span><span><b>Rastreabilidade.</b> Todo número exibido aponta sua origem: arquivo do pleito, série pública com data da consulta ou trecho do contrato.</span><span class="origem">Regra do método: nenhum número digitado à mão.</span></div>
+          <div class="req"><span class="id">RNF03</span><span><b>Reprodutibilidade.</b> O resultado guarda as versões do cadastro, do layout e das séries usadas. A mesma entrada dá o mesmo resultado.</span><span class="origem">Aditivos mudam a regra no meio do ciclo.</span></div>
+          <div class="req"><span class="id">RNF04</span><span><b>Licença.</b> Séries pagas não são exibidas fora do processo nem exportadas para painel público.</span><span class="origem">Contratos públicos da FGV com cláusula de não divulgação.</span></div>
+          <div class="req"><span class="id">RNF05</span><span><b>Privacidade.</b> O layout não aceita dados pessoais. A tarifa social entra só como agregado.</span><span class="origem">Bases de economias dos Blocos chegam ao SEI com dados pessoais.</span></div>
+          <div class="req"><span class="id">RNF06</span><span><b>Disponibilidade.</b> Se a API do IPEA ou do IBGE estiver fora do ar, o sistema usa o cache e marca a conferência como "a refazer".</span><span class="origem">Dependência de serviços externos.</span></div>
+          <div class="req"><span class="id">RNF07</span><span><b>Decisão humana.</b> O sistema não homologa nem assina. O analista da CAPET confere, ajusta e assina o parecer.</span><span class="origem">Competência legal do Conselho-Diretor e da CAPET.</span></div>
+          <div class="req"><span class="id">RNF08</span><span><b>Usabilidade.</b> O resultado da validação cabe numa tela, com cada regra, sua situação e a mensagem em linguagem de quem analisa.</span><span class="origem">Protótipo da etapa 11.</span></div>
+        </details>
+      </section>
+
+      <!-- 7 ------------------------------------------------------------- -->
+      <section id="usos">
+        <span class="rotulo">Etapa 7</span>
+        <h2>Casos de uso</h2>
+        <figure><div class="quadro">
+          <svg viewBox="0 0 760 430" role="img" aria-label="Diagrama de casos de uso do motor de cálculo" style="width:100%;min-width:620px;height:auto;color:var(--ink)">
+            <rect x="200" y="14" width="360" height="402" rx="6" fill="none" style="stroke:var(--line)" stroke-width="1.5"/>
+            <text x="380" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="currentColor">Motor de cálculo do reajuste</text>
+            <g font-size="12.5" fill="currentColor">
+              <ellipse cx="380" cy="82" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="86" text-anchor="middle">UC01 Enviar pleito</text>
+              <ellipse cx="380" cy="140" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="144" text-anchor="middle">UC02 Validar pleito na entrada</text>
+              <ellipse cx="380" cy="198" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="202" text-anchor="middle">UC03 Recalcular e conferir séries</text>
+              <ellipse cx="380" cy="256" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="260" text-anchor="middle">UC04 Emitir memória e minuta</text>
+              <ellipse cx="380" cy="314" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="318" text-anchor="middle">UC05 Manter cadastro do contrato</text>
+              <ellipse cx="380" cy="372" rx="138" ry="24" style="fill:var(--accent-soft);stroke:var(--accent)"/><text x="380" y="376" text-anchor="middle">UC06 Consultar histórico</text>
+            </g>
+            <g fill="none" style="stroke:var(--muted)" stroke-width="1.5">
+              <circle cx="80" cy="96" r="11"/><path d="M80 107v26M62 117h36M80 133l-14 20M80 133l14 20"/>
+              <circle cx="80" cy="270" r="11"/><path d="M80 281v26M62 291h36M80 307l-14 20M80 307l14 20"/>
+              <circle cx="680" cy="150" r="11"/><path d="M680 161v26M662 171h36M680 187l-14 20M680 187l14 20"/>
+              <circle cx="680" cy="330" r="11"/><path d="M680 341v26M662 351h36M680 367l-14 20M680 367l14 20"/>
+            </g>
+            <g font-size="12" fill="currentColor" text-anchor="middle">
+              <text x="80" y="172">Concessionária</text>
+              <text x="80" y="346">Analista da CAPET</text>
+              <text x="680" y="226">Séries externas</text>
+              <text x="680" y="240" style="fill:var(--muted)">IPEA · IBGE · ANEEL</text>
+              <text x="680" y="406">Gestor do cadastro</text>
+            </g>
+            <g style="stroke:var(--muted)" stroke-width="1.2">
+              <line x1="104" y1="110" x2="242" y2="84"/>
+              <line x1="104" y1="118" x2="242" y2="140"/>
+              <line x1="104" y1="285" x2="242" y2="200"/>
+              <line x1="104" y1="292" x2="242" y2="256"/>
+              <line x1="104" y1="300" x2="242" y2="370"/>
+              <line x1="518" y1="198" x2="656" y2="170"/>
+              <line x1="518" y1="314" x2="656" y2="350"/>
+            </g>
+            <g font-size="11" style="fill:var(--muted)">
+              <path d="M500 153v32" style="stroke:var(--muted)" stroke-dasharray="3 3"/>
+              <text x="506" y="173">«inclui»</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>Diagrama de casos de uso (UML). A concessionária envia e vê o resultado da validação. O analista da CAPET recalcula, emite e consulta. O gestor do cadastro mantém os parâmetros de cada contrato. As séries externas são atores-sistema. UC02 inclui UC03.</figcaption></figure>
+
+        <details open><summary>UC02 Validar pleito na entrada (caso principal)</summary>
+          <div class="tabela"><table><tbody>
+            <tr><th>Ator principal</th><td>Concessionária (o pleito chega pelo SEI)</td></tr>
+            <tr><th>Pré-condição</th><td>O contrato tem cadastro com versão vigente na data da vigência pretendida</td></tr>
+            <tr><th>Gatilho</th><td>Pacote anexado ao ofício do pleito no SEI</td></tr>
+            <tr><th>Fluxo principal</th><td>1. O sistema lê o pacote e valida o layout (V01).<br>2. Carrega a versão do cadastro e confere os trechos (V02).<br>3. Confere o interstício e os meses de referência (V03, V04).<br>4. Confere componentes e séries (V05, V06).<br>5. Busca as séries públicas e compara (V07); compara as pagas com outros pleitos (V08).<br>6. Recalcula o índice e o total (V09, V10), por UC03.<br>7. Confere energia e tabela (V11, V12).<br>8. Sem erro: encaminha à CAPET com o resultado e os avisos.</td></tr>
+            <tr><th>Fluxo alternativo</th><td>8a. Com erro: gera a minuta de ofício de complementação com a lista do que corrigir e devolve à concessionária. O prazo de resposta passa a ser acompanhado.</td></tr>
+            <tr><th>Exceção</th><td>5a. API externa fora do ar: usa o cache, marca a conferência como "a refazer" e segue.</td></tr>
+            <tr><th>Pós-condição</th><td>O resultado da validação fica salvo com as versões do cadastro, do layout e das séries (RNF03).</td></tr>
+            <tr><th>Requisitos</th><td>RF01–RF12, RNF01–RNF06</td></tr>
+          </tbody></table></div>
+        </details>
+        <details><summary>UC03 Recalcular e conferir séries</summary>
+          <p>O sistema aplica IR = Σ P<sub>k</sub> × (I<sub>k,i</sub> − I<sub>k,o</sub>) / I<sub>k,o</sub> com os pesos da versão do cadastro e arredonda nas casas do contrato. Depois compõe o total com as parcelas do cronograma pela regra de combinação. Compara com o declarado (RNF01) e grava cada termo da soma, para a memória de cálculo. Na família de índice único, IR = I<sub>i</sub>/I<sub>o</sub> − 1. Requisitos: RF06–RF09, RF14.</p>
+        </details>
+        <details><summary>UC04 Emitir memória e minuta do parecer</summary>
+          <p>Ator: analista da CAPET. A partir da validação sem erro, o sistema monta a memória de cálculo (índices, variações, termos ponderados, total) e a minuta do parecer técnico no padrão das peças da CAPET da coorte: fatos, análise, apuração, conclusão. O analista revisa, ajusta e assina no SEI (RNF07). Requisito: RF13.</p>
+        </details>
+        <details><summary>UC05 Manter cadastro do contrato</summary>
+          <p>Ator: gestor do cadastro (CAPET). Cria uma versão nova a cada termo aditivo ou deliberação que muda o reajuste. Informa o parâmetro, o valor, o documento e o trecho. O sistema recusa a versão se algum trecho não for achado no texto do documento (V02). A versão nova herda da anterior. Requisito: RF03.</p>
+        </details>
+        <details><summary>UC01 Enviar pleito e UC06 Consultar histórico</summary>
+          <p>UC01: a concessionária monta o pacote pelo layout publicado e anexa ao ofício. Ela pode rodar a mesma validação antes de enviar, se a agência publicar o validador. UC06: o analista vê, por contrato, cada ciclo com índices, resultado declarado, refeito e deliberado, e a encadeação o→i entre ciclos (RF14).</p>
+        </details>
+      </section>
+
+      <!-- 8 ------------------------------------------------------------- -->
+      <section id="dominio">
+        <span class="rotulo">Etapa 8</span>
+        <h2>Modelo de domínio</h2>
+        <p>As classes saem do vocabulário dos autos: contrato, termo aditivo, fórmula, componente, série, pleito, apuração. A peça central é a versão contratual, porque é ela que o aditivo muda.</p>
+        <figure><div class="quadro"><pre class="mermaid">
+classDiagram
+  direction LR
+  class Contrato {
+    numero
+    concessionaria
+    servico
+  }
+  class VersaoContratual {
+    codigo
+    ato
+    vigenteDesde
+    periodicidadeMeses
+    combinacao
+  }
+  class Formula {
+    tipo
+    mesesAntesDaVigencia
+    casasDecimaisIR
+  }
+  class Componente {
+    sigla
+    peso
+    codigoSerie
+    fonte
+  }
+  class ParcelaRealinhamento {
+    parcela
+    referencia
+    percentual
+  }
+  class FonteRegra {
+    documento
+    parametro
+    trecho
+    achadoNoTexto
+  }
+  class Pleito {
+    vigenciaPretendida
+    mesO
+    mesI
+    irDeclarado
+    totalDeclarado
+    situacao
+  }
+  class SeriePleito {
+    sigla
+    codigoSerie
+    evidencia
+  }
+  class ValorMensal {
+    mes
+    valor
+  }
+  class SerieExterna {
+    base
+    codigo
+    consultadaEm
+  }
+  class Validacao {
+    regra
+    situacao
+    mensagem
+  }
+  class Apuracao {
+    irRecalculado
+    totalRecalculado
+    termos
+  }
+  Contrato "1" *-- "1..*" VersaoContratual
+  VersaoContratual "1" *-- "1" Formula
+  VersaoContratual "1" *-- "0..*" ParcelaRealinhamento
+  VersaoContratual "1" o-- "1..*" FonteRegra
+  Formula "1" *-- "1..*" Componente
+  Pleito "*" --> "1" VersaoContratual : aplica
+  Pleito "1" *-- "1..*" SeriePleito
+  SeriePleito "1" *-- "2..*" ValorMensal
+  SeriePleito ..> SerieExterna : conferida com
+  Pleito "1" *-- "1..*" Validacao
+  Pleito "1" *-- "0..1" Apuracao
+        </pre></div>
+        <figcaption>Diagrama de classes (UML). Composição: a parte não existe sem o todo. Agregação (FonteRegra): o mesmo trecho pode sustentar parâmetros de versões diferentes. A dependência tracejada é a conferência com as séries públicas.</figcaption></figure>
+      </section>
+
+      <!-- 9 ------------------------------------------------------------- -->
+      <section id="sequencia">
+        <span class="rotulo">Etapa 9</span>
+        <h2>Sequência e estados</h2>
+        <figure><div class="quadro"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor C as Concessionária
+  participant S as SEI
+  participant M as Motor de cálculo
+  participant K as Cadastro do contrato
+  participant X as Séries externas
+  actor A as Analista da CAPET
+  C->>S: ofício com o pacote do pleito
+  S->>M: pacote anexado
+  M->>M: valida o layout (V01)
+  M->>K: versão vigente na data da vigência
+  K-->>M: pesos, códigos, regras, trechos (V02)
+  M->>M: interstício e meses de referência (V03, V04)
+  M->>X: séries públicas de o e i
+  X-->>M: valores e data da consulta (V07)
+  M->>M: compara séries pagas com outros pleitos (V08)
+  M->>M: recalcula índice e total (V09, V10)
+  alt algum erro
+    M->>S: minuta de ofício de complementação
+    S->>C: pendências a corrigir
+  else sem erro
+    M->>A: resultado, memória de cálculo e minuta do parecer
+    A->>S: parecer revisado e assinado
+  end
+        </pre></div>
+        <figcaption>Diagrama de sequência do caso principal (UC02 com UC03 e UC04).</figcaption></figure>
+        <figure><div class="quadro"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Recebido
+  Recebido --> EmValidacao
+  EmValidacao --> Devolvido: algum erro
+  Devolvido --> Recebido: concessionária reenvia
+  EmValidacao --> EmAnalise: sem erro
+  EmAnalise --> ParecerEmitido: analista assina
+  ParecerEmitido --> Deliberado: Conselho-Diretor
+  Deliberado --> [*]
+  EmValidacao --> AReconferir: série externa indisponível
+  AReconferir --> EmValidacao: cache atualizado
+        </pre></div>
+        <figcaption>Diagrama de estados do pleito. "Devolvido" substitui as rodadas de diligência que o AS-IS mostrou.</figcaption></figure>
+      </section>
+
+      <!-- 10 ------------------------------------------------------------ -->
+      <section id="layout">
+        <span class="rotulo">Etapa 10</span>
+        <h2>Dados que a agência pede à concessionária</h2>
+        <p>Esta é a outra metade da especificação. O órgão regulador pode exigir os dados no formato que o processamento automático precisa. O art. 25 da Lei 11.445/2007 obriga o prestador de saneamento a fornecer à reguladora os dados necessários às suas atividades. O art. 30 da Lei 8.987/1995 dá acesso aos dados técnicos, econômicos e financeiros da concessionária. Falta definir com a Procuradoria o instrumento: deliberação ou manual anexo.</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Arquivo</th><th>Formato</th><th>Conteúdo</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">pleito.json</td><td>JSON Schema 0.1</td><td>contrato e versão contratual, vigência pretendida, tarifa em vigor, meses o e i, componentes com séries, energia, resultado declarado, casas decimais, anexos com SHA-256</td></tr>
+            <tr><td class="mono">series.csv</td><td>CSV UTF-8, ponto decimal</td><td class="mono">sigla, fonte, codigo_serie, mes, valor</td></tr>
+            <tr><td class="mono">energia.csv</td><td>CSV</td><td class="mono">reh, distribuidora, subgrupo, modalidade, posto, vigencia_inicio, tusd_mwh, te_mwh, bandeira_mwh, desconto_pct</td></tr>
+            <tr><td class="mono">tabela_tarifaria.csv</td><td>CSV</td><td class="mono">categoria, faixa_inicio, faixa_fim, unidade, vigente, proposta</td></tr>
+            <tr><td>evidências</td><td>PDF ou CSV original</td><td>exportação da FGV, do IBGE ou da ANEEL de onde saiu cada série</td></tr>
+            <tr><td>memória e publicação</td><td>PDF</td><td>a conta em forma legível, assinada; o jornal com a tabela publicada</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>Todos os meses de o até i, não só as pontas.</li>
+          <li>Valores como publicados pela fonte, sem arredondar.</li>
+          <li>Siglas e versões são as do cadastro publicado pela agência. A concessionária não escolhe nome nem código.</li>
+          <li>Nenhum dado pessoal.</li>
+        </ul>
+        <details><summary>Trecho do exemplo real de Paraty 2026 no layout</summary>
+<pre class="mono" style="overflow-x:auto;margin:0;font-size:.8125rem">{
+  "versao_layout": "0.1",
+  "contrato": {"numero": "008/2014", "versao_contratual": "3TA-2024"},
+  "vigencia_pretendida": "2026-01-01",
+  "tarifa_em_vigor": {"vigente_desde": "2025-01-12", "ato": "Deliberação AGENERSA nº 4.857/2025"},
+  "periodo_referencia": {"o": "2024-10", "i": "2025-10"},
+  "componentes": [
+    {"sigla": "IPA", "codigo_serie": "1006819", "fonte": "FGV",
+     "serie": [{"mes": "2024-10", "valor": 367.637}, {"mes": "2025-10", "valor": 356.857}], ...},
+    ...
+  ],
+  "resultado_declarado": {"ir_pct": 3.967, "total_pct": 6.795,
+    "outros": [{"nome": "realinhamento", "parcela": 2, "pct": 2.72, "ato": "3º Termo Aditivo"}]}
+}</pre>
+        </details>
+      </section>
+
+      <!-- 11 ------------------------------------------------------------ -->
+      <section id="telas">
+        <span class="rotulo">Etapa 11</span>
+        <h2>Protótipos de tela</h2>
+        <p>Os protótipos usam os dados reais do pleito de Paraty para 2026. São de baixa fidelidade: servem para validar com a CAPET o que aparece e em que ordem, não o visual final.</p>
+
+        <div class="tela" role="img" aria-label="Protótipo: fila de pleitos">
+          <div class="tela-barra"><b>Pleitos de reajuste</b><span>CAPET · 3 em andamento</span></div>
+          <div class="tela-corpo">
+            <div class="tabela"><table>
+              <thead><tr><th>Contrato</th><th>Vigência</th><th>Situação</th><th class="n">Erros</th><th class="n">Avisos</th><th class="n">Prazo</th></tr></thead>
+              <tbody>
+                <tr><td>Águas de Paraty · 008/2014</td><td class="num">01/01/2026</td><td><span class="chip erro">devolvido</span></td><td class="n">1</td><td class="n">5</td><td class="n">aguarda resposta</td></tr>
+                <tr><td>Águas da Imperatriz · 067.001.2023</td><td class="num">exemplo</td><td><span class="chip neutro">em análise</span></td><td class="n">0</td><td class="n">exemplo</td><td class="n">exemplo</td></tr>
+                <tr><td>Águas da Condessa</td><td class="num">exemplo</td><td><span class="chip aviso">recebido</span></td><td class="n">exemplo</td><td class="n">exemplo</td><td class="n">exemplo</td></tr>
+              </tbody>
+            </table></div>
+            <p style="margin:0;font-size:var(--s-1);color:var(--muted)">Linhas marcadas como "exemplo" são ilustrativas; só a de Paraty usa o resultado real do validador.</p>
+          </div>
+        </div>
+
+        <div class="tela" role="img" aria-label="Protótipo: resultado da validação do pleito de Paraty 2026">
+          <div class="tela-barra"><b>Validação · Águas de Paraty · vigência 01/01/2026</b><span>versão do cadastro 3TA-2024 · layout 0.1</span></div>
+          <div class="tela-corpo">
+            <div class="cifras">
+              <div><strong class="num">10</strong><span>conferências ok</span></div>
+              <div><strong class="num">5</strong><span>avisos</span></div>
+              <div><strong class="num">1</strong><span>erro: devolver para complementação</span></div>
+            </div>
+            <div>
+              <div class="linha-regra"><span class="mono">V01</span><span class="chip ok">ok</span><span>Layout 0.1 válido</span></div>
+              <div class="linha-regra"><span class="mono">V02</span><span class="chip ok">ok</span><span>Todos os trechos do cadastro achados no contrato e aditivos</span></div>
+              <div class="linha-regra"><span class="mono">V03</span><span class="chip aviso">aviso</span><span>12 meses de referência entre 12/01/2025 e 01/01/2026, mas 354 dias</span></div>
+              <div class="linha-regra"><span class="mono">V04</span><span class="chip ok">ok</span><span>Meses o = out/2024 e i = out/2025, iguais aos da regra do 3º mês anterior</span></div>
+              <div class="linha-regra"><span class="mono">V05</span><span class="chip ok">ok</span><span>Componentes e códigos iguais ao cadastro</span></div>
+              <div class="linha-regra"><span class="mono">V06</span><span class="chip aviso">aviso</span><span>Séries só com as pontas, sem os meses intermediários</span></div>
+              <div class="linha-regra"><span class="mono">V07</span><span class="chip ok">ok</span><span>IPC 761,643 e 789,092 achados no IPEADATA</span></div>
+              <div class="linha-regra"><span class="mono">V07</span><span class="chip aviso">aviso</span><span>INCC 1.149,17 e 1.222,36 achados, mas com menos casas que a série (1.222,356)</span></div>
+              <div class="linha-regra"><span class="mono">V08</span><span class="chip ok">ok</span><span>IPA, IPQ e INCC iguais aos de outros pleitos do mesmo mês</span></div>
+              <div class="linha-regra"><span class="mono">V08</span><span class="chip aviso">aviso</span><span>Mão de obra RJ (159401): nenhum outro pleito para comparar</span></div>
+              <div class="linha-regra"><span class="mono">V09</span><span class="chip ok">ok</span><span>Índice refeito 3,9669%, arredondado 3,967%, igual ao declarado</span></div>
+              <div class="linha-regra"><span class="mono">V10</span><span class="chip ok">ok</span><span>Total 6,7949% pelo produto com a 2ª parcela (2,72%), declarado 6,795%</span></div>
+              <div class="linha-regra"><span class="mono">V11</span><span class="chip erro">erro</span><span>Energia sem distribuidora, sem regra de composição e sem resolução da ANEEL</span></div>
+              <div class="linha-regra"><span class="mono">V12</span><span class="chip aviso">aviso</span><span>Pleito sem tabela tarifária vigente e proposta</span></div>
+            </div>
+            <div class="botoes"><span class="botao principal">Gerar ofício de complementação</span><span class="botao">Ver memória de cálculo</span><span class="botao">Ver cadastro do contrato</span></div>
+          </div>
+        </div>
+
+        <div class="duas">
+          <div class="tela" role="img" aria-label="Protótipo: memória de cálculo">
+            <div class="tela-barra"><b>Memória de cálculo</b><span>out/2024 → out/2025</span></div>
+            <div class="tela-corpo">
+              <div class="tabela"><table>
+                <thead><tr><th>Índice</th><th class="n">Peso</th><th class="n">o</th><th class="n">i</th><th class="n">Variação</th><th class="n">Ponderada</th></tr></thead>
+                <tbody>
+                  <tr><td>IMO</td><td class="n">0,1951</td><td class="n">1.466,05</td><td class="n">1.576,75</td><td class="n">7,551%</td><td class="n">1,473%</td></tr>
+                  <tr><td>IEE</td><td class="n">0,0974</td><td class="n">511,75</td><td class="n">471,91</td><td class="n">−7,785%</td><td class="n">−0,758%</td></tr>
+                  <tr><td>IPA</td><td class="n">0,1082</td><td class="n">367,637</td><td class="n">356,857</td><td class="n">−2,932%</td><td class="n">−0,317%</td></tr>
+                  <tr><td>IPQ</td><td class="n">0,0405</td><td class="n">199,691</td><td class="n">209,255</td><td class="n">4,789%</td><td class="n">0,194%</td></tr>
+                  <tr><td>IPC</td><td class="n">0,0662</td><td class="n">761,643</td><td class="n">789,092</td><td class="n">3,604%</td><td class="n">0,239%</td></tr>
+                  <tr><td>ICC</td><td class="n">0,4925</td><td class="n">1.149,17</td><td class="n">1.222,36</td><td class="n">6,369%</td><td class="n">3,137%</td></tr>
+                  <tr><td colspan="5"><b>Índice de reajuste</b></td><td class="n"><b>3,967%</b></td></tr>
+                  <tr><td colspan="5">Total com realinhamento de 2,72%</td><td class="n"><b>6,795%</b></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </div>
+          <div class="tela" role="img" aria-label="Protótipo: cadastro do contrato">
+            <div class="tela-barra"><b>Cadastro · 008/2014</b><span>versão 3TA-2024 · herda contrato-2014</span></div>
+            <div class="tela-corpo">
+              <div class="campo"><span>Parâmetro</span>Peso P6 (ICC) = 0,4925</div>
+              <div class="campo"><span>Documento</span>Anexo X, proposta comercial</div>
+              <div class="trecho">… e P6 = 0,4925 (zero vírgula quatro nove dois cinco)</div>
+              <div><span class="chip ok">trecho achado no texto</span></div>
+              <div class="campo"><span>Parâmetro</span>Realinhamento 2026 = 2,72%</div>
+              <div class="campo"><span>Documento</span>3º termo aditivo, cláusula 4ª</div>
+              <div class="trecho">2º: a partir da referência janeiro de 2026 — 2,72%</div>
+              <div><span class="chip ok">trecho achado no texto</span></div>
+              <div class="botoes"><span class="botao">Nova versão por aditivo</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 ------------------------------------------------------------ -->
+      <section id="testes">
+        <span class="rotulo">Etapa 12</span>
+        <h2>Testes de aceitação</h2>
+        <p>O oráculo dos testes são os próprios casos reais: o resultado esperado já está nos autos. O sistema é aceito quando passa em todos.</p>
+        <div class="tabela"><table>
+          <thead><tr><th>Teste</th><th>Entrada</th><th>Resultado esperado</th><th>Hoje</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">AT01</td><td>24 cálculos que conferem</td><td>V09 ok em todos</td><td><span class="chip ok">passa no recálculo</span></td></tr>
+            <tr><td class="mono">AT02</td><td>Paraty 2022 (parecer de 10,37%)</td><td>V09 erro: 9,56% pelos índices</td><td><span class="chip ok">detectado</span></td></tr>
+            <tr><td class="mono">AT03</td><td>Centro Sul 2025 (parecer de 4,1245%)</td><td>V09 erro: 5,3195% pelos índices</td><td><span class="chip ok">detectado</span></td></tr>
+            <tr><td class="mono">AT04</td><td>Blocos 1 e 4, pleito de 4,80%</td><td>aviso de arredondamento do preço da água</td><td><span class="chip aviso">a implementar</span></td></tr>
+            <tr><td class="mono">AT05</td><td>Paraty 2026 com índice, mês, parcela ou evidência alterados</td><td>erro em V09, V04, V10 e V01</td><td><span class="chip ok">teste automatizado</span></td></tr>
+            <tr><td class="mono">AT06</td><td>Paraty 2026 como está nos autos</td><td>10 ok, 5 avisos, 1 erro (energia)</td><td><span class="chip ok">teste automatizado</span></td></tr>
+            <tr><td class="mono">AT07</td><td>Águas da Imperatriz 2026 com o cadastro próprio</td><td>V09 ok com 2,79%, sem mudar o código</td><td><span class="chip aviso">falta o cadastro</span></td></tr>
+            <tr><td class="mono">AT08</td><td>Ciclos de Paraty de 2022 a 2025 encadeados</td><td>mês o de cada ciclo igual ao mês i do anterior</td><td><span class="chip aviso">faltam o 1º e o 2º aditivos</span></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 13 ------------------------------------------------------------ -->
+      <section id="ondas">
+        <span class="rotulo">Etapa 13</span>
+        <h2>Ondas 2 e 3</h2>
+        <div class="duas">
+          <div>
+            <h3>Onda 2: minutas</h3>
+            <p>Reaproveita a apuração da onda 1 como fato do relatório. As fontes já existem: todas as peças de parecer jurídico (30), relatório e voto (68) e publicação (63) têm texto, as deliberações anteriores estão na base do Especialista e os 20 requisitos legais do P01 têm teste computável. O Especialista já tem um módulo que monta a lista de verificação e a minuta do ato no reajuste do gás. A onda 2 se liga a ele.</p>
+          </div>
+          <div>
+            <h3>Onda 3: faturas</h3>
+            <p>Depende de um canal de dados que não existe. Nos 1.228 documentos dos 18 processos há uma única fatura: a CAPET pede as faturas por ofício e as recebe fora dos autos. O primeiro passo é especificar com as concessionárias uma amostra de faturas, ou um extrato da base comercial sem dados pessoais, no mesmo espírito do layout do pleito.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 ------------------------------------------------------------ -->
+      <section id="pendencias">
+        <span class="rotulo">Etapa 14</span>
+        <h2>Decisões em aberto</h2>
+        <div class="tabela"><table>
+          <thead><tr><th>Decisão</th><th>Quem decide</th><th>Por que importa</th></tr></thead>
+          <tbody>
+            <tr><td>Regra da energia de Paraty: distribuidora, TUSD + TE, tributos, bandeira, mês da resolução</td><td>CAPET</td><td>É o único erro do pleito real; o pedido de alteração do índice foi remetido à revisão ordinária</td></tr>
+            <tr><td>Interstício contado por mês de referência ou por dia</td><td>CAPET e Procuradoria</td><td>12/01/2025 a 01/01/2026 tem 12 meses de referência e 354 dias</td></tr>
+            <tr><td>Instrumento que torna o layout obrigatório</td><td>Procuradoria e Conselho-Diretor</td><td>Sem ele, o layout é pedido, não exigência</td></tr>
+            <tr><td>Divergência do parecer de Paraty 2022</td><td>CAPET</td><td>A planilha anexa não foi lida; pode explicar a diferença</td></tr>
+            <tr><td>Canal de envio: peticionamento do SEI ou envio direto ao sistema</td><td>TI e Secretaria Executiva</td><td>Define onde o validador roda</td></tr>
+            <tr><td>Assinatura da FGV Dados</td><td>Gestão</td><td>Opcional: a conferência cruzada cobre a maior parte dos casos</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 15 ------------------------------------------------------------ -->
+      <section id="pacote">
+        <span class="rotulo">Etapa 15 · PARADA 11</span>
+        <h2>Pacote pronto para o desenvolvimento assistido por IA</h2>
+        <p>A especificação do motor resolve a parte mais difícil, as regras de negócio. Para uma IA construir o <b>sistema completo</b> com qualidade, ela precisa também das decisões que tomaria sozinha, e cada sessão de um jeito: stack, fronteiras do código, contratos, modelo de dados e telas. O pacote fecha essas lacunas. O nome de trabalho do sistema é <b>Reajusta</b>. Ele cobre o P01 de ponta a ponta, do protocolo ao arquivamento, em dez módulos tirados das 18 melhorias do TO-BE.</p>
+        <div class="cifras">
+          <div><strong class="num">45 + 14</strong><span>requisitos funcionais e não funcionais, cada um com origem e critério de aceite</span></div>
+          <div><strong class="num">20</strong><span>casos de uso descritos, com sequências e estados do ciclo</span></div>
+          <div><strong class="num">16 · 25</strong><span>telas especificadas e componentes reutilizáveis no padrão gov.br</span></div>
+          <div><strong class="num">80</strong><span>operações de API em OpenAPI 3.1, com perfil e caso de uso</span></div>
+          <div><strong class="num">40</strong><span>modelos de dados no Prisma, com o schema validado</span></div>
+          <div><strong class="num">48 · 31</strong><span>histórias com critérios Dado/Quando/Então e testes de aceitação</span></div>
+        </div>
+        <div class="tabela"><table>
+          <thead><tr><th>Para garantir</th><th>O pacote traz</th></tr></thead>
+          <tbody>
+            <tr><td><b>Código limpo e desacoplado</b></td><td>Arquitetura hexagonal: domínio em TypeScript puro, portas e adaptadores, regra de dependência verificada por ferramenta. Onze ADRs registram as decisões (stack, oráculo Python, versionamento do cadastro, SEI, modelo de linguagem, séries, autenticação, gov.br, dias úteis).</td></tr>
+            <tr><td><b>Reuso</b></td><td>Inventário de componentes de tela e catálogo de funções do domínio. O arquivo de regras para a IA proíbe duplicar, pôr regra de negócio em tela ou rota, usar <code>any</code> e chamar serviço externo fora de adaptador.</td></tr>
+            <tr><td><b>Qualidade verificável</b></td><td>Testes antes do código, com fixtures tirados dos autos e gerados por script; portões de tipos, lint, cobertura de 90% no domínio, acessibilidade com axe e paridade com o oráculo Python.</td></tr>
+            <tr><td><b>Telas, UX e UI</b></td><td>Princípios, tokens do Design System gov.br prontos para o Tailwind v4 (claro, escuro, alto contraste), guia de mensagens, WCAG 2.2 AA e eMAG, as 16 telas com estados (vazio, carregando, erro, sem permissão) e um <a href="https://claude.ai/artifact/8y1yeJGS634Xvm77Bb78Lb">protótipo navegável</a> com os dados reais de Paraty.</td></tr>
+            <tr><td><b>Tarefas do tamanho certo</b></td><td>Backlog em quatro releases, com a primeira fatiada em esqueleto andante: domínio e linha de comando, API, tela de validação, envio do pleito. Definition of Ready e Definition of Done.</td></tr>
+          </tbody>
+        </table></div>
+        <p>Stack: Next.js 15, React 19, TypeScript estrito, Tailwind v4, Zod, Prisma 6 com PostgreSQL, NextAuth, Vitest e Playwright. O pacote está na pasta <span class="mono">especificacao/</span> do repositório do curso. O <span class="mono">README</span> dá a ordem de leitura, e o <span class="mono">AGENTS_DESENVOLVIMENTO.md</span> é o arquivo que a IA de desenvolvimento lê antes de cada tarefa.</p>
+        <div class="nota"><strong>A aula para aqui.</strong> Antes de codar, a área de negócio, a Procuradoria e a TI decidem o que só elas podem decidir:
+          <ul style="margin:.4rem 0 0">
+            <li>regra da energia e contagem do interstício;</li>
+            <li>instrumento que torna o layout obrigatório;</li>
+            <li>integração com o SEI e infraestrutura;</li>
+            <li>provedor do modelo de linguagem;</li>
+            <li>as sete divergências em que o sistema é mais estrito que o oráculo.</li>
+          </ul>
+          Daqui em diante começa o desenvolvimento.</div>
+      </section>
+
+      <!-- 16 ------------------------------------------------------------ -->
+      <section id="replicar">
+        <span class="rotulo">Etapa 16</span>
+        <h2>Como fazer no seu órgão</h2>
+        <ol>
+          <li>Comece pelo processo que a matriz de priorização da aula 1 indicar.</li>
+          <li>Extraia os cálculos de 15 a 20 casos reais, sem fazer conta, e refaça cada um por script. O que não fecha vira caso de teste.</li>
+          <li>Classifique a fonte de cada componente: pública, pública com regra, paga, outro processo, documento.</li>
+          <li>Ache as regras no contrato e nos aditivos e guarde o trecho literal de cada parâmetro. Confira por script que o trecho existe.</li>
+          <li>Escolha um contrato com regras e dados completos para o piloto e um segundo da mesma família para provar a generalização.</li>
+          <li>Especifique o que o regulado deve enviar, no formato que a máquina lê, e com que base legal.</li>
+          <li>Escreva requisitos com origem, casos de uso, classes, sequência e telas a partir desses dados. Feche com testes de aceitação cujo resultado esperado já está nos autos.</li>
+          <li>Monte o pacote para a IA de desenvolvimento: decisões registradas, arquitetura com fronteiras verificáveis, contratos, modelo de dados, guia de UI com componentes, backlog com critérios e o arquivo de regras de código. Pare na PARADA 11.</li>
+        </ol>
+        <div class="nota"><strong>Hipóteses desta aula.</strong> A extração dos números foi feita por IA e conferida pela aritmética, não por um segundo leitor. Nenhum valor de energia foi reproduzido pela base da ANEEL. O cadastro e o layout ainda não foram validados com a CAPET. Horas e custos da priorização seguem como hipótese até a calibração com servidores.</div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="rodape">
+    <span>Fontes: processos SEI da coorte do reajuste tarifário anual; contratos, aditivos e deliberações da base de conhecimento do Especialista AGENERSA; IPEADATA; IBGE SIDRA; dados abertos da ANEEL; contratos públicos de licença da FGV Dados (ANTT, 2019; Saneago, 2021).</span>
+    <span>Documentos do projeto: Levantamento do motor de cálculo; Especificação dos dados do pleito; cadastro do Contrato 008/2014; layout do pleito 0.1. Versão de 31/10/2026.</span>
+  </footer>
+</div>

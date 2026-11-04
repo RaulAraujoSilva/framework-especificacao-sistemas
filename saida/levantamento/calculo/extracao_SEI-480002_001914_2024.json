@@ -1,0 +1,104 @@
+{
+  "processo": "SEI-480002/001914/2024",
+  "concessionaria": "Iguá Rio de Janeiro S.A. (Bloco 2)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão nº 34/2021 (Bloco II), alterado pelo Termo de Conciliação de 02/10/2023, homologado pela Deliberação AGENERSA nº 4.656/2023, e pelo 1º Termo Aditivo assinado em 16/10/2024",
+  "clausula_reajuste": "Cláusula 28 e subitens do Contrato de Concessão; ITS e IDG no Anexo III (art. 4.3)",
+  "vigencia_pretendida": "abril de 2024 no pleito original (OF-RJ 0748/2024, não incluído no arquivo; período 'abril de 2023 a abril de 2024'); nova proposta (OF-RJ 4276/2024, doc 84581263, não incluído) para 01/12/2024",
+  "data_pleito": "27/02/2024 (data dos anexos do pleito no SEI)",
+  "data_recebimento_agenersa": "recebimento acusado pelo Ofício AGENERSA/SCEXEC nº 528 de 28/02/2024",
+  "formula": {
+    "texto": "Tarifas_b = Tarifas_b-1 * IRC; IRC = [P1 x (Ai/Ao) + P2 x (Bi/Bo) + P3 x (Ci/Co) + P4 x (Di/Do) + P5 x (Ei/Eo)]; Tarifa_e = f(Tarifa_b, IDG, ITS) (fórmulas da tarifa efetiva e do ITS são imagens no Parecer 289)",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "multiplicativa",
+    "componentes": [
+      {"sigla": "A (P1)", "indice": "ICC-São Paulo-DI-Mão de obra (substitui o ICC - Mão de Obra 161368 - Col. 56, por comunicado da FGV de julho/2023)", "fonte": "FGV", "codigo_serie": "1472373", "peso_texto": "10,30%", "peso": 0.103,
+       "regra_data": "quarto mês anterior à data do reajuste e do último reajuste; no pleito: dezembro-23 (Ai) e dezembro-22 (Ao). Após o 1º Termo Aditivo, para 2024 de dez/2022 a ago/2024", "doc_id": "69249156"},
+      {"sigla": "B (P2)", "indice": "Energia elétrica com bandeiras e benefícios tarifários da categoria 'água, esgoto e saneamento - grupo A' (Grupo A - Convencional, Subgrupo A4 - 2,3 kV a 25 kV, fora ponta), média de 12 meses", "fonte": "ANEEL", "codigo_serie": null, "peso_texto": "4,40%", "peso": 0.044,
+       "regra_data": "média dos 12 meses: fevereiro-23 a janeiro-24 (Bi) e fevereiro-22 a janeiro-23 (Bo). Após o 1º Termo Aditivo, para 2024 de fev/2022 a ago/2024", "doc_id": "69249156"},
+      {"sigla": "C (P3)", "indice": "IPCA (Números Índices), em substituição ao IPA-Origem-OG-DI-Produtos Industriais-Indústria de Transformação-Produtos Químicos (1006820)", "fonte": "IBGE", "codigo_serie": "1004963 (código FGV-Dados citado para o IPCA)", "peso_texto": "2,50%", "peso": 0.025,
+       "regra_data": "dezembro-23 (Ci) e dezembro-22 (Co)", "doc_id": "69249156"},
+      {"sigla": "D (P4)", "indice": "Valor de venda da água da CEDAE (R$/m³)", "fonte": "CEDAE", "codigo_serie": null, "peso_texto": "37,50%", "peso": 0.375,
+       "regra_data": "Janeiro/23 a Janeiro/24 (pleito); 1º Termo Aditivo: Di = preço já com o reajuste do mesmo período, Do = preço vigente no momento do pedido; para 2024, de nov/2023 a dez/2024", "doc_id": "69249156"},
+      {"sigla": "E (P5)", "indice": "INCC-Brasil-DI-Todos os itens (substitui o INCC total média 160868 - Col. 6)", "fonte": "FGV", "codigo_serie": "1464783", "peso_texto": "45,30%", "peso": 0.453,
+       "regra_data": "dezembro-23 (Ei) e dezembro-22 (Eo)", "doc_id": "69249156"}
+    ]
+  },
+  "apuracoes": [
+    {"doc_id": "69249156", "emissor": "concessionária", "tipo_doc": "Anexo Memória de Cálculo e Estrutura Tarifária (planilha em texto)", "data": "27/02/2024",
+     "periodo_referencia": "abril de 2023 a abril de 2024",
+     "nota_valores": "variacao registrada como razão i/o, como escrita na memória",
+     "valores": [
+       {"sigla": "A", "i_texto": "1.255,82", "i": 1255.82, "o_texto": "1.178,92", "o": 1178.92, "variacao_texto": "1,065231", "variacao": 1.065231, "peso_usado": 0.103},
+       {"sigla": "B", "i_texto": "503,95", "i": 503.95, "o_texto": "515,06", "o": 515.06, "variacao_texto": "0,978435", "variacao": 0.978435, "peso_usado": 0.044},
+       {"sigla": "C", "i_texto": "6.773,27", "i": 6773.27, "o_texto": "6.474,09", "o": 6474.09, "variacao_texto": "1,046212", "variacao": 1.046212, "peso_usado": 0.025},
+       {"sigla": "D", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "1,067500 (Di/Do 6,75%)", "variacao": 1.0675, "peso_usado": 0.375},
+       {"sigla": "E", "i_texto": "1.088,31", "i": 1088.31, "o_texto": "1.051,63", "o": 1051.63, "variacao_texto": "1,034879", "variacao": 1.034879, "peso_usado": 0.453}
+     ],
+     "ir_texto": "4,80%", "ir_pct": 4.80,
+     "outros_componentes": [],
+     "reajuste_total_texto": null, "reajuste_total_pct": null,
+     "conclusao": "outra",
+     "divergencias": ["Parcelas ponderadas na planilha: A 0,109719; B 0,043051; C 0,026155; D 0,400313; E 0,468800 (o texto extraído embaralha a ordem das células)", "ITS do pleito (2,90%) aparece só no Parecer 289, citando o Relatório Técnico 69249278, que não está no arquivo"]},
+    {"doc_id": "70892875", "emissor": "CAPET", "tipo_doc": "Parecer CAPET nº 91/2024", "data": "09/04/2024",
+     "periodo_referencia": "tabela de out/22 a jan/24 (variações em 12 meses)",
+     "valores": [
+       {"sigla": "E (INCC-Brasil-DI)", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "3,488%", "variacao": 0.03488, "peso_usado": 0.453},
+       {"sigla": "B (ANEEL Grupo A4)", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "-2,157%", "variacao": -0.02157, "peso_usado": 0.044},
+       {"sigla": "C (IPCA)", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "4,621%", "variacao": 0.04621, "peso_usado": 0.025},
+       {"sigla": "D (Tarifa de água CEDAE)", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "6,750%", "variacao": 0.0675, "peso_usado": 0.375},
+       {"sigla": "A (ICC-SP)", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "6,523%", "variacao": 0.06523, "peso_usado": 0.103}
+     ],
+     "ir_texto": "4,80%", "ir_pct": 4.80,
+     "outros_componentes": [
+       {"nome": "outro", "descricao": "Tarifa mínima praticada de R$ 4,72/m³ passa a R$ 4,95/m³ com o IRC", "valor_texto": "R$ 4,95/m³", "valor_pct": null}
+     ],
+     "reajuste_total_texto": "4,80%", "reajuste_total_pct": 4.80,
+     "conclusao": "confirma o pleito",
+     "divergencias": ["Não trata do ITS; sugere apreciação pela Procuradoria e validação pelo verificador independente (FIPE)"]},
+    {"doc_id": "86749009", "emissor": "CAPET", "tipo_doc": "Despacho CAPET à Procuradoria", "data": "04/11/2024",
+     "periodo_referencia": "reajuste para aplicação em 01/12/2024 (1º Termo Aditivo)",
+     "valores": [
+       {"sigla": "D (Preço Água CEDAE)", "i_texto": "2,28", "i": 2.28, "o_texto": "2,23", "o": 2.23, "variacao_texto": "2,087%", "variacao": 0.02087, "peso_usado": null}
+     ],
+     "ir_texto": "5,9005%", "ir_pct": 5.9005,
+     "outros_componentes": [],
+     "reajuste_total_texto": null, "reajuste_total_pct": null,
+     "conclusao": "diverge do pleito",
+     "divergencias": ["Concessionária (OF-RJ 4276/2024, doc 84581263, não incluído) pede 8,4552% (item 8) ou 8,46% (item 10), somando o reajuste da CEDAE atual (2,087%) e o de nov/22 (6,75%); CAPET calcula IRC de 5,9005% com Di/Do = 2,28/2,23", "Evolução do preço da água: CEDAE 1,70 (abr/21), 1,87 (nov/21), 2,09 (nov/22), 2,23 (nov/23), 2,28 (dez/24); repassado à tarifa 1,70, 1,87, 2,09, 2,33"]},
+    {"doc_id": "87357895", "emissor": "CAPET", "tipo_doc": "Parecer CAPET nº 289/2024", "data": "12/11/2024",
+     "periodo_referencia": "27/04/2023 a 01/12/2024 (A, C, E: dez/2022 a ago/2024; B: fev/2022 a ago/2024; D: nov/2023 a dez/2024)",
+     "valores": [],
+     "ir_texto": "1,084687 (8,4687%)", "ir_pct": 8.4687,
+     "outros_componentes": [
+       {"nome": "IDG", "descricao": "Igual a 1 por decisão do CODIR (23ª Reunião Interna, 04/09/2024)", "valor_texto": "1", "valor_pct": null},
+       {"nome": "ITS", "descricao": "Concessionária: 2,90% (Relatório Técnico 69249278); FIPE retificou para 2,79% após exclusão de economias em áreas de favela (NT FIPE, Tabela 8, doc 85992500); CAPET calcula 0,027858", "valor_texto": "0,027858", "valor_pct": 2.7858},
+       {"nome": "Di/Do", "descricao": "Segue o Parecer PROC nº 562 (doc 87318216) sobre os reajustes acumulados do preço da água no atacado vendida pela CEDAE; valores não aparecem no texto (tabela em imagem)", "valor_texto": null, "valor_pct": null},
+       {"nome": "verificador", "descricao": "Nota Técnica da FIPE (Of. 22.10.2024-008/FIPE, doc 85992499) recalculou os índices", "valor_texto": null, "valor_pct": null}
+     ],
+     "reajuste_total_texto": "11,49%", "reajuste_total_pct": 11.49,
+     "conclusao": "diverge do pleito",
+     "divergencias": ["ITS: 2,90% (concessionária) contra 2,79% (FIPE) / 0,027858 (CAPET)", "IRC 1,084687 segue a Procuradoria (PROC 562), revertendo o IRC de 5,9005% do Despacho 86749009"]}
+  ],
+  "resultado_deliberado": {"doc_id": "88237237", "deliberacao": "número não preenchido no texto (\"Deliberação AGENERSA Nº. ___ , de 27 de novembro de 2024\")", "reajuste_pct": 11.49,
+    "observacao": "Homologado 11,49% a partir de 01/12/2024; processo específico sobre o formato de aplicação da fórmula (resíduo na revisão tarifária); cópia aos processos de ITS e IDG. O reajuste pedido para abril/2024 não foi aplicado (decisão do CODIR de 11/06/2024)."},
+  "insumos_do_pleito": [
+    "OF-RJ 0748/2024 (pedido; não incluído no arquivo)",
+    "Memória de Cálculo e Estrutura Tarifária (planilha com IRC e tabela tarifária Área A e Área B)",
+    "Tabela de Serviços (preços de ligações e serviços)",
+    "Índices Econômicos (ICC-SP Mão de Obra 1472373, IPCA 1004963, INCC-DI 1464783, dez/2022 a jan/2024)",
+    "Tarifas de Energia e Bandeiras (planilha mês a mês de jan/2019 a fev/2024 com subsídio, bandeira, proporcionalização por dias e média de 12 meses)",
+    "Resolução Homologatória ANEEL nº 3.176/2023",
+    "Relatório Técnico de ITS (doc 69249278, citado no Parecer 289; não incluído)"
+  ],
+  "inconsistencias_textuais": [
+    "Pareceres 91 e 289 citam o pleito como 'OF-R3 0748/2024' (91) e 'OF-RJ 0748/2024'; o Parecer 93 do Bloco 1 (processo 001913) cita por engano este mesmo documento (69249155)",
+    "Parecer 91 define A1 como INCC e E1 como ICC-SP, B como Grupo A - Convencional e D1/D0 como tarifa CEDAE de dez/2022 e dez/2021; a tabela aplica peso 45,30% ao INCC e 10,30% ao ICC-SP, e a variação da CEDAE usada (6,750%) é a da Deliberação 4653; a coluna CEDAE está vazia no texto",
+    "Memória da concessionária cita como fonte do valor da água a Deliberação AGENERSA nº 4492, de 31/10/2022, mas usa Di/Do de 6,75% (reajuste da Deliberação 4653/2023)",
+    "Memória da concessionária e Parecer 289 descrevem a energia como 'Grupo A - Convencional, Subgrupo A4', enquanto o 1º Termo Aditivo (conforme Pareceres 290/291 dos Blocos 4 e 1) fala em 'Grupo A - Azul, Subgrupo A4'; os valores (503,95 / 515,06) são os mesmos dos outros blocos",
+    "Despacho 86749009 dá o pleito da concessionária como 8,4552% no item 8 e 8,46% no item 10",
+    "Parecer 289 indica o início do índice D em novembro de 2023, enquanto os Pareceres 290/291 (Blocos 4 e 1) indicam abril de 2023; IRC 1,084687 aqui contra 1,084688 nos outros blocos",
+    "Parecer 289: as fórmulas do IRC, da tarifa efetiva, do ITS e as tabelas de índices não vieram no texto (imagens)"
+  ],
+  "observacoes": "Mesma família de fórmula dos Blocos 1 e 4 (5 índices, pesos do Anexo III, Tabela 5, P4 retificado de 37,6% para 37,5% pela errata 01/2021). A planilha de energia traz o cálculo completo mês a mês (TUSD+TE, subsídio CDE decrescente, bandeira, proporcionalização por dias), o que permite reproduzir B, mas depende das Resoluções Homologatórias da ANEEL. D depende do preço da água da CEDAE (Contrato de Interdependência, com índice de Acordo Coletivo não público). ITS depende de base de economias da concessionária validada pela FIPE; IDG fixado em 1 em 2024. A carta do pleito e o relatório de ITS não estão no arquivo; a memória de cálculo é planilha exportada em texto com células fora de ordem. Mudanças de séries FGV (códigos 161368/160868 substituídos por 1472373/1464783) e do índice de químicos (IPA 1006820 → IPCA) exigem mapear códigos ao longo do tempo."
+}

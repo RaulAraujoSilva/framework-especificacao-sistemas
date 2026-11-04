@@ -1,0 +1,167 @@
+{
+  "processo": "SEI-480002/000037/2023",
+  "concessionaria": "Concessionária Centro Sul (Centro Sul I)",
+  "servico": "saneamento",
+  "servico_observacao": "resíduos sólidos (aterro sanitário, RSS, RCC, triagem, compostagem)",
+  "contrato": "Contrato de Concessão (número não citado no texto)",
+  "clausula_reajuste": "Cláusula Décima Sétima do Contrato de Concessão (reajuste anual pelo IPCA-E/IBGE); Parágrafo Primeiro (data-base)",
+  "vigencia_pretendida": "01/12/2023 (pleito e parecer CAPET); homologada para 01/01/2024",
+  "data_pleito": "10/10/2023 (Ofício CCS-116/2023 (CSS N. 116-2023_0001), SEI 61433645)",
+  "data_recebimento_agenersa": "10/10/2023 ('recebido na AGENERSA no mesmo dia', doc 62037534)",
+  "formula": {
+    "texto": "Tcn = Tco * ( (IPCA-En/IPCA-Eo) - 1 )",
+    "tipo": "índice único",
+    "combinacao_com_outros_componentes": "não informada",
+    "doc_id": "62037534",
+    "componentes": [
+      {
+        "sigla": "IPCA-E",
+        "indice": "Índice Nacional de Preços ao Consumidor Amplo Especial",
+        "fonte": "IBGE",
+        "codigo_serie": null,
+        "peso_texto": null,
+        "peso": null,
+        "regra_data": "n = valor do IPCA-E publicado no mês de setembro da data prevista do reajuste; o = valor publicado no mês de setembro do último reajuste",
+        "doc_id": "62037534"
+      }
+    ]
+  },
+  "apuracoes": [
+    {
+      "doc_id": "62037534",
+      "emissor": "concessionária",
+      "tipo_doc": "Pleito (Ofício CCS-116/2023 (CSS N. 116-2023_0001), SEI 61433645) — valores relatados no Parecer CAPET 228/2023",
+      "data": "10/10/2023",
+      "periodo_referencia": "setembro/2021 a setembro/2023 (24 meses)",
+      "valores": [],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "outra",
+      "divergencias": [],
+      "doc_pleito_citado": "61433645"
+    },
+    {
+      "doc_id": "62037534",
+      "emissor": "CAPET",
+      "tipo_doc": "Parecer Técnico AGENERSA/CAPET Nº 228/2023",
+      "data": "24/10/2023",
+      "periodo_referencia": "set/2021 a set/2023",
+      "valores": [
+        {
+          "sigla": "IPCA-E",
+          "i_texto": "6.583,85",
+          "i": 6583.85,
+          "o_texto": "5.808,14",
+          "o": 5808.14,
+          "variacao_texto": null,
+          "variacao": null,
+          "peso_usado": null,
+          "observacao": "n = set/2023; o = set/2021"
+        }
+      ],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Item 5 dizia 'com divergências aos valores apresentados pela Delegatária', mas o item 4.2 diz que o índice coincide com o pleito; o item 5 foi retificado para 'sem divergências' pelo doc 63014736 (Parecer 256/2023, 08/11/2023).",
+        "Período de 24 meses porque o pleito de janeiro de 2023 (Ofício CCS-005/23 (SEI 45747500), processo SEI-220007/000376/2023) não foi homologado."
+      ]
+    },
+    {
+      "doc_id": "66186613",
+      "emissor": "Conselho",
+      "tipo_doc": "Deliberação AGENERSA Nº 4662, de 27/12/2023 (publicação no DOERJ de 29/12/2023)",
+      "data": "27/12/2023",
+      "periodo_referencia": "IPCA-E - PER.SET/2021 A SET/2023",
+      "valores": [
+        {
+          "sigla": "IPCA-E",
+          "i_texto": "6.583,85",
+          "i": 6583.85,
+          "o_texto": "5.808,14",
+          "o": 5808.14,
+          "variacao_texto": "13,3556%",
+          "variacao": 13.3556,
+          "peso_usado": null,
+          "observacao": "'(( 6.583,85/5.808,14)-1)=13,3556%'"
+        }
+      ],
+      "ir_texto": "13,3556%",
+      "ir_pct": 13.3556,
+      "outros_componentes": [],
+      "reajuste_total_texto": "13,3556%",
+      "reajuste_total_pct": 13.3556,
+      "conclusao": "confirma o pleito",
+      "divergencias": [
+        "Tabela publicada com rótulo 'VIGÊNCIA DEZ/2023', mas o Art. 1º homologa a partir de 01/01/2024."
+      ],
+      "tarifas_homologadas": [
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DO ATERRAMENTO SANITÁRIO, COM ATERRAMENTO, CONTROLE DE ÁGUAS PLUVIAIS E GASES, E SISTEMA DE DRENAGEM E TRATAMENTO DO CHORUME",
+          "unidade": "T",
+          "preco_texto": "R$ 99,50",
+          "preco": 99.5
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE RSS",
+          "unidade": "T",
+          "preco_texto": "R$ 4.120,10",
+          "preco": 4120.1
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE RCC",
+          "unidade": "T",
+          "preco_texto": "R$ 38,57",
+          "preco": 38.57
+        },
+        {
+          "servico": "GERENCIAMENTO INTEGRADO E EDUCAÇÃO AMBIENTAL",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 22.719,88",
+          "preco": 22719.88
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE DE TRIAGEM E APOIO A COLETIVA SELETIVA",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 28.372,14",
+          "preco": 28372.14
+        },
+        {
+          "servico": "OPERAÇÃO E MANUTENÇÃO DE UNIDADE DE COMPOSTAGEM",
+          "unidade": "UNID X MÊS",
+          "preco_texto": "R$ 13.022,37",
+          "preco": 13022.37
+        }
+      ]
+    }
+  ],
+  "resultado_deliberado": {
+    "doc_id": "66186613",
+    "deliberacao": "4662/2023 (minuta sem número: doc 65986990)",
+    "reajuste_pct": 13.3556,
+    "observacao": "Vigência a partir de 01/01/2024. Art. 2º manda a CAPET apurar possível desequilíbrio pela não aplicação do reajuste em 2023 e calcular a compensação no processo revisional; Art. 3º aplica advertência por não cooperar no processo do pleito anterior. Não é cautelar."
+  },
+  "insumos_do_pleito": [
+    "Ofício CCS-116/2023 (CSS N. 116-2023_0001) (SEI 61433645) — conteúdo não consta do dump",
+    "Pleito anterior de janeiro de 2023: Ofício CCS-005/23 (SEI 45747500), processo SEI-220007/000376/2023 (não homologado)"
+  ],
+  "inconsistencias_textuais": [
+    "A fórmula escrita 'Tcn = Tco * ((IPCA-En/IPCA-Eo) - 1)' daria só o acréscimo, não a tarifa reajustada (faltaria '1 +' ou retirar o '- 1'); o cálculo usa a expressão como percentual de reajuste.",
+    "A fórmula manda usar setembro 'do último reajuste' (set/2021), mas o período acumulado de 24 meses decorre do reajuste de 2023 não homologado.",
+    "Vigência: 01/12/2023 no pleito e no parecer CAPET; 01/01/2024 na deliberação; 'VIGÊNCIA DEZ/2023' no cabeçalho da tabela publicada.",
+    "Item 5 do parecer 228/2023 ('com divergências') contradiz o item 4.2 ('coincide'); retificado pelo doc 63014736.",
+    "O parecer chama o reajuste ordinário de 'realinhamento tarifário' (item 6).",
+    "A cláusula exige data-base na apresentação da Proposta Financeira, mas na prática se adota dezembro desde 2017 (item 2.1).",
+    "O doc publicado (SEI 66186613) é a página do DOERJ, com as Deliberações 4662, 4663 e 4664 e uma portaria intercaladas pelo OCR; a tabela de preços tem de ser atribuída à concessionária certa.",
+    "Data do pleito: o parecer CAPET diz 10/10/2023, recebido no mesmo dia; o e-mail da concessionária (doc 62055404) diz que os ofícios foram protocolados presencialmente em 11/10/2023.",
+    "Sigla do ofício: 'CCS-116/2023' no parecer CAPET e 'CSS N. 116-2023_0001' nos ofícios da AGENERSA.",
+    "Nome: 'Centro Sul I' nos pareceres e 'Centro Sul' na deliberação."
+  ],
+  "observacoes": "É o caso mais simples de automatizar: índice único, série pública do IBGE (o IPCA-E é trimestral; o texto não cita código de série) e preços unitários por serviço. Dificuldades: (1) a tarifa vigente (Tco) não aparece no texto, porque o último reajuste homologado não está no dump; (2) o mês de referência é setembro, já que dezembro ainda não estaria divulgado na data-limite, e isso diverge da data-base contratual; (3) o acúmulo de 24 meses por pleito anterior não homologado exige guardar o histórico de homologações; (4) a deliberação assinada não traz a tabela no texto, que só aparece na publicação do DOERJ misturada com outras deliberações."
+}

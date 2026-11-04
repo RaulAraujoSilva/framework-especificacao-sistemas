@@ -1,0 +1,74 @@
+{
+  "processo": "SEI-480002/007637/2024",
+  "concessionaria": "CEDAE - Companhia Estadual de Águas e Esgotos (preço da água no atacado fornecida à concessionária do Bloco III)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Interdependência CEDAE x Bloco III (Anexo VI do Contrato de Concessão) e Contrato de Produção de Água nº 134/2021; Termo de Conciliação de 05/10/2023; 1º Termo Aditivo (doc 86407054) de 16/10/2024",
+  "clausula_reajuste": "Cláusula 6.2 do Contrato de Interdependência; cláusula 17.1 do Contrato de Produção de Água nº 134/2021",
+  "vigencia_pretendida": "08/11/2024 a 07/11/2025 no pleito original; 01/12/2024 após o 1º Termo Aditivo",
+  "data_pleito": "06/09/2024",
+  "data_recebimento_agenersa": "06/09/2024 (data do documento no SEI); retificação pelo Ofício CEDAE DPR-7 nº 254/2024 (doc 86442805, não incluído), 'recebida na AGENERSA no mesmo dia'",
+  "formula": {
+    "texto": "Preço_a = Preço_a-1 x IRC; IRC = [P1 x A + P2 x (Bi/Bo) + P3 x (Ci/Co)]",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "não informada",
+    "componentes": [
+      {"sigla": "A (P1)", "indice": "Índice de reajuste salarial do Acordo Coletivo de Trabalho entre a CEDAE e o sindicato", "fonte": "ACT (acordo coletivo)", "codigo_serie": null, "peso_texto": "30%", "peso": 0.30,
+       "regra_data": "ACT vigente nos 12 meses anteriores ao reajuste (ACT 2023-2024, reajuste salarial de 1º/05/2023)", "doc_id": "82750326"},
+      {"sigla": "B (P2)", "indice": "Pleito: média da tarifa Light Grupo A, Subgrupo A4 (2,3 kV a 25 kV), Azul fora de ponta; 1º Termo Aditivo: Grupo A - Azul, Subgrupo A2 (88 kV a 138 kV), fora de ponta, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}", "fonte": "ANEEL", "codigo_serie": null, "peso_texto": "40%", "peso": 0.40,
+       "regra_data": "pleito: ago/24 (Bi) e ago/23 (Bo); CAPET: médias set/23 a ago/24 (Bi) e set/22 a ago/23 (Bo)", "doc_id": "82750326"},
+      {"sigla": "C (P3)", "indice": "Pleito: IPA-OG-DI Produtos Químicos (o texto cita 1006820 na definição e 1420683 nos valores); 1º Termo Aditivo: IPCA", "fonte": "FGV", "codigo_serie": "1420683", "peso_texto": "30%", "peso": 0.30,
+       "regra_data": "quarto mês anterior ao reajuste e ao último reajuste; pleito: jul/2024 e jul/2023; CAPET (IPCA/IBGE): ago/2024 e jul/2023", "doc_id": "82750326"}
+    ]
+  },
+  "apuracoes": [
+    {"doc_id": "82750326", "emissor": "concessionária", "tipo_doc": "Ofício CEDAE DPR nº 193/2024 com memória de cálculo (texto obtido por OCR)", "data": "06/09/2024",
+     "periodo_referencia": "08/11/2024 a 07/11/2025 (energia ago/23 a ago/24; IPA jul/23 a jul/24)",
+     "valores": [
+       {"sigla": "A", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "4,18%", "variacao": 0.0418, "peso_usado": 0.30},
+       {"sigla": "B", "i_texto": "R$ 504,05", "i": 504.05, "o_texto": "R$ 496,77", "o": 496.77, "variacao_texto": "1,47%", "variacao": 0.0147, "peso_usado": 0.40},
+       {"sigla": "C", "i_texto": "195,190", "i": 195.19, "o_texto": "189,367", "o": 189.367, "variacao_texto": "3,07%", "variacao": 0.0307, "peso_usado": 0.30}
+     ],
+     "ir_texto": "2,7627%", "ir_pct": 2.7627,
+     "outros_componentes": [
+       {"nome": "outro", "descricao": "Parcelas ponderadas: mão de obra 1,2540%; energia 0,5862%; químicos 0,9225%. Preço de R$ 2,09/m³ para R$ 2,15/m³. Reajuste concedido em 08/11/2023 (Conciliação): 0,0000%", "valor_texto": "R$ 2,15/m³", "valor_pct": null}
+     ],
+     "reajuste_total_texto": "2,7627%", "reajuste_total_pct": 2.7627,
+     "conclusao": "outra",
+     "divergencias": []},
+    {"doc_id": "86417039", "emissor": "CAPET", "tipo_doc": "Parecer Técnico CAPET nº 272/2024", "data": "30/10/2024 (no texto); 04/11/2024 (data no SEI)",
+     "periodo_referencia": "08/11/2023 a 01/12/2024 (Bi set/23 a ago/24; Bo set/22 a ago/23; Ci ago/24; Co jul/23)",
+     "valores": [
+       {"sigla": "A", "i_texto": null, "i": null, "o_texto": null, "o": null, "variacao_texto": "1,0418 (4,18%)", "variacao": 0.0418, "peso_usado": null},
+       {"sigla": "B", "i_texto": "442,97", "i": 442.97, "o_texto": "438,61", "o": 438.61, "variacao_texto": "1,0099 (0,99%)", "variacao": 0.0099, "peso_usado": null},
+       {"sigla": "C", "i_texto": "6.966,50", "i": 6966.5, "o_texto": "6.667,94", "o": 6667.94, "variacao_texto": "1,0448 (4,48%)", "variacao": 0.0448, "peso_usado": null}
+     ],
+     "ir_texto": "2,9944% (1,02994)", "ir_pct": 2.9944,
+     "outros_componentes": [
+       {"nome": "outro", "descricao": "Preço_a = 2,09 * 1,02994 = 2,15 R$/m³, a partir de 01/12/2024", "valor_texto": "2,15 R$/m³", "valor_pct": null},
+       {"nome": "verificador", "descricao": "Nota Técnica da FIPE (Ofício 22.10.2024-012/FIPE, doc 86072909)", "valor_texto": null, "valor_pct": null}
+     ],
+     "reajuste_total_texto": "2,9944%", "reajuste_total_pct": 2.9944,
+     "conclusao": "confirma o pleito",
+     "divergencias": ["Confirma o pleito retificado (Ofício CEDAE DPR-7 nº 254/2024, doc 86442805, não incluído), com IRC 2,9944%; o pleito original (82750326) pedia 2,7627% com energia A4 e IPA", "Com o 1º Termo Aditivo, a CAPET usa energia A2 e IPCA em vez de A4 e IPA"]}
+  ],
+  "resultado_deliberado": {"doc_id": "88238372", "deliberacao": "número não preenchido no texto (\"Deliberação AGENERSA Nº. ___ , de 27 de novembro de 2024\")", "reajuste_pct": 2.9944,
+    "observacao": "Homologado 2,9944% a partir de 01/12/2024: Preço_a = 2,09 * 1,02994 = 2,15 R$/m³."},
+  "insumos_do_pleito": [
+    "Ofício CEDAE DPR nº 193/2024 com memória de cálculo (escaneado, texto por OCR)",
+    "Apêndices 1 a 3 - Acordos Coletivos de Trabalho (citados; ACT não juntado neste processo, o Parecer cita o doc 82748589 do processo 007635)",
+    "Apêndices 4 a 8 - Resoluções Homologatórias ANEEL da Light nº 2.835/2021, 3.014/2022, 3.144/2022, 3.176/2023 e 3.310/2024",
+    "Apêndice 9 - série IPA FGV (IPA-OG-DI Produtos Químicos 1420683, jul/2023 a jul/2024; traz também ICC e INCC)",
+    "Apêndice 10 - quadro de energia elétrica Light A4 Azul fora de ponta (planilha mês a mês com média móvel de 12 meses)"
+  ],
+  "inconsistencias_textuais": [
+    "Parecer 272 diz no item 6 que 'o percentual de -2,490% (sete inteiros, quatrocentos e noventa milésimo por cento)' expressa o reajuste, mas conclui 2,9944% no item 7 e na fórmula do preço (1,02994)",
+    "Parecer 272 diz que a CEDAE praticará novas tarifas a partir de 08/11/2024, mas o assunto e a conclusão indicam 01/12/2024",
+    "Parecer 272 cita o ACT 2023/2024 pelo doc 82748589, que pertence ao processo 007635, não a este",
+    "Memória da CEDAE define Ci/Co pelo código 1006820, mas os valores usados são da série 1420683 (que a FGV indicou como substituta)",
+    "Memória da CEDAE descreve a energia como 'Grupo A - Convencional, Subgrupo A4' na definição e 'LIGHT A4 TAR APLIC AZUL FP' no quadro",
+    "Memória da CEDAE diz 'Para o período de 20/12/2023 a 20/12/2024, Bi (referente a agosto de 2024)'; a data de referência do Bloco III era 20/12",
+    "A fórmula do IRC e a tabela de pesos do Parecer 272 são imagens; o OCR da memória corrompe a fórmula",
+    "Fórmula escrita usa A como índice (fator), mas o quadro da CEDAE soma variações ponderadas"
+  ],
+  "observacoes": "Preço da água no atacado do Bloco III (insumo D da tarifa da concessionária do Bloco III), com 3 índices: ACT (não público), energia Light e índice de preços. O 1º Termo Aditivo mudou, no meio do processo, a energia (A4 → A2) e o índice de químicos (IPA → IPCA), além da data-base; o pleito original ficou obsoleto e foi substituído por retificação não incluída no arquivo. A energia exige reconstrução mês a mês pelas Resoluções Homologatórias da ANEEL com desconto CDE e bandeiras. Documentos da CEDAE são digitalizados com OCR ruim. O Parecer 272 contém um percentual errado (-2,490%) que contradiz sua própria conclusão, o que mostra o risco de copiar texto de parecer de outro processo."
+}

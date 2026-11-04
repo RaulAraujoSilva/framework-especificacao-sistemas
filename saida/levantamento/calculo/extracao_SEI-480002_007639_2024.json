@@ -1,0 +1,98 @@
+{
+  "processo": "SEI-480002/007639/2024",
+  "concessionaria": "Rio+ Saneamento BL3 S.A. (Bloco 3)",
+  "servico": "saneamento",
+  "contrato": "Contrato de Concessão nº 11/2022 (Bloco 3), alterado pelo Termo de Conciliação de 05/10/2023, homologado pela Deliberação AGENERSA nº 4.657/2023, e pelo 1º Termo Aditivo assinado em 29/10/2024 (doc 86407382)",
+  "clausula_reajuste": "Cláusula 27 (Reajuste) do Contrato de Concessão (a carta cita a Cláusula 28); ITS no item 4.3 e IDG no item 4.2 do Anexo III",
+  "vigencia_pretendida": "08/11/2024 no pleito (Carta RIO+_274/2024_REG); nova proposta (Carta RIO+_301/2024_REG, doc 84579492, não incluída) para 01/12/2024",
+  "data_pleito": "06/09/2024",
+  "data_recebimento_agenersa": "06/09/2024 (data do documento no SEI)",
+  "formula": {
+    "texto": "TARIFA_b = TARIFA_b-1 x IRC; IRC = P1 x (Ai/Ao) + P2 x (Bi/Bo) + P3 x (Ci/Co) + P4 x (Di/Do) + P5 x (Ei/Eo); TARIFA_e = TARIFA_b x IDG + TARIFA_b x ITS; ITS = (0,5 x TS - 3,75%) / 96,25%",
+    "tipo": "paramétrica ponderada",
+    "combinacao_com_outros_componentes": "multiplicativa",
+    "componentes": [
+      {"sigla": "A (P1)", "indice": "ICC-São Paulo-DI-Mão de obra", "fonte": "FGV", "codigo_serie": "1472373", "peso_texto": "10,30%", "peso": 0.103,
+       "regra_data": "mês de agosto, quarto mês anterior à data do reajuste (Ai), e agosto do ano anterior (Ao); para 2024, excepcionalmente, de jul/2023 a ago/2024", "doc_id": "82752476"},
+      {"sigla": "B (P2)", "indice": "Média da tarifa de energia elétrica Grupo A - Azul (a carta diz 'Azul ou Verde'), Subgrupo A4 (2,3 kV a 25 kV), fora de ponta, Light, {[(TUSD+TE) * (1-SUBSÍDIO)] + BANDEIRA}", "fonte": "ANEEL", "codigo_serie": null, "peso_texto": "4,40%", "peso": 0.044,
+       "regra_data": "média dos 12 meses anteriores ao mês de agosto (Bi) e média do período de 12 meses anterior (Bo); para 2024, de ago/2023 a ago/2024", "doc_id": "82752476"},
+      {"sigla": "C (P3)", "indice": "IPCA", "fonte": "IBGE", "codigo_serie": null, "peso_texto": "2,50%", "peso": 0.025,
+       "regra_data": "agosto (Ci) e agosto do ano anterior (Co); para 2024, de jul/2023 a ago/2024", "doc_id": "82752476"},
+      {"sigla": "D (P4)", "indice": "Preço da água cobrado pela CEDAE (Di = valor já reajustado pela fórmula do Contrato de Interdependência; Do = valor vigente no momento do pedido)", "fonte": "CEDAE", "codigo_serie": null, "peso_texto": "37,50%", "peso": 0.375,
+       "regra_data": "para 2024, de jul/2023 a dez/2024", "doc_id": "82752476"},
+      {"sigla": "E (P5)", "indice": "INCC-Brasil-DI-Todos os itens", "fonte": "FGV", "codigo_serie": "1464783", "peso_texto": "45,30%", "peso": 0.453,
+       "regra_data": "agosto (Ei) e agosto do ano anterior (Eo); para 2024, de jul/2023 a ago/2024", "doc_id": "82752476"}
+    ]
+  },
+  "apuracoes": [
+    {"doc_id": "82752476", "emissor": "concessionária", "tipo_doc": "Carta RIO+_274/2024_REG com memória de cálculo e relatório de recadastro da tarifa social", "data": "06/09/2024",
+     "periodo_referencia": "jul/2023 a jul/2024 (energia ago/2023 a ago/2024), 12 meses",
+     "valores": [
+       {"sigla": "A", "i_texto": "1331,066", "i": 1331.066, "o_texto": "1235,102", "o": 1235.102, "variacao_texto": null, "variacao": null, "peso_usado": 0.103},
+       {"sigla": "B", "i_texto": "500,769", "i": 500.769, "o_texto": "498,109", "o": 498.109, "variacao_texto": null, "variacao": null, "peso_usado": 0.044},
+       {"sigla": "C", "i_texto": "6967,890", "i": 6967.89, "o_texto": "6667,940", "o": 6667.94, "variacao_texto": null, "variacao": null, "peso_usado": 0.025},
+       {"sigla": "D", "i_texto": "2,148", "i": 2.148, "o_texto": "2,091", "o": 2.091, "variacao_texto": null, "variacao": null, "peso_usado": 0.375},
+       {"sigla": "E", "i_texto": "1126,916", "i": 1126.916, "o_texto": "1076,626", "o": 1076.626, "variacao_texto": null, "variacao": null, "peso_usado": 0.453}
+     ],
+     "ir_texto": "1,040800 (4,0800%)", "ir_pct": 4.08,
+     "outros_componentes": [
+       {"nome": "ITS", "descricao": "TS = 25,426% (173.356 economias sociais sobre 681.817 economias ativas: Interior/Região Metropolitana 20.274/205.818 = 9,85%; AP-5 153.082/475.999 = 32,16%, desconsideradas as de favelas); ITS = (0,5 x TS - 3,75%)/96,25%", "valor_texto": "9,3120% (1,0931200)", "valor_pct": 9.312},
+       {"nome": "IDG", "descricao": "Não aplicado no pleito", "valor_texto": null, "valor_pct": null}
+     ],
+     "reajuste_total_texto": "13,77193% = (1,093120 * 1,040800) - 1", "reajuste_total_pct": 13.77193,
+     "conclusao": "outra",
+     "divergencias": []},
+    {"doc_id": "86568566", "emissor": "CAPET", "tipo_doc": "Parecer Técnico CAPET nº 273/2024", "data": "04/11/2024",
+     "periodo_referencia": "08/11/2023 a 01/12/2024 (A, C, E: jul/2023 a ago/2024; B: ago/2023 a ago/2024; D: jul/2023 a dez/2024)",
+     "valores": [
+       {"sigla": "A", "i_texto": "1339,322", "i": 1339.322, "o_texto": "1235,102", "o": 1235.102, "variacao_texto": "8,4382%", "variacao": 0.084382, "peso_usado": 0.103},
+       {"sigla": "B", "i_texto": "502,475", "i": 502.475, "o_texto": "496,766", "o": 496.766, "variacao_texto": "1,1493%", "variacao": 0.011493, "peso_usado": 0.044},
+       {"sigla": "C", "i_texto": "6966,50", "i": 6966.5, "o_texto": "6667,94", "o": 6667.94, "variacao_texto": "4,4775%", "variacao": 0.044775, "peso_usado": 0.025},
+       {"sigla": "D", "i_texto": "2,15", "i": 2.15, "o_texto": "2,09", "o": 2.09, "variacao_texto": "2,8708%", "variacao": 0.028708, "peso_usado": 0.375},
+       {"sigla": "E", "i_texto": "1134,775", "i": 1134.775, "o_texto": "1076,626", "o": 1076.626, "variacao_texto": "5,4010%", "variacao": 0.05401, "peso_usado": 0.453}
+     ],
+     "ir_texto": "1,045549", "ir_pct": 4.5549,
+     "outros_componentes": [
+       {"nome": "IDG", "descricao": "Igual a 01 (um) por decisão do CODIR (23ª Reunião Interna, 04/09/2024)", "valor_texto": "01 (um)", "valor_pct": null},
+       {"nome": "ITS", "descricao": "TS = 25,4126% apurado pela FIPE (NT 85992975) após exclusão de inativos e de residentes em favelas; concessionária: TS 25,4256% e ITS 9,3120%", "valor_texto": "0,093052", "valor_pct": 9.3052},
+       {"nome": "Di/Do", "descricao": "Preço da água CEDAE do Bloco 3 recalculado pela fórmula do Contrato de Interdependência: mão de obra (ACT) 4,1800% peso 30,00%; energia A2 Azul Light Bi 442,969 (ago/24) / Bo 438,614 (ago/23), 0,9930%, peso 40,00%; IPCA Ci 6966,50 (ago/24) / Co 6667,94 (jul/23), 4,4775%, peso 30,00%; IRC FIPE 1,029944 e CAPET 1,029945; novo preço 2,15", "valor_texto": "2,15", "valor_pct": null},
+       {"nome": "verificador", "descricao": "Nota Técnica da FIPE (Of. 22.10.2024-009/FIPE, doc 85992974): IRC 1,045549", "valor_texto": "1,045549", "valor_pct": null}
+     ],
+     "reajuste_total_texto": "14,2839%", "reajuste_total_pct": 14.2839,
+     "conclusao": "diverge do pleito",
+     "divergencias": ["Nova proposta da concessionária (Carta RIO+_301/2024_REG, doc 84579492, não incluída): IRC 1,044300 e reajuste de 14,1502%, com Di = 2,146 e Do = 2,091 (três casas decimais); CAPET e FIPE usam Di = 2,15 e Do = 2,09 (duas casas, conforme Deliberação 4.657/2023) e chegam a IRC 1,045549 e reajuste de 14,2839%", "TS: 25,4126% (FIPE) contra 25,4256% (concessionária), diferença de 0,0130%"]},
+    {"doc_id": "91280658", "emissor": "CAPET", "tipo_doc": "Parecer Técnico CAPET nº 13/2025 (retifica o quadro tarifário do Parecer 273)", "data": "14/01/2025",
+     "periodo_referencia": "08/11/2023 a 01/12/2024",
+     "valores": [],
+     "ir_texto": "1,045549", "ir_pct": 4.5549,
+     "outros_componentes": [
+       {"nome": "ITS", "descricao": "Mesmo valor do Parecer 273", "valor_texto": "0,093052", "valor_pct": 9.3052},
+       {"nome": "tarifa social", "descricao": "Retifica a representação da Tarifa Social: valor único da conta por unidade predial 27,359566 (o Parecer 273 trazia 27,359566 com esgoto e 23,999619 sem esgoto)", "valor_texto": "27,359566", "valor_pct": null}
+     ],
+     "reajuste_total_texto": "14,2839%", "reajuste_total_pct": 14.2839,
+     "conclusao": "outra",
+     "divergencias": ["Erro material no quadro tarifário do Parecer 273 (Tarifa Social); demais elementos inalterados (Despacho 91291210)"]}
+  ],
+  "resultado_deliberado": {"doc_id": "88237272", "deliberacao": "4810 (número na publicação, doc 94475506; no documento 88237272 o número está em branco)", "reajuste_pct": 14.2839,
+    "observacao": "Homologado 14,2839% a partir de 01/12/2024; processo específico sobre o formato de aplicação da fórmula (resíduo na revisão tarifária) e cópia aos processos de ITS e IDG. Deliberação republicada no D.O. de 10/02/2025 por incorreção no original publicado em 13/12/2024 (quadro da Tarifa Social)."},
+  "insumos_do_pleito": [
+    "Carta RIO+_274/2024_REG com memória de cálculo do IRC e do ITS",
+    "Arquivo Excel 'Cálculo Reajuste Tarifário _ 2024' (citado como evidência; não extraído)",
+    "Arquivo Excel 'Cálculo Tarifa Social _ 2024' (citado; trecho em texto no documento)",
+    "Relatório de recadastro anual de beneficiários da Tarifa Social - BL.3 (critérios, canais, apuração de economias)",
+    "Anexo 3 Base de Economias - Interior e Anexo 4 Base de Economias - AP-5 (planilhas xlsx; não extraídas)",
+    "Camada de favelas e comunidades urbanas do IBGE para expurgo de economias"
+  ],
+  "inconsistencias_textuais": [
+    "Na carta, a definição de Ai, Ci, Ei fala em 'mês de agosto', mas os valores usados são de jul/24 e jul/23 (Ai 1331,066; Ci 6967,890; Ei 1126,916); Bi/Bo usam ago/24 e ago/23",
+    "Na carta, Bi é descrito como 'Grupo A - Azul ou Verde, Subgrupo A4'; o Parecer 273 usa 'A4 Azul Light'",
+    "Carta apresenta ITS como '1,0931200' e chama de 'Reajuste da Tarifa Social 2024 = 9,3120%'; TS aparece como 25,426% (carta), 25,4256% (citação do Parecer 273) e 25,43% (tabela do relatório)",
+    "Na carta Di = 2,148 e Do = 2,091; o Parecer 273 diz que a concessionária usou Di = 2,146 e Do = 2,091 (referente à segunda proposta, não incluída)",
+    "Parecer 273 compara Co de jul/23 com Ci de ago/24 (13 meses), conforme a regra excepcional de 2024",
+    "Parecer 273 cita a Cláusula 27 (Reajuste) e a carta cita a Cláusula 28; Parecer 273 cita a subcláusula 28.5 para o prazo da CEDAE",
+    "Parecer 273 traz Tarifa Social com e sem esgoto (27,359566 e 23,999619), retificado pelo Parecer 13/2025 para valor único 27,359566; o Despacho 91291210 traz no cabeçalho o processo SEI-220007/005636/2023",
+    "Fórmulas do IRC, da tarifa efetiva e do ITS no Parecer 273 são imagens; a fórmula do ITS só aparece na carta da concessionária",
+    "Deliberação no SEI (88237272) sem número; número 4810 só aparece na republicação no Diário Oficial"
+  ],
+  "observacoes": "Estrutura igual aos Blocos 1, 2 e 4 (5 índices, pesos do Anexo III), mas o ITS do Bloco 3 tem constantes diferentes: (0,5 x TS - 3,75%)/96,25%, contra (0,5 x TS - 2,5%)/97,5% nos Blocos 1 e 4. O ITS depende de bases de economias da concessionária e de outro operador (Zona Oeste Mais Saneamento, na AP-5), com expurgo de favelas pela camada do IBGE, e é validado pela FIPE. O preço da água (D) depende do cálculo da CEDAE (ACT não público, energia A2, IPCA) e do número de casas decimais, que mudou o resultado (14,1502% x 14,2839%). As planilhas Excel citadas como evidência não foram extraídas. IDG fixado em 1 em 2024. Houve erro material no quadro tarifário corrigido por parecer posterior e republicação da deliberação."
+}

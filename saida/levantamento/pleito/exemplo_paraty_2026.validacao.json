@@ -1,0 +1,82 @@
+[
+ {
+  "regra": "V01",
+  "situacao": "ok",
+  "mensagem": "layout 0.1 válido"
+ },
+ {
+  "regra": "V02",
+  "situacao": "ok",
+  "mensagem": "todos os trechos do cadastro achados no contrato e aditivos"
+ },
+ {
+  "regra": "V03",
+  "situacao": "aviso",
+  "mensagem": "12 meses de referência entre 2025-01-12 e 2026-01-01 (354 dias)"
+ },
+ {
+  "regra": "V04",
+  "situacao": "ok",
+  "mensagem": "meses informados o=2024-10, i=2025-10; a regra (3 meses antes da vigência) dá o=2024-10, i=2025-10"
+ },
+ {
+  "regra": "V05",
+  "situacao": "ok",
+  "mensagem": "componentes e códigos iguais ao cadastro"
+ },
+ {
+  "regra": "V06",
+  "situacao": "aviso",
+  "mensagem": "só as pontas, sem os meses intermediários: ['IMO', 'IEE', 'IPA', 'IPQ', 'IPC', 'ICC']"
+ },
+ {
+  "regra": "V07",
+  "situacao": "ok",
+  "mensagem": "IPC: o=761.643, i=789.092 achados em IPEADATA IGP12_IPC12"
+ },
+ {
+  "regra": "V07",
+  "situacao": "aviso",
+  "mensagem": "ICC: o=1149.17, i=1222.36 achados em IPEADATA IGP12_INCC12; [1149.17, 1222.36] com menos de 3 casas, arredondado em relação à série"
+ },
+ {
+  "regra": "V08",
+  "situacao": "aviso",
+  "mensagem": "IMO (159401): 0 de 2 valores iguais aos de outros pleitos extraídos; sem outro pleito do mesmo mês para comparar"
+ },
+ {
+  "regra": "V08",
+  "situacao": "ok",
+  "mensagem": "IPA (1006819): 2 de 2 valores iguais aos de outros pleitos extraídos"
+ },
+ {
+  "regra": "V08",
+  "situacao": "ok",
+  "mensagem": "IPQ (1006820): 2 de 2 valores iguais aos de outros pleitos extraídos"
+ },
+ {
+  "regra": "V08",
+  "situacao": "ok",
+  "mensagem": "ICC (160868): 2 de 2 valores iguais aos de outros pleitos extraídos"
+ },
+ {
+  "regra": "V09",
+  "situacao": "ok",
+  "mensagem": "IR recalculado 3.9669% (arredondado 3.967%) e declarado 3.967%"
+ },
+ {
+  "regra": "V10",
+  "situacao": "ok",
+  "mensagem": "total pela regra multiplicativa: 6.7949%; declarado 6.795%; parcela 2 do cronograma (2.72%)"
+ },
+ {
+  "regra": "V11",
+  "situacao": "erro",
+  "mensagem": "energia sem ['distribuidora', 'composicao', 'resolução ANEEL']"
+ },
+ {
+  "regra": "V12",
+  "situacao": "aviso",
+  "mensagem": "pleito sem tabela tarifária vigente e proposta"
+ }
+]

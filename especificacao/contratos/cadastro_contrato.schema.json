@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agenersa/cadastro_contrato/0.1",
+  "title": "Cadastro de parâmetros de reajuste de um contrato, versionado por ato",
+  "description": "Rascunho 0.1. Um arquivo por contrato. Cada versão contratual nasce de um ato (contrato, termo aditivo, deliberação) que muda o reajuste e herda da anterior (campo herda): a versão resolvida é a anterior com as chaves de primeiro nível da versão nova por cima (RN-CAD-01). Todo parâmetro tem fonte com trecho literal, conferido no texto do documento (RN-CAD-02, regra V02). Datas ISO 8601 (AAAA-MM-DD; mês AAAA-MM), números com ponto decimal. Formato de referência: saida/levantamento/contratos/paraty_008_2014.json.",
+  "type": "object",
+  "required": ["contrato", "concessionaria", "servico", "situacao", "versoes"],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": {"const": "0.1", "description": "Versão deste layout de cadastro"},
+    "contrato": {"type": "string", "minLength": 1, "description": "Nome do contrato como no ato, ex.: 'Contrato de Concessão nº 008/2014'"},
+    "numero": {"type": "string", "minLength": 1, "description": "Número do contrato como o pleito informa em contrato.numero, ex.: '008/2014' (proposto)"},
+    "concessionaria": {"type": "string", "minLength": 1},
+    "cnpj": {"type": "string", "pattern": "^\\d{14}$", "description": "CNPJ da concessionária (proposto)"},
+    "servico": {"enum": ["saneamento", "resíduos sólidos"], "description": "Escopo: saneamento e resíduos (01_VISAO_ESCOPO.md, seção 3)"},
+    "situacao": {"type": "string", "minLength": 1, "description": "Situação do cadastro, ex.: 'rascunho para validação com a CAPET', 'publicado'"},
+    "data_base": {
+      "type": "object", "additionalProperties": false, "required": ["mes", "dia"],
+      "description": "Calendário de data-base do contrato para o alerta de início da instrução (RF-CAD-04, RN-CAD-04) (proposto)",
+      "properties": {
+        "mes": {"type": "integer", "minimum": 1, "maximum": 12},
+        "dia": {"type": "integer", "minimum": 1, "maximum": 31},
+        "antecedencia_alerta_dias": {"type": "integer", "minimum": 0}
+      }
+    },
+    "versoes": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/versao"}
+    }
+  },
+  "$defs": {
+    "mes": {"type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"},
+    "fonte": {
+      "type": "object",
+      "required": ["documento", "parametro", "trecho"],
+      "additionalProperties": false,
+      "description": "Documento e trecho literal que sustentam um parâmetro. O trecho, com espaços normalizados, tem de estar contido no texto do documento na base do Especialista.",
+      "properties": {
+        "documento": {"type": "string", "minLength": 1, "description": "Identificador do texto na base do Especialista (INT-05)"},
+        "parametro": {"type": "string", "minLength": 1, "description": "Caminho do parâmetro sustentado, ex.: 'periodicidade', 'IMO.codigo_serie', 'pesos', 'realinhamento.2'"},
+        "trecho": {"type": "string", "minLength": 1},
+        "dispositivo": {"type": "string", "description": "Cláusula, item ou anexo (proposto)"},
+        "achado_no_texto": {"type": ["boolean", "null"], "description": "Resultado da última conferência; preenchido pelo sistema (proposto)"},
+        "conferido_em": {"type": ["string", "null"], "format": "date-time", "description": "Data da última conferência; preenchido pelo sistema (proposto)"}
+      }
+    },
+    "componente": {
+      "type": "object",
+      "required": ["sigla", "peso", "fonte", "codigo_serie", "indice"],
+      "additionalProperties": false,
+      "properties": {
+        "sigla": {"type": "string", "minLength": 1, "description": "Sigla que o pleito usa (a concessionária não escolhe)"},
+        "peso": {"type": ["number", "null"], "description": "Peso como escrito na fonte, sem normalizar a soma (RN-CAD-03); null no índice único"},
+        "fonte": {"enum": ["FGV", "IBGE", "ANEEL", "acordo coletivo", "deliberação AGENERSA", "outra"]},
+        "codigo_serie": {"type": ["string", "null"], "description": "Código da série na fonte; null se a fonte não tiver código"},
+        "indice": {"type": "string", "minLength": 1, "description": "Definição do índice como no contrato"},
+        "serie_publica": {"type": "string", "description": "Série pública para a regra V07, ex.: 'IPEADATA IGP12_IPC12', 'IBGE SIDRA 3065'"},
+        "disponibilidade": {"enum": ["pública", "pública com regra", "assinatura", "outro reajuste", "documento"], "description": "Classe da fonte (proposto)"},
+        "pendencia": {"type": "string", "description": "O que falta confirmar neste componente"}
+      }
+    },
+    "formula": {
+      "type": "object",
+      "required": ["tipo", "mes_referencia", "casas_decimais_ir", "componentes"],
+      "additionalProperties": false,
+      "properties": {
+        "tipo": {"enum": ["parametrica_ponderada", "indice_unico"]},
+        "expressao": {"type": "string", "description": "Expressão como no contrato, para leitura"},
+        "mes_referencia": {
+          "type": "object",
+          "required": ["regra", "meses"],
+          "additionalProperties": false,
+          "properties": {
+            "regra": {"enum": ["meses_antes_da_vigencia"], "description": "i = mês da vigência pretendida − n; o = mês da vigência da tarifa em vigor − n (RN-CAL-05)"},
+            "meses": {"type": "integer", "minimum": 0},
+            "i": {"type": "string"},
+            "o": {"type": "string"}
+          }
+        },
+        "casas_decimais_ir": {"type": "integer", "minimum": 0, "maximum": 10},
+        "modo_arredondamento": {"enum": ["meio_para_o_par", "meio_para_cima"], "default": "meio_para_o_par", "description": "RN-NUM-03, DEC-06 (proposto)"},
+        "componentes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/componente"}},
+        "observacao_pesos": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"tipo": {"const": "parametrica_ponderada"}}},
+         "then": {"properties": {"componentes": {"items": {"properties": {"peso": {"type": "number", "exclusiveMinimum": 0}}}}}}},
+        {"if": {"properties": {"tipo": {"const": "indice_unico"}}},
+         "then": {"properties": {"componentes": {"maxItems": 1}}}}
+      ]
+    },
+    "parcela_realinhamento": {
+      "type": "object",
+      "required": ["parcela", "referencia", "pct"],
+      "additionalProperties": false,
+      "properties": {
+        "parcela": {"type": "integer", "minimum": 1},
+        "referencia": {"$ref": "#/$defs/mes", "description": "Mês de referência da vigência em que a parcela se aplica"},
+        "pct": {"type": "number", "description": "Percentual em pontos percentuais (2,72 = 2,72%)"}
+      }
+    },
+    "energia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["situacao"],
+      "description": "Regra de composição do índice de energia (RN-SER-03, DEC-01). Enquanto a situação for 'a confirmar', V11 exige a composição declarada no pleito (proposto).",
+      "properties": {
+        "situacao": {"enum": ["a confirmar", "validada"]},
+        "distribuidora": {"type": "string"},
+        "subgrupo": {"type": "string"},
+        "modalidade": {"type": "string"},
+        "posto": {"type": ["string", "null"]},
+        "parcelas": {"type": "array", "items": {"enum": ["TUSD", "TE", "bandeira"]}, "uniqueItems": true},
+        "com_tributos": {"type": "boolean"},
+        "aplica_desconto": {"type": "boolean"},
+        "regra_resolucao": {"enum": ["vigente_no_mes_de_referencia", "media_12_meses"]},
+        "casas_decimais": {"type": "integer", "minimum": 0},
+        "fontes": {"type": "array", "items": {"$ref": "#/$defs/fonte"}}
+      }
+    },
+    "aplicacao_tabela": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regra"],
+      "description": "Regra de aplicação da tabela tarifária na conferência das faturas (RN-FAT-03, DEC-04) (proposto)",
+      "properties": {
+        "regra": {"enum": ["progressiva_por_faixa", "faixa_unica"]},
+        "consumo_minimo_m3": {"type": ["number", "null"]},
+        "tolerancia_reais": {"type": "number", "minimum": 0, "default": 0.01},
+        "fontes": {"type": "array", "items": {"$ref": "#/$defs/fonte"}}
+      }
+    },
+    "versao": {
+      "type": "object",
+      "required": ["versao", "vigente_desde", "ato", "fontes"],
+      "additionalProperties": false,
+      "properties": {
+        "versao": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$", "description": "Código da versão, ex.: 'contrato-2014', '3TA-2024'; é o que o pleito informa em contrato.versao_contratual"},
+        "vigente_desde": {"type": ["string", "null"], "format": "date", "description": "null só na versão original quando a data não consta do ato"},
+        "ato": {"type": "string", "minLength": 1},
+        "herda": {"type": "string", "description": "Código da versão anterior"},
+        "situacao": {"enum": ["rascunho", "publicada", "substituida"], "description": "Ciclo de vida da versão no sistema; versão com trecho não achado não é publicada (proposto)"},
+        "periodicidade_meses": {"type": "integer", "minimum": 1},
+        "combinacao": {"enum": ["multiplicativa", "aditiva"], "description": "Regra de combinação do total (RN-CAL-03)"},
+        "formula": {"$ref": "#/$defs/formula"},
+        "realinhamento": {"type": "array", "items": {"$ref": "#/$defs/parcela_realinhamento"}},
+        "energia": {"$ref": "#/$defs/energia"},
+        "aplicacao_tabela": {"$ref": "#/$defs/aplicacao_tabela"},
+        "observacao": {"type": "string"},
+        "fontes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/fonte"}}
+      },
+      "if": {"not": {"required": ["herda"]}},
+      "then": {"required": ["periodicidade_meses", "formula"]}
+    }
+  }
+}

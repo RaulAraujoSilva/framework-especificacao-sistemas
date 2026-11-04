@@ -1,0 +1,550 @@
+{
+ "versao": "1",
+ "descricao": "Pleito real de Paraty 2026 no layout 0.1, cadastro do contrato 008/2014 e resultado esperado das regras V01 a V12 (AT-06), mais as mutações do AT-05. CNPJ e hashes do pleito são fictícios.",
+ "origem": {
+  "oraculo": "scripts/validar_pleito.py",
+  "arquivos": {
+   "saida/levantamento/pleito/exemplo_paraty_2026.json": "95658b92f677631fa431ec424ee5dc707d828ac88c1183e1954cd209b87d2781",
+   "saida/levantamento/pleito/exemplo_paraty_2026.validacao.json": "7d666742ff8d88e83fc96b6f20ea5da1702c22a5645eade70a30e89af2d09a56",
+   "saida/levantamento/contratos/paraty_008_2014.json": "0bbba5d5e9fe240eca8ad7efc25c4118bf105c1336f920b599afe39341b7a849"
+  }
+ },
+ "contagens": {
+  "itens_validacao": 16,
+  "ok": 10,
+  "aviso": 5,
+  "erro": 1,
+  "mutacoes": 4
+ },
+ "pleito": {
+  "versao_layout": "0.1",
+  "contrato": {
+   "numero": "008/2014",
+   "versao_contratual": "3TA-2024"
+  },
+  "concessionaria": {
+   "nome": "Águas de Paraty",
+   "cnpj": "00000000000000"
+  },
+  "vigencia_pretendida": "2026-01-01",
+  "tarifa_em_vigor": {
+   "vigente_desde": "2025-01-12",
+   "ato": "Deliberação AGENERSA nº 4.857/2025"
+  },
+  "periodo_referencia": {
+   "o": "2024-10",
+   "i": "2025-10"
+  },
+  "componentes": [
+   {
+    "sigla": "IMO",
+    "codigo_serie": "159401",
+    "fonte": "FGV",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 1466.05
+     },
+     {
+      "mes": "2025-10",
+      "valor": 1576.75
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_II_series_fgv.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   },
+   {
+    "sigla": "IEE",
+    "codigo_serie": null,
+    "fonte": "ANEEL",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 511.75
+     },
+     {
+      "mes": "2025-10",
+      "valor": 471.91
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_III_energia.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   },
+   {
+    "sigla": "IPA",
+    "codigo_serie": "1006819",
+    "fonte": "FGV",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 367.637
+     },
+     {
+      "mes": "2025-10",
+      "valor": 356.857
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_II_series_fgv.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   },
+   {
+    "sigla": "IPQ",
+    "codigo_serie": "1006820",
+    "fonte": "FGV",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 199.691
+     },
+     {
+      "mes": "2025-10",
+      "valor": 209.255
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_II_series_fgv.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   },
+   {
+    "sigla": "IPC",
+    "codigo_serie": null,
+    "fonte": "FGV",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 761.643
+     },
+     {
+      "mes": "2025-10",
+      "valor": 789.092
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_II_series_fgv.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   },
+   {
+    "sigla": "ICC",
+    "codigo_serie": "160868",
+    "fonte": "FGV",
+    "serie": [
+     {
+      "mes": "2024-10",
+      "valor": 1149.17
+     },
+     {
+      "mes": "2025-10",
+      "valor": 1222.36
+     }
+    ],
+    "evidencia": {
+     "arquivo": "anexo_II_series_fgv.csv",
+     "pagina": null,
+     "extraido_em": null
+    }
+   }
+  ],
+  "energia": {
+   "distribuidora": "não informada no processo",
+   "subgrupo": "A4",
+   "modalidade": "Convencional",
+   "posto": null,
+   "composicao": "não informada no processo",
+   "resolucoes": [
+    {
+     "reh": "não informada",
+     "vigencia_inicio": "2025-03-15",
+     "tusd_mwh": 0,
+     "te_mwh": 0,
+     "bandeira_mwh": null,
+     "desconto_pct": null
+    }
+   ]
+  },
+  "resultado_declarado": {
+   "ir_pct": 3.967,
+   "outros": [
+    {
+     "nome": "realinhamento",
+     "parcela": 2,
+     "pct": 2.72,
+     "ato": "3º Termo Aditivo; art. 18 da Deliberação AGENERSA nº 4.830/2024"
+    }
+   ],
+   "total_pct": 6.795
+  },
+  "casas_decimais": {
+   "indice": 3,
+   "ir": 3,
+   "tarifa": 4
+  },
+  "publicacao": {
+   "veiculo": "Diário do Vale",
+   "data": "2025-11-30",
+   "arquivo": "publicacao_jornal.pdf"
+  },
+  "anexos": [
+   {
+    "arquivo": "anexo_II_series_fgv.csv",
+    "tipo": "séries de índices",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+   },
+   {
+    "arquivo": "anexo_III_energia.csv",
+    "tipo": "tarifas de energia",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+   },
+   {
+    "arquivo": "publicacao_jornal.pdf",
+    "tipo": "publicação da tabela",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+   }
+  ]
+ },
+ "cadastro": {
+  "contrato": "Contrato de Concessão nº 008/2014",
+  "concessionaria": "Águas de Paraty",
+  "servico": "saneamento",
+  "situacao": "rascunho para validação com a CAPET",
+  "versoes": [
+   {
+    "versao": "contrato-2014",
+    "vigente_desde": null,
+    "ato": "Contrato de Concessão nº 008/2014, cláusula 20; Anexo X (Proposta Comercial)",
+    "periodicidade_meses": 12,
+    "formula": {
+     "tipo": "parametrica_ponderada",
+     "expressao": "IR = Σ Pk × (Ik_i − Ik_o) / Ik_o",
+     "mes_referencia": {
+      "regra": "meses_antes_da_vigencia",
+      "meses": 3,
+      "i": "nova tarifa",
+      "o": "tarifa em vigor"
+     },
+     "casas_decimais_ir": 3,
+     "componentes": [
+      {
+       "sigla": "IMO",
+       "peso": 0.1951,
+       "fonte": "FGV",
+       "codigo_serie": "159401",
+       "indice": "ICC — Rio de Janeiro — Mão de Obra"
+      },
+      {
+       "sigla": "IEE",
+       "peso": 0.0974,
+       "fonte": "ANEEL",
+       "codigo_serie": null,
+       "indice": "Tarifa de energia elétrica, Grupo A Convencional, subgrupo A4 (2,3 kV a 25 kV), valor de consumo em MWh, da concessionária de energia local",
+       "pendencia": "composição exata (TUSD + TE, tributos, bandeira) a confirmar com a CAPET; pedido de alteração do IEE (SEI-480002/003110/2024) remetido à revisão ordinária pelo art. 16 da Deliberação 4.830/2024"
+      },
+      {
+       "sigla": "IPA",
+       "peso": 0.1082,
+       "fonte": "FGV",
+       "codigo_serie": "1006819",
+       "indice": "IPA — Origem — OG-DI — Produtos Industriais — Indústria de Transformação — Produtos Derivados do Petróleo e Álcool"
+      },
+      {
+       "sigla": "IPQ",
+       "peso": 0.0405,
+       "fonte": "FGV",
+       "codigo_serie": "1006820",
+       "indice": "IPA — Origem — OG-DI — Produtos Industriais — Indústria de Transformação — Produtos Químicos"
+      },
+      {
+       "sigla": "IPC",
+       "peso": 0.0662,
+       "fonte": "FGV",
+       "codigo_serie": null,
+       "indice": "IPC — Brasil — Geral — Índice de Preços ao Consumidor",
+       "serie_publica": "IPEADATA IGP12_IPC12"
+      },
+      {
+       "sigla": "ICC",
+       "peso": 0.4925,
+       "fonte": "FGV",
+       "codigo_serie": "160868",
+       "indice": "INCC — Índice Nacional de Preços da Construção Civil",
+       "serie_publica": "IPEADATA IGP12_INCC12"
+      }
+     ],
+     "observacao_pesos": "O Anexo X declara que os pesos somam 1,000; a soma dos seis valores escritos é 0,9999. O cálculo usa os pesos como escritos."
+    },
+    "fontes": [
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "periodicidade",
+      "trecho": "serão reajustados a cada período de 12 (doze) meses"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "mes_referencia",
+      "trecho": "correspondente, quando do cálculo dos posteriores reajustes, ao terceiro mês anterior ao da data de início de vigência da tarifa em vigor"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "IMO.codigo_serie",
+      "trecho": "Mão de Obra (159401)"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "IEE.indice",
+      "trecho": "IEFi: é o valor da tarifa de energia elétrica referente ao"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "IPA.codigo_serie",
+      "trecho": "Produtos Derivados do Petróleo e Álcool (1006819)"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "IPQ.codigo_serie",
+      "trecho": "Produtos Químicos (1006820)"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "IPC.indice",
+      "trecho": "IPC — Brasil — Geral — Índice de Preços ao Consumidor"
+     },
+     {
+      "documento": "contrato-concessao-aguas-paraty.txt",
+      "parametro": "ICC.codigo_serie",
+      "trecho": "INCC — Índice Nacional de Preços da Construção Civil (160868)"
+     },
+     {
+      "documento": "Paraty-Anexo-X.txt",
+      "parametro": "pesos",
+      "trecho": "são P1 = 0,1951 (zero vírgula um nove cinco um); P2 = 0,0974 (zero vírgula zero nove sete quatro); P3 = 0,1082 (zero vírgula um zero oito dois); P4 = 0,0405 (zero vírgula zero quatro zero cinco); P5 = 0,0662 (zero vírgula zero seis seis dois) e P6 = 0,4925 (zero vírgula quatro nove dois cinco)"
+     }
+    ]
+   },
+   {
+    "versao": "3TA-2024",
+    "vigente_desde": "2024-12-16",
+    "ato": "3º Termo Aditivo (Paraty, 16/12/2024), cláusula quarta, em cumprimento à Deliberação AGENERSA nº 4.830/2024",
+    "herda": "contrato-2014",
+    "combinacao": "multiplicativa",
+    "realinhamento": [
+     {
+      "parcela": 1,
+      "referencia": "2025-01",
+      "pct": 6.3
+     },
+     {
+      "parcela": 2,
+      "referencia": "2026-01",
+      "pct": 2.72
+     },
+     {
+      "parcela": 3,
+      "referencia": "2027-01",
+      "pct": 2.72
+     },
+     {
+      "parcela": 4,
+      "referencia": "2028-01",
+      "pct": 2.72
+     },
+     {
+      "parcela": 5,
+      "referencia": "2029-01",
+      "pct": 2.72
+     },
+     {
+      "parcela": 6,
+      "referencia": "2030-01",
+      "pct": 2.72
+     },
+     {
+      "parcela": 7,
+      "referencia": "2031-01",
+      "pct": 2.72
+     }
+    ],
+    "observacao": "A cláusula diz que as parcelas são aplicadas cumulativamente ao reajuste ordinário; nos ciclos de 2025 e 2026 o total deliberado fecha pelo produto (1 + IR) × (1 + parcela) − 1. O cronograma segue além de 2031 no aditivo; aqui só até a 7ª parcela.",
+    "fontes": [
+     {
+      "documento": "TerceiroTermoAditivo-Paraty.txt",
+      "parametro": "combinacao",
+      "trecho": "que serão aplicados cumulativamente ao reajuste ordinário anual"
+     },
+     {
+      "documento": "TerceiroTermoAditivo-Paraty.txt",
+      "parametro": "realinhamento.1",
+      "trecho": "1º: a partir da referência janeiro de 2025 — 6,30%"
+     },
+     {
+      "documento": "TerceiroTermoAditivo-Paraty.txt",
+      "parametro": "realinhamento.2",
+      "trecho": "2º: a partir da referência janeiro de 2026 — 2,72%"
+     }
+    ]
+   }
+  ]
+ },
+ "validacao_esperada": [
+  {
+   "regra": "V01",
+   "situacao": "ok",
+   "mensagem": "layout 0.1 válido"
+  },
+  {
+   "regra": "V02",
+   "situacao": "ok",
+   "mensagem": "todos os trechos do cadastro achados no contrato e aditivos"
+  },
+  {
+   "regra": "V03",
+   "situacao": "aviso",
+   "mensagem": "12 meses de referência entre 2025-01-12 e 2026-01-01 (354 dias)"
+  },
+  {
+   "regra": "V04",
+   "situacao": "ok",
+   "mensagem": "meses informados o=2024-10, i=2025-10; a regra (3 meses antes da vigência) dá o=2024-10, i=2025-10"
+  },
+  {
+   "regra": "V05",
+   "situacao": "ok",
+   "mensagem": "componentes e códigos iguais ao cadastro"
+  },
+  {
+   "regra": "V06",
+   "situacao": "aviso",
+   "mensagem": "só as pontas, sem os meses intermediários: ['IMO', 'IEE', 'IPA', 'IPQ', 'IPC', 'ICC']"
+  },
+  {
+   "regra": "V07",
+   "situacao": "ok",
+   "mensagem": "IPC: o=761.643, i=789.092 achados em IPEADATA IGP12_IPC12"
+  },
+  {
+   "regra": "V07",
+   "situacao": "aviso",
+   "mensagem": "ICC: o=1149.17, i=1222.36 achados em IPEADATA IGP12_INCC12; [1149.17, 1222.36] com menos de 3 casas, arredondado em relação à série"
+  },
+  {
+   "regra": "V08",
+   "situacao": "aviso",
+   "mensagem": "IMO (159401): 0 de 2 valores iguais aos de outros pleitos extraídos; sem outro pleito do mesmo mês para comparar"
+  },
+  {
+   "regra": "V08",
+   "situacao": "ok",
+   "mensagem": "IPA (1006819): 2 de 2 valores iguais aos de outros pleitos extraídos"
+  },
+  {
+   "regra": "V08",
+   "situacao": "ok",
+   "mensagem": "IPQ (1006820): 2 de 2 valores iguais aos de outros pleitos extraídos"
+  },
+  {
+   "regra": "V08",
+   "situacao": "ok",
+   "mensagem": "ICC (160868): 2 de 2 valores iguais aos de outros pleitos extraídos"
+  },
+  {
+   "regra": "V09",
+   "situacao": "ok",
+   "mensagem": "IR recalculado 3.9669% (arredondado 3.967%) e declarado 3.967%"
+  },
+  {
+   "regra": "V10",
+   "situacao": "ok",
+   "mensagem": "total pela regra multiplicativa: 6.7949%; declarado 6.795%; parcela 2 do cronograma (2.72%)"
+  },
+  {
+   "regra": "V11",
+   "situacao": "erro",
+   "mensagem": "energia sem ['distribuidora', 'composicao', 'resolução ANEEL']"
+  },
+  {
+   "regra": "V12",
+   "situacao": "aviso",
+   "mensagem": "pleito sem tabela tarifária vigente e proposta"
+  }
+ ],
+ "mutacoes": [
+  {
+   "id": "AT-05a",
+   "descricao": "IR declarado diferente do recalculado",
+   "patch": [
+    {
+     "op": "replace",
+     "path": "/resultado_declarado/ir_pct",
+     "value": 4.5
+    }
+   ],
+   "esperado": {
+    "regra": "V09",
+    "contem_situacao": "erro"
+   }
+  },
+  {
+   "id": "AT-05b",
+   "descricao": "mês de referência i fora da regra do terceiro mês anterior",
+   "patch": [
+    {
+     "op": "replace",
+     "path": "/periodo_referencia/i",
+     "value": "2025-09"
+    }
+   ],
+   "esperado": {
+    "regra": "V04",
+    "contem_situacao": "erro"
+   }
+  },
+  {
+   "id": "AT-05c",
+   "descricao": "parcela de realinhamento diferente da do cronograma",
+   "patch": [
+    {
+     "op": "replace",
+     "path": "/resultado_declarado/outros/0/pct",
+     "value": 6.3
+    }
+   ],
+   "esperado": {
+    "regra": "V10",
+    "contem_situacao": "erro"
+   }
+  },
+  {
+   "id": "AT-05d",
+   "descricao": "componente sem evidência",
+   "patch": [
+    {
+     "op": "remove",
+     "path": "/componentes/0/evidencia"
+    }
+   ],
+   "esperado": {
+    "regra": "V01",
+    "situacoes_exatas": [
+     "erro"
+    ],
+    "para_no_v01": true
+   }
+  }
+ ],
+ "limites": [
+  "V02 depende dos textos do contrato e dos aditivos (INT-05); sem eles o oráculo dá aviso, não ok.",
+  "V07 depende das séries públicas (INT-02); o teste usa respostas gravadas do IPEADATA (MSW).",
+  "V08 depende dos valores de outros pleitos (saida/levantamento/calculo/componentes.csv)."
+ ]
+}
