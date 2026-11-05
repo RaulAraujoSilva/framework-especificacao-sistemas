@@ -3,7 +3,7 @@
 Copie aqui as saídas do mapeamento do processo que o sistema vai atender. A especificação cita cada uma pelo
 identificador (atividade do BPMN, melhoria, norma, indicador, caso). A lista completa, com o mínimo necessário quando
 o mapeamento não seguiu o mesmo método, está no capítulo 01 da metodologia (`docs/metodologia/01_INSUMOS_DO_PROCESSO.md`
-do repositório especificacao-sistema-sei).
+do repositório framework-especificacao-sistemas).
 
 | Arquivo | O que traz | Situação |
 |---|---|---|

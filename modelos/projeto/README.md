@@ -1,12 +1,12 @@
 # Especificação do sistema {{Nome do sistema}}
 
 <!-- COMO PREENCHER: este é o README do seu projeto. Troque os marcadores e mantenha a tabela de pastas. O método
-está no repositório especificacao-sistema-sei (docs/metodologia/). -->
+está no repositório framework-especificacao-sistemas (docs/metodologia/). -->
 
 {{Uma frase: qual processo do órgão o sistema atende e o que ele muda}}.
 
 Especificação feita pelo método do repositório
-[especificacao-sistema-sei](https://github.com/RaulAraujoSilva/especificacao-sistema-sei): do processo TO-BE à
+[framework-especificacao-sistemas](https://github.com/RaulAraujoSilva/framework-especificacao-sistemas): do processo TO-BE à
 especificação completa, com documentos para as áreas avaliarem.
 
 ## Pastas
