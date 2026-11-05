@@ -1,6 +1,6 @@
 # fora do git: caches, textos de contrato com assinaturas, pareceres com nome de avaliador
 dados/
-saida/pareceres/
+**/saida/pareceres/
 __pycache__/
 *.pyc
 .env

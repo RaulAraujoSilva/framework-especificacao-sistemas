@@ -1,0 +1,101 @@
+{
+  "_leia": "Define as versões de leitura do pacote: o que vira PDF, para quem e com que nome. Lido por gerar_documentos.py e conferir_especificacao.py. Nomes de arquivo: NN_Palavras_com_sublinhado, sem acento e sem espaço; a versão vai na capa e no rodapé, nunca no nome. Troque os marcadores {{...}}; ajuste cadernos e públicos à estrutura do seu órgão.",
+  "sistema": "{{Nome do sistema}}",
+  "titulo_pacote": "Especificação do sistema {{Nome do sistema}}",
+  "subtitulo": "{{Uma linha: o que o sistema faz e para qual processo}}",
+  "orgao": "{{Sigla do órgão}}",
+  "versao": "1.0",
+  "situacao": "Minuta para avaliação",
+  "palavras_por_minuto": 150,
+  "publico_prototipo": "Área de negócio, gestão e TI",
+  "termos_bloqueados": ["\\b(?:feit|gerad|escrit|produzid|elaborad|redigid)[oa]s? (?:\\w+ ){0,2}(?:por|com) (?:a )?(?:IA|intelig[eê]ncia artificial)\\b"],
+  "termos_permitidos": {},
+  "prefixos_extras": {},
+  "capitulos": [
+    {"id": "01", "fonte": ["especificacao/01_VISAO_ESCOPO.md"], "arquivo": "01_Visao_e_escopo", "titulo": "Visão, escopo e identificadores"},
+    {"id": "02", "fonte": ["especificacao/02_PERFIS_E_JORNADAS.md"], "arquivo": "02_Perfis_e_jornadas", "titulo": "Perfis de usuário e jornadas"},
+    {"id": "03", "fonte": ["especificacao/03_REQUISITOS.md"], "arquivo": "03_Requisitos", "titulo": "Requisitos"},
+    {"id": "04", "fonte": ["especificacao/04_CASOS_DE_USO.md"], "arquivo": "04_Casos_de_uso", "titulo": "Casos de uso e estados"},
+    {"id": "05", "fonte": ["especificacao/05_ARQUITETURA.md", "especificacao/adr/[0-9]*.md"], "arquivo": "05_Arquitetura_e_decisoes", "titulo": "Arquitetura e decisões registradas"},
+    {"id": "06", "fonte": ["especificacao/06_MODELO_DADOS.md"], "arquivo": "06_Modelo_de_dados", "titulo": "Modelo de dados"},
+    {"id": "07", "fonte": ["especificacao/07_CONTRATOS_API.md"], "arquivo": "07_Contratos_e_API", "titulo": "Contratos de dados e API"},
+    {"id": "08", "fonte": ["especificacao/08_REGRAS_NEGOCIO.md"], "arquivo": "08_Regras_de_negocio", "titulo": "Regras de negócio"},
+    {"id": "09", "fonte": ["especificacao/09_INTEGRACOES.md"], "arquivo": "09_Integracoes", "titulo": "Integrações"},
+    {"id": "10", "fonte": ["especificacao/10_UX_UI.md"], "arquivo": "10_Experiencia_e_interface", "titulo": "Experiência do usuário e interface"},
+    {"id": "11", "fonte": ["especificacao/11_TELAS.md"], "arquivo": "11_Telas", "titulo": "Telas"},
+    {"id": "12", "fonte": ["especificacao/12_TESTES.md"], "arquivo": "12_Testes_de_aceitacao", "titulo": "Testes de aceitação"},
+    {"id": "13", "fonte": ["especificacao/13_BACKLOG.md"], "arquivo": "13_Backlog_e_entregas", "titulo": "Backlog e entregas"},
+    {"id": "14", "fonte": ["especificacao/14_OPERACAO.md"], "arquivo": "14_Operacao", "titulo": "Operação, acesso e LGPD"},
+    {"id": "15", "fonte": ["especificacao/15_SEGURANCA.md"], "arquivo": "15_Seguranca", "titulo": "Segurança"}
+  ],
+  "cadernos": [
+    {
+      "arquivo": "01_Caderno_Gestao",
+      "titulo": "Caderno da gestão",
+      "publico": "{{Dirigente e gestor do processo}}",
+      "o_que_avaliar": [
+        "O problema e as metas descritos são os que o órgão quer resolver?",
+        "O escopo de cada entrega está na ordem certa de prioridade?",
+        "As jornadas descrevem como o trabalho deve acontecer depois do sistema?",
+        "Quem decide cada uma das decisões pendentes, e até quando?"
+      ],
+      "capitulos": ["01", "02", "13"]
+    },
+    {
+      "arquivo": "02_Caderno_Area_de_Negocio",
+      "titulo": "Caderno da área de negócio",
+      "publico": "{{Unidade que executa o processo}}",
+      "o_que_avaliar": [
+        "Cada requisito e cada regra de negócio está correto e completo?",
+        "Os casos de uso e os estados descrevem o processo como ele deve funcionar?",
+        "Os casos reais usados como teste têm o resultado esperado certo?",
+        "As telas mostram o que a pessoa precisa para decidir?"
+      ],
+      "capitulos": ["03", "04", "08", "11", "12"]
+    },
+    {
+      "arquivo": "03_Caderno_Juridico",
+      "titulo": "Caderno jurídico",
+      "publico": "{{Procuradoria ou assessoria jurídica}}",
+      "o_que_avaliar": [
+        "A base legal citada sustenta cada regra e cada exigência?",
+        "Os prazos e marcos seguem a norma?",
+        "O tratamento de dados pessoais atende à LGPD?",
+        "Alguma decisão pendente depende de ato normativo?"
+      ],
+      "capitulos": ["01", "08", "14"]
+    },
+    {
+      "arquivo": "04_Caderno_TI",
+      "titulo": "Caderno da TI",
+      "publico": "Tecnologia da informação e segurança",
+      "o_que_avaliar": [
+        "A arquitetura e as tecnologias propostas são sustentáveis pelo órgão?",
+        "As integrações são viáveis como descritas?",
+        "Os requisitos de segurança, operação e cópia de segurança são suficientes?",
+        "Onde o sistema vai rodar e quem o mantém?"
+      ],
+      "capitulos": ["05", "06", "07", "09", "10", "14", "15"]
+    }
+  ],
+  "itens_avaliaveis": {
+    "RF": "03",
+    "RNF": "03",
+    "UC": "04",
+    "RN": "08",
+    "DEC": "08",
+    "INT": "09",
+    "TL": "11",
+    "AT": "12",
+    "HIS": "13",
+    "SEG": "15"
+  },
+  "decisoes_pendentes": {"fonte": "especificacao/README.md", "secao": "Decisões pendentes"},
+  "prototipo": "especificacao/prototipos/wireframes.html",
+  "descricao_saida": [
+    ["saida/levantamento/casos/*", "Caso real com resultado conhecido: valores copiados das peças, com o documento de origem", "Área de negócio; desenvolvimento (testes)"],
+    ["saida/levantamento/regras/*", "Parâmetros e regras com trecho literal da norma ou do contrato", "Área de negócio, jurídico"],
+    ["saida/levantamento/conferencias/*", "Resultado refeito por script a partir dos casos (o que confere e o que diverge, com a causa)", "Área de negócio; desenvolvimento"],
+    ["saida/levantamento/*", "{{Descreva este arquivo do levantamento}}", "{{Para quem}}"]
+  ]
+}

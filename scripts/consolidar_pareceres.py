@@ -10,17 +10,26 @@ Entrada: `saida/pareceres/recebidos/*.xlsx`, cópias preenchidas de `05_Planilha
 - Decisões: as decisões pendentes que alguma área registrou como tomadas;
 - Resumo: contagem por situação.
 
-Uso, da raiz do repositório: python scripts/consolidar_pareceres.py
+Uso, da raiz deste repositório: python scripts/consolidar_pareceres.py --projeto <pasta do projeto>
 """
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[1]
+RAIZ = Path.cwd()
 RECEBIDOS = RAIZ / "saida" / "pareceres" / "recebidos"
 DESTINO = RAIZ / "saida" / "pareceres" / "00_Consolidado_dos_pareceres.xlsx"
 MODELO = RAIZ / "saida" / "documentos_para_avaliacao" / "05_Planilha_de_avaliacao.xlsx"
+
+
+def definir_projeto(pasta: Path) -> None:
+    global RAIZ, RECEBIDOS, DESTINO, MODELO
+    RAIZ = Path(pasta).resolve()
+    RECEBIDOS = RAIZ / "saida" / "pareceres" / "recebidos"
+    DESTINO = RAIZ / "saida" / "pareceres" / "00_Consolidado_dos_pareceres.xlsx"
+    MODELO = RAIZ / "saida" / "documentos_para_avaliacao" / "05_Planilha_de_avaliacao.xlsx"
 ORDEM = {"Não aprovado": 0, "Aprovado com ajustes": 1, "Aprovado": 2, "Não se aplica": 3}
 
 
@@ -119,6 +128,9 @@ def gravar(res: dict, destino: Path) -> None:
 
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--projeto", default=".", help="pasta do projeto (a que contém saida/)")
+    definir_projeto(Path(ap.parse_args().projeto))
     planilhas = sorted(p for p in RECEBIDOS.glob("*.xlsx") if not p.name.startswith("~$"))
     if not planilhas:
         RECEBIDOS.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,8 @@
+# dados pessoais, textos com assinatura e caches: nunca no git
+dados/
+saida/pareceres/
+.env
+*.env
+__pycache__/
+.pytest_cache/
+~$*

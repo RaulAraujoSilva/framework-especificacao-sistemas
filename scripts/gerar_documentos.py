@@ -12,14 +12,17 @@ fonte: só a lê e escreve, em `saida/documentos_para_avaliacao/`,
 
 e `saida/LEIA-ME.md`, o índice da pasta de saída (cada arquivo, o que é e para quem).
 
-O que vira documento, para quem e com que nome está em `especificacao/documentos.json`. Diagramas Mermaid são
-desenhados no navegador (Chromium do Playwright) e impressos como vetor.
+O que vira documento, para quem e com que nome está em `<projeto>/especificacao/documentos.json`. Diagramas Mermaid
+são desenhados no navegador (Chromium do Playwright) e impressos como vetor.
 
-Uso, da raiz do repositório:
-    python scripts/gerar_documentos.py            # gera tudo
-    python scripts/gerar_documentos.py --rapido   # só guia, planilha e LEIA-ME (sem PDFs de capítulo e cadernos)
+Uso, da raiz deste repositório:
+    python scripts/gerar_documentos.py --projeto <pasta>            # gera tudo
+    python scripts/gerar_documentos.py --projeto <pasta> --rapido   # só guia, planilha e LEIA-ME
+    python scripts/gerar_documentos.py --projeto exemplo/reajusta   # o caso resolvido
 
-Portões (o script para com erro): fonte inexistente, caminho local da máquina no texto, diagrama que não desenhou,
+Antes de gerar, roda `conferir_especificacao.py` e para se houver erro (rastreabilidade, marcador do modelo, termo do
+caso resolvido). Portões próprios (o script para com erro): fonte inexistente, caminho local da máquina no texto,
+diagrama que não desenhou,
 nome de arquivo fora do padrão e os termos bloqueados de `documentos.json` (por padrão, frases que dizem que o
 documento foi feito por IA). Nome de ferramenta de IA e menção a IA ou a modelo de linguagem dão só aviso: quando é
 função do sistema (minuta assistida, provedor do modelo), fica; quando comenta como o documento foi feito, sai da fonte.
@@ -44,10 +47,21 @@ from pathlib import Path
 
 from markdown_it import MarkdownIt
 
-RAIZ = Path(__file__).resolve().parents[1]
+# Pasta do projeto (a que contém especificacao/); definida por definir_projeto()
+RAIZ = Path.cwd()
 CONFIG = RAIZ / "especificacao" / "documentos.json"
 SAIDA = RAIZ / "saida"
 DESTINO = SAIDA / "documentos_para_avaliacao"
+
+
+def definir_projeto(pasta: Path) -> None:
+    global RAIZ, CONFIG, SAIDA, DESTINO
+    RAIZ = Path(pasta).resolve()
+    CONFIG = RAIZ / "especificacao" / "documentos.json"
+    SAIDA = RAIZ / "saida"
+    DESTINO = SAIDA / "documentos_para_avaliacao"
+    if not CONFIG.exists():
+        raise SystemExit(f"não achei especificacao/documentos.json em {RAIZ.name}/ (use --projeto <pasta do projeto>)")
 
 MERMAID_URL = "https://cdn.jsdelivr.net/npm/mermaid@12.2.0/dist/mermaid.min.js"
 MERMAID_SRI = "sha384-8xUhuLNMjW/cI2Dacg3DR4WliYznvIg0LVG1stctThKD/YVrJFI9TNCFxft5NYgp"
@@ -66,8 +80,8 @@ PREFIXOS = {
     "DEC": "Decisão de negócio pendente", "INT": "Integração", "TL": "Tela", "AT": "Teste de aceitação",
     "HIS": "História do backlog", "SEG": "Requisito de segurança", "ADR": "Decisão de arquitetura registrada",
     "MOD": "Módulo do sistema", "PER": "Perfil de usuário", "CMP": "Componente de interface",
-    "V01 a V12": "Regras de validação do pleito",
-}
+    "EP": "Épico do backlog",
+}  # documentos.json pode acrescentar prefixos próprios em "prefixos_extras"
 
 
 # ---------------------------------------------------------------- configuração e fonte
@@ -472,13 +486,14 @@ def gerar_pdfs(cfg: dict, imp: Impressora, data: str, planilha: str) -> dict[str
         n_telas = len({t for t, *_ in telas})
         caixa = caixa_avaliacao(["Cada tela mostra o que o usuário precisa para decidir, na ordem certa?",
                                  "Os textos, rótulos e mensagens são claros para quem usa?"], planilha)
-        doc = capa(cfg, data, "Protótipo de telas", f"{n_telas} telas com dados reais de exemplo; as regras de "
-                   "cada tela estão no capítulo 11", "Área técnica, gestão e TI", "", caixa) + blocos
+        publico_prot = cfg.get("publico_prototipo", "Área de negócio, gestão e TI")
+        doc = capa(cfg, data, "Protótipo de telas", f"{n_telas} telas com dados de exemplo; as regras de "
+                   "cada tela estão no capítulo de telas", publico_prot, "", caixa) + blocos
         destino = DESTINO / "07_Prototipo_de_telas.pdf"
         cab, rod = cabecalho_rodape(cfg, "Protótipo de telas", data)
         imp.pdf(pagina("Protótipo de telas", doc, paisagem=True), destino, cab, rod, 0, paisagem=True)
         info[destino.name] = {"o_que": f"Protótipo de baixa fidelidade: {n_telas} telas, em páginas paisagem",
-                              "para_quem": "Área técnica, gestão e TI", "leitura": ""}
+                              "para_quem": publico_prot, "leitura": ""}
         print(f"  {destino.relative_to(RAIZ).as_posix()}")
     return info
 
@@ -693,8 +708,9 @@ def guia_md(cfg: dict, info: dict, decisoes: list[list[str]], itens: list[dict],
     for nome in sorted(info):
         if "/" not in nome and not nome.startswith("00_"):
             l.append(f'| {nome} | {info[nome]["o_que"]} | {info[nome]["para_quem"]} |')
-    l.append("| capitulos/ | Um PDF por capítulo (01 a 17), com o mesmo conteúdo dos cadernos | Quem quer um capítulo "
-             "sozinho |")
+    ids = [c["id"] for c in cfg["capitulos"]]
+    l.append(f"| capitulos/ | Um PDF por capítulo ({ids[0]} a {ids[-1]}), com o mesmo conteúdo dos cadernos | Quem quer "
+             "um capítulo sozinho |")
     l += ["",
           "## 5. Como ler os identificadores",
           "",
@@ -702,7 +718,7 @@ def guia_md(cfg: dict, info: dict, decisoes: list[list[str]], itens: list[dict],
           "",
           "| Prefixo | Significa |",
           "|---|---|"]
-    l += [f"| {k} | {v} |" for k, v in PREFIXOS.items()]
+    l += [f"| {k} | {v} |" for k, v in {**PREFIXOS, **cfg.get("prefixos_extras", {})}.items()]
     return "\n".join(l) + "\n"
 
 
@@ -716,21 +732,21 @@ def descricao(cfg: dict, rel: str) -> tuple[str, str]:
 def leia_me(cfg: dict, info: dict, data: str) -> str:
     l = ["# Pasta de saída",
          "",
-         "Índice gerado por `scripts/gerar_documentos.py`. Não edite à mão: rode o script de novo.",
+         "Índice gerado por `gerar_documentos.py`. Não edite à mão: rode o script de novo.",
          "",
          f'Pacote de especificação versão {cfg["versao"]} ({cfg["situacao"].lower()}), gerado em {data}.',
          "",
          f"Impressão digital da fonte: `{impressao_digital(cfg)}`. Se a fonte mudar e os documentos não forem gerados de "
-         "novo, o teste `tests/test_especificacao.py` acusa documento desatualizado.",
+         "novo, `conferir_especificacao.py --documentos` acusa documento desatualizado (C17).",
          "",
          "| Pasta | O que tem | Quem produz |",
          "|---|---|---|",
-         "| `levantamento/` | Dados que sustentam a especificação: cálculos da coorte refeitos, cadastro do contrato com "
-         "trecho literal, layout do pleito e a validação do pleito real | agente (extração) + scripts (recálculo, validação) |",
+         "| `levantamento/` | Dados que sustentam a especificação: casos reais com resultado conhecido, regras e "
+         "parâmetros com origem, conferências refeitas por script | extração (com a fonte de cada valor) + scripts |",
          "| `documentos_para_avaliacao/` | Versões de leitura para as áreas avaliarem: guia, cadernos por público, "
-         "planilha de parecer, especificação completa, protótipo e um PDF por capítulo | `scripts/gerar_documentos.py` |",
+         "planilha de parecer, especificação completa, protótipo e um PDF por capítulo | `gerar_documentos.py` |",
          "| `pareceres/` | `recebidos/`: planilhas de avaliação devolvidas pelas áreas; `00_Consolidado_dos_pareceres.xlsx`: "
-         "todos os pareceres item por item | áreas avaliadoras + `scripts/consolidar_pareceres.py` |",
+         "todos os pareceres item por item | áreas avaliadoras + `consolidar_pareceres.py` |",
          "",
          "## documentos_para_avaliacao/",
          "",
@@ -743,8 +759,8 @@ def leia_me(cfg: dict, info: dict, data: str) -> str:
         i = info[nome]
         l.append(f'| `{nome}` | {i["o_que"]} | {i["para_quem"]} | {i.get("leitura", "")} |')
     l += ["", "## levantamento/", "", "| Arquivo | O que é | Para quem |", "|---|---|---|"]
-    for f in sorted((SAIDA / "levantamento").rglob("*")):
-        if f.is_file():
+    for f in sorted((SAIDA / "levantamento").rglob("*")) if (SAIDA / "levantamento").exists() else []:
+        if f.is_file() and not f.name.startswith("."):
             rel = f.relative_to(RAIZ).as_posix()
             o_que, quem = descricao(cfg, rel)
             l.append(f"| `{f.relative_to(SAIDA).as_posix()}` | {o_que} | {quem} |")
@@ -786,8 +802,19 @@ def conferir_nomes() -> None:
 def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--projeto", default=".", help="pasta do projeto (a que contém especificacao/)")
     ap.add_argument("--rapido", action="store_true", help="só guia, planilha e LEIA-ME")
     args = ap.parse_args()
+    definir_projeto(Path(args.projeto))
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import conferir_especificacao as ce
+    achados = ce.conferir(RAIZ)
+    erros = [a for a in achados if a.nivel == "erro"]
+    if erros:
+        for a in erros[:40]:
+            print(f"erro  {a.codigo} {a.arquivo}:{a.linha}  {a.mensagem}")
+        raise SystemExit(f"conferência da especificação: {ce.resumo(achados)}. Corrija a fonte antes de gerar.")
+    print(f"  conferência: {ce.resumo(achados)}")
     cfg = ler_config()
     BLOQUEADOS.extend(re.compile(x, re.I) for x in cfg.get("termos_bloqueados", []))
     data = data_da_versao()
@@ -815,8 +842,8 @@ def main() -> None:
                 info[f'{cd["arquivo"]}.pdf'] = {"o_que": f'{cd["titulo"]} (capítulos {", ".join(cd["capitulos"])})',
                                                 "para_quem": cd["publico"], "leitura": ""}
             info["06_Especificacao_completa.pdf"] = {"o_que": "Especificação completa", "para_quem": "Todos", "leitura": ""}
-            info["07_Prototipo_de_telas.pdf"] = {"o_que": "Protótipo de telas", "para_quem": "Área técnica, gestão e TI",
-                                                 "leitura": ""}
+            info["07_Prototipo_de_telas.pdf"] = {"o_que": "Protótipo de telas", "leitura": "",
+                                                 "para_quem": cfg.get("publico_prototipo", "Área de negócio, gestão e TI")}
             info = {k: v for k, v in info.items() if (DESTINO / k).exists()}
         md = guia_md(cfg, info, decisoes, itens, planilha)
         conv = Conversor(cfg["capitulos"], set())
@@ -834,7 +861,7 @@ def main() -> None:
 
     (SAIDA / "LEIA-ME.md").write_text(leia_me(cfg, info, data), encoding="utf-8")
     conferir_nomes()
-    print(f"  saida/LEIA-ME.md")
+    print(f"  {(SAIDA / 'LEIA-ME.md').relative_to(RAIZ).as_posix()}")
     for a in AVISOS:
         print("aviso:", a)
 

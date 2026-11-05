@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{Nome do sistema}} (protótipo)</title>
+<meta name="description" content="Protótipo navegável de baixa fidelidade das telas de {{Nome do sistema}}.">
+<!-- COMO PREENCHER: protótipo de baixa fidelidade das telas do 11_TELAS.md (capítulo 03 da metodologia, §3.10).
+Uma <section data-tela="TL-nn"> por tela, com o mesmo número e nome do 11; o gerador de documentos captura cada
+section[data-tela] e monta o 07_Prototipo_de_telas.pdf. Copie a seção da TL-01 para cada tela nova e acrescente o
+item no menu lateral. Use os dados de um caso real anonimizado; o que for ilustrativo leva a marca "exemplo" (classe
+"ex"). As cores são os tokens do 10_UX_UI.md: troque os valores do :root pelos da tabela 3.1 e meça de novo o
+contraste. Tudo fica neste arquivo (CSS e script embutidos, sem biblioteca externa nem fonte da internet).
+Pronto quando: toda tela do 11 tem seção aqui; o menu leva a todas; cada tela mostra os cinco estados pelo seletor;
+não há rolagem horizontal da página a 320 px; a navegação funciona só pelo teclado.
+Referência de formato: exemplo/reajusta/especificacao/prototipos/wireframes.html. Ele serve só para ver estrutura e
+nível de detalhe. Não copie texto, dado nem termo dele. -->
+<style>
+/* Tokens (troque pelos valores do 10_UX_UI.md, seção 3.1). Contraste medido:
+   texto #1f1f1f sobre #ffffff 16,48 e sobre #f5f5f5 15,12; texto-2 #595959 sobre #ffffff 7,00;
+   interativo #1a4d99 sobre #ffffff 8,19 (e branco sobre ele 8,19); borda #767676 sobre #ffffff 4,54;
+   foco #b35c00 sobre #ffffff 4,72; ok #1e6b1e sobre #e6f4e6 5,81; aviso #6b4a00 sobre #fff4cc 7,32;
+   erro #a51d1d sobre #fdecec 6,58; info #1a4d99 sobre #e8f0fb 7,13; rodapé #ffffff sobre #1f2a3a 14,48. */
+:root{
+  --fundo:#f5f5f5;--superficie:#ffffff;--texto:#1f1f1f;--texto-2:#595959;--borda:#767676;--divisoria:#d9d9d9;
+  --interativo:#1a4d99;--interativo-texto:#ffffff;--foco:#b35c00;
+  --ok-fundo:#e6f4e6;--ok-texto:#1e6b1e;
+  --aviso-fundo:#fff4cc;--aviso-texto:#6b4a00;
+  --erro-fundo:#fdecec;--erro-texto:#a51d1d;
+  --info-fundo:#e8f0fb;--info-texto:#1a4d99;
+  --rodape:#1f2a3a;--rodape-texto:#ffffff;
+  --fonte:system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+  --menu-largura:240px;--cabecalho-altura:56px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{font-family:var(--fonte);color:var(--texto);background:var(--fundo);scroll-padding-top:calc(var(--cabecalho-altura) + 8px)}
+body{margin:0;font-size:1rem;line-height:1.5;overflow-x:hidden}
+:focus-visible{outline:3px solid var(--foco);outline-offset:3px}
+a{color:var(--interativo)}
+h1{font-size:1.5rem;line-height:1.2;margin:.25rem 0 1rem}
+h2{font-size:1.2rem;line-height:1.2;margin:1.5rem 0 .5rem}
+p{margin:.5rem 0}
+.meta{font-size:.875rem;color:var(--texto-2)}
+.ex{font-size:.75rem;font-weight:600;color:var(--texto-2);border:1px dashed var(--borda);border-radius:4px;padding:0 .3rem;margin-left:.25rem}
+.visual-oculto{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* Barra de acessibilidade */
+.saltos{background:var(--superficie);border-bottom:1px solid var(--divisoria);display:flex;flex-wrap:wrap;gap:.25rem 1rem;padding:.25rem 16px;font-size:.875rem}
+
+/* Cabeçalho */
+header.cabecalho{position:sticky;top:0;z-index:10;background:var(--superficie);border-bottom:1px solid var(--divisoria);
+  display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;min-height:var(--cabecalho-altura);padding:0 16px}
+.marca{font-weight:700}
+.marca span{font-weight:400;color:var(--texto-2)}
+.cabecalho .perfil{margin-left:auto}
+
+/* Botões e campos */
+.btn{font:inherit;font-weight:600;min-height:40px;padding:0 1.1rem;border-radius:999px;border:1px solid var(--interativo);
+  background:transparent;color:var(--interativo);cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.btn.primario{background:var(--interativo);color:var(--interativo-texto)}
+.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+input,select,textarea{font:inherit;min-height:40px;border:1px solid var(--borda);border-radius:4px;background:var(--superficie);
+  color:var(--texto);padding:0 .6rem;max-width:100%}
+textarea{padding:.5rem .6rem;width:100%}
+label{font-weight:600;font-size:.875rem}
+.campo{display:grid;gap:.25rem;margin:.5rem 0}
+.linha-acoes{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0;align-items:end}
+fieldset{border:1px solid var(--divisoria);border-radius:8px;margin:1rem 0;padding:.5rem 1rem 1rem}
+legend{font-weight:600;padding:0 .25rem}
+
+/* Layout */
+.layout{display:flex;min-height:calc(100vh - var(--cabecalho-altura))}
+nav#menu{flex:0 0 var(--menu-largura);background:var(--superficie);border-right:1px solid var(--divisoria)}
+nav#menu ul{list-style:none;margin:0;padding:.5rem 0}
+nav#menu a{display:flex;gap:.5rem;padding:.6rem 1rem;color:var(--texto);text-decoration:none;border-left:4px solid transparent}
+nav#menu a .id{color:var(--texto-2);min-width:3.2rem;font-size:.875rem}
+nav#menu a[aria-current="page"]{border-left-color:var(--interativo);background:var(--info-fundo);color:var(--info-texto);font-weight:600}
+main{flex:1 1 auto;min-width:0;max-width:1200px;padding:16px}
+@media (min-width:992px){main{padding:24px}}
+@media (max-width:767.98px){.layout{flex-direction:column}nav#menu{flex:none;border-right:0;border-bottom:1px solid var(--divisoria)}}
+.trilha ol{list-style:none;display:flex;flex-wrap:wrap;gap:.25rem;margin:0;padding:0;font-size:.875rem}
+.trilha li+li::before{content:"›";margin-right:.25rem;color:var(--texto-2)}
+footer.rodape{background:var(--rodape);color:var(--rodape-texto);padding:16px;font-size:.875rem;display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+footer.rodape a{color:var(--rodape-texto)}
+
+/* Resumo, chips, cartões, tabela */
+dl.resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin:0 0 1rem}
+dl.resumo div{background:var(--superficie);border:1px solid var(--divisoria);border-left:4px solid var(--borda);border-radius:8px;padding:.6rem .8rem}
+dl.resumo dt{font-size:.875rem;color:var(--texto-2)}
+dl.resumo dd{margin:0;font-size:1.4rem;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:.3rem;border-radius:999px;padding:.05rem .6rem;font-size:.875rem;font-weight:600}
+.chip.ok{background:var(--ok-fundo);color:var(--ok-texto)}
+.chip.aviso{background:var(--aviso-fundo);color:var(--aviso-texto)}
+.chip.erro{background:var(--erro-fundo);color:var(--erro-texto)}
+.chip.info{background:var(--info-fundo);color:var(--info-texto)}
+.cartao{background:var(--superficie);border:1px solid var(--divisoria);border-radius:8px;padding:16px;margin:.75rem 0}
+.duas-colunas{display:grid;gap:1rem}
+@media (min-width:992px){.duas-colunas{grid-template-columns:2fr 1fr}}
+.tabela{overflow-x:auto;background:var(--superficie);border:1px solid var(--divisoria);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.9375rem}
+caption{text-align:left;font-weight:600;padding:.6rem .8rem}
+th,td{text-align:left;padding:.5rem .8rem;border-top:1px solid var(--divisoria);vertical-align:top}
+th{font-weight:600;background:var(--fundo)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+ol.historico{list-style:none;margin:0;padding:0}
+ol.historico li{padding:.4rem 0 .4rem 1.2rem;border-left:2px solid var(--divisoria);position:relative}
+ol.historico li::before{content:"";position:absolute;left:-6px;top:.85rem;width:10px;height:10px;border-radius:50%;background:var(--borda)}
+ol.historico li[aria-current="step"]::before{background:var(--interativo)}
+
+/* Seletor de estado do protótipo e estados */
+.seletor-estado{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:0 0 1rem;padding:.4rem .6rem;
+  border:1px dashed var(--borda);border-radius:8px;font-size:.875rem}
+.estado{background:var(--superficie);border:1px solid var(--divisoria);border-radius:8px;padding:16px}
+.faixa{border-radius:8px;padding:.6rem .8rem;margin:.5rem 0}
+.faixa.ok{background:var(--ok-fundo);color:var(--ok-texto)}
+.faixa.erro{background:var(--erro-fundo);color:var(--erro-texto)}
+.esqueleto{height:1rem;border-radius:4px;background:var(--divisoria);margin:.6rem 0}
+</style>
+</head>
+<body>
+
+<div class="saltos">
+  <a href="#conteudo" accesskey="1">Ir para o conteúdo [1]</a>
+  <a href="#menu" accesskey="2">Ir para o menu [2]</a>
+  <a href="#rodape" accesskey="4">Ir para o rodapé [4]</a>
+</div>
+
+<header class="cabecalho">
+  <div class="marca">{{Sigla do órgão}} · {{Nome do sistema}} <span>protótipo</span></div>
+  <span class="perfil meta">Perfil: PER-{{SIG}} <span class="ex">exemplo</span></span>
+</header>
+
+<div class="layout">
+<nav id="menu" aria-label="Menu principal" tabindex="-1">
+  <ul>
+    <li><a href="#TL-01"><span class="id">TL-01</span>{{Nome da tela}}</a></li>
+    <li><a href="#TL-02"><span class="id">TL-02</span>{{Nome da tela}}</a></li>
+  </ul>
+</nav>
+
+<main id="conteudo" tabindex="-1">
+
+<!-- ===================== TL-01: tela de lista (copie para cada tela nova) ===================== -->
+<section data-tela="TL-01" data-titulo="{{Nome da tela}}" data-vazio="{{Mensagem de estado vazio}}" hidden>
+<nav class="trilha" aria-label="Você está aqui"><ol><li><a href="#TL-01">Início</a></li><li aria-current="page">{{Nome da tela}}</li></ol></nav>
+<div class="normal">
+<h1>{{Nome da tela}}</h1>
+<dl class="resumo">
+  <div><dt>{{Cifra do resumo}}</dt><dd>12 <span class="ex">exemplo</span></dd></div>
+  <div><dt>Com prazo vencido</dt><dd>1 <span class="ex">exemplo</span></dd></div>
+  <div><dt>Sem responsável</dt><dd>0 <span class="ex">exemplo</span></dd></div>
+</dl>
+<div class="linha-acoes" role="group" aria-label="Filtros">
+  <div class="campo"><label for="f-situacao">Situação</label>
+    <select id="f-situacao"><option>todas</option><option>em análise</option><option>pendente</option><option>concluído</option></select></div>
+  <div class="campo"><label for="f-busca">Buscar pelo número</label><input id="f-busca" type="search"></div>
+</div>
+<p role="status" class="meta">3 itens na lista.</p>
+<div class="tabela" role="region" aria-label="Lista de itens (rola na horizontal)" tabindex="0">
+<table>
+<caption>{{Legenda da tabela, por exemplo: pedidos em andamento, prazo mais próximo primeiro}}</caption>
+<thead><tr><th scope="col">Número</th><th scope="col">{{Coluna}}</th><th scope="col">Situação</th><th scope="col">Responsável</th><th scope="col">Próximo prazo</th></tr></thead>
+<tbody>
+<tr><td><a href="#TL-02">Pedido 0001</a> <span class="ex">exemplo</span></td><td>Documento A</td>
+  <td><span class="chip erro"><span aria-hidden="true">✕</span>pendente</span></td><td>Analista</td>
+  <td><span class="chip erro">venceu há 2 dias úteis</span></td></tr>
+<tr><td><a href="#TL-02">Pedido 0002</a> <span class="ex">exemplo</span></td><td>Documento B</td>
+  <td><span class="chip info"><span aria-hidden="true">●</span>em análise</span></td><td>Analista</td>
+  <td><span class="chip aviso">vence em 3 dias úteis</span></td></tr>
+<tr><td><a href="#TL-02">Pedido 0003</a> <span class="ex">exemplo</span></td><td>Documento C</td>
+  <td><span class="chip ok"><span aria-hidden="true">✓</span>concluído</span></td><td>—</td>
+  <td><span class="chip ok">cumprido em 02/03/2026</span></td></tr>
+</tbody></table></div>
+</div>
+</section>
+
+<!-- ===================== TL-02: tela de detalhe com ação ===================== -->
+<section data-tela="TL-02" data-titulo="{{Nome da tela}}" data-vazio="{{Mensagem de estado vazio}}" hidden>
+<nav class="trilha" aria-label="Você está aqui"><ol><li><a href="#TL-01">Início</a></li><li><a href="#TL-01">{{Nome da tela de lista}}</a></li><li aria-current="page">Pedido 0002</li></ol></nav>
+<div class="normal">
+<h1>Pedido 0002 <span class="ex">exemplo</span> <span class="chip info"><span aria-hidden="true">●</span>em análise</span></h1>
+<dl class="resumo">
+  <div><dt>Responsável</dt><dd>Analista</dd></div>
+  <div><dt>Próximo prazo</dt><dd>vence em 3 dias úteis</dd></div>
+  <div><dt>{{Cifra do resumo}}</dt><dd>2 <span class="ex">exemplo</span></dd></div>
+</dl>
+<div class="duas-colunas">
+<div>
+  <div class="cartao">
+    <h2>Dados do pedido</h2>
+    <dl>
+      <dt>{{Campo}}</dt><dd>{{Valor do caso anonimizado}}</dd>
+      <dt>Documentos anexados</dt><dd>Documento B, Documento B-1 <span class="ex">exemplo</span></dd>
+    </dl>
+  </div>
+  <form class="cartao" id="form-decisao" novalidate>
+    <h2>Registrar decisão</h2>
+    <div id="erros-decisao" tabindex="-1"></div>
+    <fieldset>
+      <legend>Decisão</legend>
+      <label><input type="radio" name="decisao" value="a"> {{Opção de decisão 1}}</label><br>
+      <label><input type="radio" name="decisao" value="b"> {{Opção de decisão 2}}</label>
+    </fieldset>
+    <div class="campo">
+      <label for="justificativa">Justificativa</label>
+      <p class="meta" id="instrucao-justificativa">Explique a decisão em poucas linhas.</p>
+      <textarea id="justificativa" rows="3" aria-describedby="instrucao-justificativa erro-justificativa"></textarea>
+      <p class="meta" id="erro-justificativa"></p>
+    </div>
+    <div class="linha-acoes"><button type="submit" class="btn primario">{{Verbo da ação}}</button><a class="btn" href="#TL-01">Cancelar</a></div>
+  </form>
+</div>
+<div class="cartao">
+  <h2>Histórico</h2>
+  <ol class="historico">
+    <li>02/03/2026 · pedido recebido <span class="ex">exemplo</span></li>
+    <li aria-current="step">04/03/2026 · em análise <span class="ex">exemplo</span></li>
+    <li>decisão (prevista)</li>
+  </ol>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+
+<footer class="rodape" id="rodape" tabindex="-1">
+  <span>{{Sigla do órgão}} · {{Nome do sistema}} · protótipo de baixa fidelidade</span>
+  <a href="#TL-01">Acessibilidade</a><a href="#TL-01">Privacidade</a>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var telas=Array.prototype.slice.call(document.querySelectorAll("main section[data-tela]"));
+var nomeSistema=document.title;
+
+/* Seletor dos cinco estados em cada tela (vazio, carregando, erro, sem permissão, sucesso) */
+telas.forEach(function(sec){
+  var t=sec.getAttribute("data-tela"),normal=sec.querySelector(".normal");
+  var caixa=document.createElement("div");caixa.className="seletor-estado";
+  caixa.innerHTML='<label for="estado-'+t+'">Ver estado da tela (protótipo)</label><select id="estado-'+t+'">'+
+    '<option value="normal">com dados</option><option value="vazio">vazio</option><option value="carregando">carregando</option>'+
+    '<option value="erro">erro</option><option value="sem">sem permissão</option><option value="sucesso">sucesso</option></select>';
+  var est=document.createElement("div");est.className="estado";est.hidden=true;
+  sec.insertBefore(caixa,normal);sec.insertBefore(est,normal);
+  caixa.querySelector("select").addEventListener("change",function(){
+    var v=this.value,titulo=sec.getAttribute("data-titulo");
+    normal.hidden=(v!=="normal"&&v!=="sucesso");est.hidden=(v==="normal");est.removeAttribute("aria-busy");
+    if(v==="vazio")est.innerHTML="<h2>Nada por aqui ainda</h2><p>"+sec.getAttribute("data-vazio")+"</p>";
+    if(v==="carregando"){est.setAttribute("aria-busy","true");est.innerHTML='<p role="status">Carregando: '+titulo+'</p><div class="esqueleto"></div><div class="esqueleto" style="width:70%"></div>';}
+    if(v==="erro")est.innerHTML='<div role="alert"><h2>Não foi possível carregar: '+titulo+'</h2><p>Nada foi perdido. Tente de novo em instantes.</p></div><button type="button" class="btn primario">Tentar de novo</button>';
+    if(v==="sem")est.innerHTML='<h2>Sem permissão para esta tela</h2><p>Esta tela é do perfil PER-{{SIG}}. Peça acesso à administração do sistema.</p><a class="btn primario" href="#TL-01">Voltar ao início</a>';
+    if(v==="sucesso")est.innerHTML='<div class="faixa ok" role="status">{{Mensagem de sucesso da ação principal}}</div>';
+  });
+});
+
+/* Mostra a tela do endereço (#TL-nn) ou a primeira; esconde as demais */
+function mostrar(){
+  var id=location.hash.slice(1),alvo=null;
+  telas.forEach(function(s){if(s.getAttribute("data-tela")===id)alvo=s});
+  if(!alvo){
+    /* salto interno (conteúdo, menu, rodapé, campo do formulário): foca o alvo e mantém a tela atual */
+    var el=id?document.getElementById(id):null,atual=document.querySelector("main section[data-tela]:not([hidden])");
+    if(el&&atual){el.focus();return null}
+    alvo=telas[0];
+  }
+  telas.forEach(function(s){s.hidden=(s!==alvo)});
+  var t=alvo.getAttribute("data-tela");
+  Array.prototype.forEach.call(document.querySelectorAll("#menu a"),function(a){
+    if(a.getAttribute("href")==="#"+t)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  document.title=alvo.getAttribute("data-titulo")+" · "+nomeSistema;
+  return alvo;
+}
+window.addEventListener("hashchange",function(){var s=mostrar();if(s&&location.hash.slice(1)===s.getAttribute("data-tela")){var h=s.querySelector("h1");if(h){h.setAttribute("tabindex","-1");h.focus()}}});
+mostrar();
+
+/* TL-02: validação do formulário com resumo de erros ligado aos campos */
+var form=document.getElementById("form-decisao");
+if(form)form.addEventListener("submit",function(e){
+  e.preventDefault();
+  var j=document.getElementById("justificativa"),resumo=document.getElementById("erros-decisao"),erro=document.getElementById("erro-justificativa");
+  if(!j.value.trim()){
+    j.setAttribute("aria-invalid","true");erro.textContent="Escreva a justificativa da decisão.";
+    resumo.innerHTML='<div class="faixa erro" role="alert">Há 1 campo a corrigir: <a href="#justificativa">justificativa</a>.</div>';
+    resumo.focus();return;
+  }
+  j.removeAttribute("aria-invalid");erro.textContent="";
+  resumo.innerHTML='<div class="faixa ok" role="status">Decisão registrada <span class="ex">exemplo</span>.</div>';resumo.focus();
+});
+})();
+</script>
+</body>
+</html>
